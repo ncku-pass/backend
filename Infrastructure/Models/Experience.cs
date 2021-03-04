@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
-namespace Application.Models
+namespace Infrastructure.Models
 {
     public class Experience
     {
@@ -14,6 +14,9 @@ namespace Application.Models
         [Required]
         [MaxLength(30)]
         public string Name { get; set; }
+        [Required]
+        [MaxLength(10)]
+        public string Position { get; set; }
         [Required]
         [MaxLength(100)]
         public string Description { get; set; }
@@ -30,7 +33,8 @@ namespace Application.Models
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd HH:mm:ss}", ApplyFormatInEditMode = true)]
         public DateTime? UpdateTime { get; set; }
-
-        public ICollection<Tag> Tags { get; set; }
+        [ForeignKey("UserId")]
+        public virtual User User { get; set; }
+        public int UserId { get; set; }
     }
 }

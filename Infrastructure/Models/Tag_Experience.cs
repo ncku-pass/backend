@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
-namespace Application.Models
+namespace Infrastructure.Models
 {
     public class Tag_Experience
     {
@@ -13,11 +13,11 @@ namespace Application.Models
         public int Id { get; set; }
 
         [ForeignKey("ExperienceId")]
-        public int E_Id { get; set; }
-        public Experience Experience { get; set; }
+        public virtual Experience Experience { get; set; }
+        public int ExperienceId { get; set; }
 
         [ForeignKey("TagId")]
-        public int T_Id { get; set; }
-        public Tag Tag { get; set; }
+        public virtual Tag Tag { get; set; }
+        public int TagId { get; set; }
     }
 }

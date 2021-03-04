@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
-namespace Application.Models
+namespace Infrastructure.Models
 {
     public class Tag
     {
@@ -14,5 +14,8 @@ namespace Application.Models
         [Required]
         [MaxLength(30)]
         public string Name { get; set; }
+        [ForeignKey("UserId")]
+        public virtual User User { get; set; }
+        public int UserId { get; set; }
     }
 }
