@@ -15,7 +15,6 @@ namespace Infrastructure.Profiles
         public ExperienceProfile()
         {
             CreateMap<Experience, ExperienceDomain>().ReverseMap();
-            CreateMap<List<Tag>, ExperienceDomain>().ReverseMap();
             CreateMap<ExperienceDomain, ExperienceDto>().ReverseMap();
 
             //CreateMap<TouristRouteForCreationDto, TouristRoute>().

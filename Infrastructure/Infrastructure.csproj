@@ -6,6 +6,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Infrastructure\Repositories\**" />
+    <EmbeddedResource Remove="Infrastructure\Repositories\**" />
+    <None Remove="Infrastructure\Repositories\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Application\Application.csproj" />
   </ItemGroup>
 

@@ -4,15 +4,19 @@ using Application.Services.Interface;
 using AutoMapper;
 using Infrastructure.Database;
 using Infrastructure.Profiles;
-using Infrastructure.Repositories;
+using Infrastructure.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.PlatformAbstractions;
+using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Serialization;
 using System;
+using System.IO;
+using Application.Domains;
 
 namespace Api
 {
@@ -37,23 +41,50 @@ namespace Api
                     setupAction.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                 });
 
-            services.AddTransient<IExperienceRepository, ExperienceRepository>();
-            services.AddTransient<IExperienceService, ExperienceService>();
-
+            // Add MySQL相關設定
             services.AddDbContext<AppDbContext>(option =>
             {
                 option.UseMySql(Configuration["DbContext:MySQLConnectionString"]);
             });
+
+            // TODO:問家駿這邊該怎麼做
+            // DI註冊
+            // Service用Scoped:每個Request刷新
+            // Repo用Transient:每個子任務刷新
+            services.AddScoped<IExperienceService, ExperienceService>();
+            services.AddTransient<IBaseRepository<ExperienceDomain>, BaseRepository<ExperienceDomain>>();
+            services.AddTransient<IBaseRepository<TagDomain>, BaseRepository<TagDomain>>();
+            services.AddTransient<IBaseRepository<Tag_ExperienceDomain>, BaseRepository<Tag_ExperienceDomain>>();
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
+
+            // Add Auto Mapper Configurations
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-            // Auto Mapper Configurations
             var mappingConfig = new MapperConfiguration(mc =>
             {
                 mc.AddProfile(new ExperienceProfile());
                 mc.AddProfile(new TagProfile());
             });
-
             IMapper mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
+
+            // Add Swagger相關設定
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc(
+                    // name: 攸關 SwaggerDocument 的 URL 位置。
+                    name: "v1",
+                    // info: 是用於 SwaggerDocument 版本資訊的顯示(內容非必填)。
+                    info: new OpenApiInfo
+                    {
+                        Title = "Malaysia API",
+                        Version = "1.0.0",
+                        Description = "This is ASP.NET Core Malaysia API.",
+                    }
+                );
+
+                var filePath = Path.Combine(PlatformServices.Default.Application.ApplicationBasePath, "Api.xml");
+                c.IncludeXmlComments(filePath);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -62,6 +93,11 @@ namespace Api
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseSwagger();
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                });
             }
 
             app.UseHttpsRedirection();
