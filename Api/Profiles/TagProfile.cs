@@ -2,9 +2,12 @@
 using Application.Dtos;
 using AutoMapper;
 using Infrastructure.Models;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace Infrastructure.Profiles
+namespace Api.Profiles
 {
     public class TagProfile : Profile
     {

@@ -5,9 +5,9 @@ using Infrastructure.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Threading.Tasks;
 
-namespace Infrastructure.Profiles
+namespace Api.Profiles
 {
     public class ExperienceProfile : Profile
     {
@@ -15,6 +15,7 @@ namespace Infrastructure.Profiles
         public ExperienceProfile()
         {
             CreateMap<Experience, ExperienceDomain>().ReverseMap();
+            CreateMap<List<Tag>, ExperienceDomain>().ReverseMap();
             CreateMap<ExperienceDomain, ExperienceDto>().ReverseMap();
 
             //CreateMap<TouristRouteForCreationDto, TouristRoute>().

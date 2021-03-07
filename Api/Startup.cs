@@ -1,9 +1,7 @@
-using Application.Domains.Interface;
 using Application.Services;
 using Application.Services.Interface;
 using AutoMapper;
 using Infrastructure.Database;
-using Infrastructure.Profiles;
 using Infrastructure.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -17,6 +15,8 @@ using Newtonsoft.Json.Serialization;
 using System;
 using System.IO;
 using Application.Domains;
+using Infrastructure.Models;
+using Api.Profiles;
 
 namespace Api
 {
@@ -52,9 +52,9 @@ namespace Api
             // Service用Scoped:每個Request刷新
             // Repo用Transient:每個子任務刷新
             services.AddScoped<IExperienceService, ExperienceService>();
-            services.AddTransient<IBaseRepository<ExperienceDomain>, BaseRepository<ExperienceDomain>>();
-            services.AddTransient<IBaseRepository<TagDomain>, BaseRepository<TagDomain>>();
-            services.AddTransient<IBaseRepository<Tag_ExperienceDomain>, BaseRepository<Tag_ExperienceDomain>>();
+            services.AddTransient<IBaseRepository<Experience>, BaseRepository<Experience>>();
+            services.AddTransient<IBaseRepository<Tag>, BaseRepository<Tag>>();
+            services.AddTransient<IBaseRepository<Tag_Experience>, BaseRepository<Tag_Experience>>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
 
             // Add Auto Mapper Configurations

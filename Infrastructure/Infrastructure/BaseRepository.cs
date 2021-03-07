@@ -1,5 +1,4 @@
-﻿using Application.Domains.Interface;
-using Infrastructure.Database;
+﻿using Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using System;

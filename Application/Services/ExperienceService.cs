@@ -1,5 +1,4 @@
 ﻿using Application.Domains;
-using Application.Domains.Interface;
 using Application.Services.Interface;
 using System;
 using System.Collections.Generic;
@@ -8,6 +7,8 @@ using System.Threading.Tasks;
 using System.Linq;
 using System.Collections;
 using AutoMapper;
+using Infrastructure.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Services
 {
@@ -27,12 +28,12 @@ namespace Application.Services
 
         public void AddExperience(ExperienceDomain experience)
         {
-            this._unitOfWork.Experience.Add(experience);
+            //this._unitOfWork.Experience.Add(experience);
         }
 
         public void DeleteExperience(ExperienceDomain experience)
         {
-            this._unitOfWork.Experience.Remove(experience);
+            //this._unitOfWork.Experience.Remove(experience);
         }
 
         public Task<bool> ExperienceExistsAsync(int experienceId)
@@ -44,14 +45,14 @@ namespace Application.Services
         {
             var experienceModel = await _unitOfWork.Experience.FirstOrDefaultAsync(n => n.Id == experienceId);
 
-            var tagModel = (from tag in _unitOfWork.Tag.GetAll()
-                            join combine in _unitOfWork.Tag_Experience.Where(t => t.ExperienceId == experienceModel.Id)
-                                on tag.Id equals combine.TagId
-                            select new TagDomain()
-                            {
-                                Id = tag.Id,
-                                Name = tag.Name
-                            }).ToList();
+            var tagModel = await (from tag in _unitOfWork.Tag.GetAll()
+                                  join combine in _unitOfWork.Tag_Experience.Where(t => t.ExperienceId == experienceModel.Id)
+                                      on tag.Id equals combine.TagId
+                                  select new TagDomain()
+                                  {
+                                      Id = tag.Id,
+                                      Name = tag.Name
+                                  }).ToListAsync();
 
             var experienceDomain = _mapper.Map<ExperienceDomain>(experienceModel);
             experienceDomain.Tags = _mapper.Map<ICollection<TagDomain>>(tagModel);

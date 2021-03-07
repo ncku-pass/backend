@@ -1,5 +1,4 @@
-﻿using Application.Domains;
-using Application.Domains.Interface;
+﻿
 using Infrastructure.Database;
 using Infrastructure.Models;
 using System;
@@ -15,15 +14,15 @@ namespace Infrastructure.Infrastructure
         private bool disposed = false;
         public AppDbContext _context { get; private set; }
 
-        public IBaseRepository<ExperienceDomain> Experience { get; private set; }
-        public IBaseRepository<TagDomain> Tag { get; private set; }
-        public IBaseRepository<Tag_ExperienceDomain> Tag_Experience { get; private set; }
+        public IBaseRepository<Experience> Experience { get; private set; }
+        public IBaseRepository<Tag> Tag { get; private set; }
+        public IBaseRepository<Tag_Experience> Tag_Experience { get; private set; }
 
         public UnitOfWork(
             AppDbContext context,
-            IBaseRepository<ExperienceDomain> experienceRepository,
-            IBaseRepository<TagDomain> tagRepository,
-            IBaseRepository<Tag_ExperienceDomain> tag_ExperienceRepository
+            IBaseRepository<Experience> experienceRepository,
+            IBaseRepository<Tag> tagRepository,
+            IBaseRepository<Tag_Experience> tag_ExperienceRepository
             )
         {
             this._context = context;
