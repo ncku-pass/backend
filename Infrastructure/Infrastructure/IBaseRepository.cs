@@ -15,13 +15,20 @@ namespace Infrastructure.Infrastructure
         void Update(TEntity entity);
         void Remove(TEntity entity);
         bool Contains(Expression<Func<TEntity, bool>> predicate);
-        IQueryable<TEntity> GetAll(Expression<Func<TEntity, bool>> predicate = null);
+        IQueryable<TEntity> GetAll();
         IQueryable<TEntity> Where(Expression<Func<TEntity, bool>> predicate);
         Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate);
-        ValueTask<IQueryable<TEntity>> GetAsync(Expression<Func<TEntity, bool>> predicate = null);
-        ValueTask<int> CountAsync(Expression<Func<TEntity, bool>> predicate = null);
-        ValueTask<TEntity> SingleOrDefaultAsync(Expression<Func<TEntity, bool>> predicate = null);
-        ValueTask<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate = null);
-        Task<ICollection<TEntity>> ToListAsync();
+        Task<IQueryable<TEntity>> GetAsync(Expression<Func<TEntity, bool>> predicate = null);
+        Task<int> CountAsync(Expression<Func<TEntity, bool>> predicate);
+        Task<TEntity> SingleOrDefaultAsync(Expression<Func<TEntity, bool>> predicate = null);
+        Task<List<TEntity>> ToListAsync();
+        Task AddAsync(TEntity entity);
+        Task UpdateAsync(TEntity entity);
+        /// <summary>
+        /// 取得單筆
+        /// </summary>
+        /// <param name="predicate">查詢條件</param>
+        /// <returns></returns>
+        Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate);
     }
 }

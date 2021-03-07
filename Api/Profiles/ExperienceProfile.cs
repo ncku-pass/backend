@@ -1,5 +1,4 @@
-﻿using Application.Domains;
-using Application.Dtos;
+﻿using Application.Dtos;
 using AutoMapper;
 using Infrastructure.Models;
 using System;
@@ -11,12 +10,11 @@ namespace Api.Profiles
 {
     public class ExperienceProfile : Profile
     {
-
         public ExperienceProfile()
         {
-            CreateMap<Experience, ExperienceDomain>().ReverseMap();
-            CreateMap<List<Tag>, ExperienceDomain>().ReverseMap();
-            CreateMap<ExperienceDomain, ExperienceDto>().ReverseMap();
+            CreateMap<Experience, ExperienceDto>().ReverseMap();
+            CreateMap<ExperienceDtoCreate, Experience>().ReverseMap();
+            CreateMap<List<Tag>, Experience>().ReverseMap();
 
             //CreateMap<TouristRouteForCreationDto, TouristRoute>().
             //    ForMember(

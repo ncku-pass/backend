@@ -5,9 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Domains\Interface\**" />
-    <EmbeddedResource Remove="Domains\Interface\**" />
-    <None Remove="Domains\Interface\**" />
+    <Compile Remove="Domains\**" />
+    <EmbeddedResource Remove="Domains\**" />
+    <None Remove="Domains\**" />
   </ItemGroup>
 
   <ItemGroup>

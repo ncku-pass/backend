@@ -14,7 +14,6 @@ using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Serialization;
 using System;
 using System.IO;
-using Application.Domains;
 using Infrastructure.Models;
 using Api.Profiles;
 

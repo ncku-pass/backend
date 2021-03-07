@@ -4,5 +4,20 @@
         <name>Api</name>
     </assembly>
     <members>
+        <member name="M:Api.Controllers.ExperiencesController.GetExperiences">
+            get api/experiences
+            <summary>
+            取得所有經歷
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.ExperiencesController.GetExperienceById(System.Int32)">
+            get api/experiences/1
+            <summary>
+            根據Id取得經歷
+            </summary>
+            <param name="experienceId">經歷Id</param>
+            <returns></returns>
+        </member>
     </members>
 </doc>
