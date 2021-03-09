@@ -1,6 +1,10 @@
-﻿using Application.Dtos;
+﻿using Api.RequestModel.Parameters;
+using Api.RequestModel.ViewModels;
+using Application.Dto;
+using Application.Dto.Messages;
 using Application.Services.Interface;
 using AutoMapper;
+using Infrastructure.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -37,7 +41,7 @@ namespace Api.Controllers
             {
                 return this.NotFound("查無經歷");
             }
-            var ExperienceDto = this._mapper.Map<List<ExperienceDto>>(ExperiencesFromService);
+            var ExperienceDto = this._mapper.Map<List<ExperienceResponse>>(ExperiencesFromService);
             return this.Ok(ExperienceDto);
         }
 
@@ -50,30 +54,30 @@ namespace Api.Controllers
         [HttpGet("{experienceId}", Name = "GetExperienceById")]
         public async Task<IActionResult> GetExperienceById([FromRoute] int experienceId)
         {
-            var ExperiencesFromService = await _experienceService.GetExperienceByIdAsync(experienceId);
-            if (ExperiencesFromService == null)
+            var ExperienceResponse = await _experienceService.GetExperienceByIdAsync(experienceId);
+            if (ExperienceResponse == null)
             {
                 return this.NotFound("查無此經歷=>Id:" + experienceId);
             }
-            var ExperienceDto = this._mapper.Map<ExperienceDto>(ExperiencesFromService);
-            return this.Ok(ExperienceDto);
+            var ExperienceViewModel = this._mapper.Map<ExperienceViewModel>(ExperienceResponse);
+            return this.Ok(ExperienceViewModel);
         }
 
         //Task<bool> ExperienceExistsAsync(int experienceId);
         //void AddExperience(ExperienceDtoCreate experience);
         //void DeleteExperienceAsync(int experienceId);
 
-        //[HttpPost]
-        //public async Task<IActionResult> CreateExperience([FromBody] ExperienceDtoCreate experienceDtoCreate)
-        //{
-        //    _experienceService.AddExperience(experienceDtoCreate);
-        //    var touristRouteReturn = _mapper.Map<ExperienceDto>(experienceDtoCreate);
-        //    return this.CreatedAtRoute(
-        //        "GetTouristRouteById",
-        //        new { touristRouteId = touristRouteReturn.Id },
-        //        touristRouteReturn
-        //    );
-
-        //}
+        [HttpPost]
+        public async Task<IActionResult> CreateExperience([FromBody] ExperienceCreateParameter experienceCreateParameter)
+        {
+            var experienceModel = _mapper.Map<ExperienceCreateMessage>(experienceCreateParameter);
+            var experienceResponse = await _experienceService.AddExperienceAsync(experienceModel);
+            var experienceViewModel = _mapper.Map<ExperienceViewModel>(experienceResponse);
+            return this.CreatedAtRoute(
+                "GetExperienceById",
+                new { experienceId = experienceViewModel.Id },
+                experienceViewModel
+            );
+        }
     }
 }

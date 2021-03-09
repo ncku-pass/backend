@@ -1,4 +1,7 @@
-﻿using Application.Dtos;
+﻿using Api.RequestModel.Parameters;
+using Api.RequestModel.ViewModels;
+using Application.Dto;
+using Application.Dto.Messages;
 using AutoMapper;
 using Infrastructure.Models;
 using System;
@@ -12,9 +15,10 @@ namespace Api.Profiles
     {
         public ExperienceProfile()
         {
-            CreateMap<Experience, ExperienceDto>().ReverseMap();
-            CreateMap<ExperienceDtoCreate, Experience>().ReverseMap();
-            CreateMap<List<Tag>, Experience>().ReverseMap();
+            CreateMap<ExperienceCreateParameter, ExperienceCreateMessage>();
+            CreateMap<ExperienceCreateMessage, Experience>();
+            CreateMap<Experience, ExperienceResponse>();
+            CreateMap<ExperienceResponse, ExperienceViewModel>();
 
             //CreateMap<TouristRouteForCreationDto, TouristRoute>().
             //    ForMember(

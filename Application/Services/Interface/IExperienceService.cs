@@ -1,4 +1,6 @@
-﻿using Application.Dtos;
+﻿using Application.Dto;
+using Application.Dto.Messages;
+using Infrastructure.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,10 +10,10 @@ namespace Application.Services.Interface
 {
     public interface IExperienceService
     {
-        Task<ExperienceDto> GetExperienceByIdAsync(int experienceId);
-        Task<IEnumerable<ExperienceDto>> GetExperiencesAsync();
+        Task<ExperienceResponse> GetExperienceByIdAsync(int experienceId);
+        Task<IEnumerable<ExperienceResponse>> GetExperiencesAsync();
         Task<bool> ExperienceExistsAsync(int experienceId);
-        void AddExperience(ExperienceDtoCreate experience);
-        void DeleteExperienceAsync(int experienceId);
+        Task<ExperienceResponse> AddExperienceAsync(ExperienceCreateMessage experience);
+        Task<bool> DeleteExperienceAsync(int experienceId);
     }
 }

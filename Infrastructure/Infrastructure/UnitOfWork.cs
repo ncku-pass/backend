@@ -45,9 +45,9 @@ namespace Infrastructure.Infrastructure
         /// SaveChange
         /// </summary>
         /// <returns></returns>
-        public async Task<int> SaveChangeAsync()
+        public async Task<bool> SaveChangeAsync()
         {
-            return await this._context.SaveChangesAsync();
+            return await this._context.SaveChangesAsync() >= 0;
         }
 
         /// <summary>

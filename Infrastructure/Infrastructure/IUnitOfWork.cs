@@ -16,6 +16,6 @@ namespace Infrastructure.Infrastructure
         /// Saves the change.
         /// </summary>
         /// <returns></returns>
-        Task<int> SaveChangeAsync();
+        Task<bool> SaveChangeAsync();
     }
 }

@@ -1,4 +1,7 @@
-﻿using Application.Dtos;
+﻿using Api.RequestModel.Parameters;
+using Api.RequestModel.ViewModels;
+using Application.Dto;
+using Application.Dto.Messages;
 using AutoMapper;
 using Infrastructure.Models;
 using System;
@@ -12,7 +15,10 @@ namespace Api.Profiles
     {
         public TagProfile()
         {
-            CreateMap<Tag, TagDto>().ReverseMap();
+            CreateMap<TagCreateParameter, TagCreateMessage>();
+            CreateMap<TagCreateMessage, Tag>();
+            CreateMap<Tag, TagResponse>();
+            CreateMap<TagResponse, TagViewModel>();
         }
     }
 }

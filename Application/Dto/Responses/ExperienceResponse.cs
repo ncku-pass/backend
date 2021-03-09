@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Application.Dtos
+namespace Application.Dto
 {
-    public class ExperienceDto
+    public class ExperienceResponse
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -13,6 +13,6 @@ namespace Application.Dtos
         public string Feedback { get; set; }
         public string Semester { get; set; }
         public string Link { get; set; }
-        public ICollection<TagDto> Tags { get; set; }
+        public ICollection<TagResponse> Tags { get; set; }
     }
 }

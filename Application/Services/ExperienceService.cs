@@ -8,8 +8,9 @@ using System.Collections;
 using AutoMapper;
 using Infrastructure.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using Application.Dtos;
+using Application.Dto;
 using Infrastructure.Models;
+using Application.Dto.Messages;
 
 namespace Application.Services
 {
@@ -30,23 +31,24 @@ namespace Application.Services
         /// <summary>
         /// 新增經歷
         /// </summary>
-        /// <param name="experience"></param>
-        public void AddExperience(ExperienceDtoCreate experience)
+        /// <param name="experienceMessage"></param>
+        public async Task<ExperienceResponse> AddExperienceAsync(ExperienceCreateMessage experienceMessage)
         {
-            var experienceModel = _mapper.Map<Experience>(experience);
-            this._unitOfWork.Experience.AddAsync(experienceModel);
-            this._unitOfWork.SaveChangeAsync();
+            var experienceModel = _mapper.Map<Experience>(experienceMessage);
+            experienceModel.UserId = 1;
+            await this._unitOfWork.Experience.AddAsync(experienceModel);
+            return _mapper.Map<ExperienceResponse>(experienceModel);
         }
 
         /// <summary>
         /// 刪除經歷
         /// </summary>
         /// <param name="experience"></param>
-        public async void DeleteExperienceAsync(int experienceId)
+        public async Task<bool> DeleteExperienceAsync(int experienceId)
         {
             var experienceModel = await this._unitOfWork.Experience.FirstOrDefaultAsync(e => e.Id == experienceId);
             this._unitOfWork.Experience.Remove(experienceModel);
-            await this._unitOfWork.SaveChangeAsync();
+            return await this._unitOfWork.SaveChangeAsync();
         }
 
         /// <summary>
@@ -64,33 +66,33 @@ namespace Application.Services
         /// </summary>
         /// <param name="experienceId">經歷Id</param>
         /// <returns></returns>
-        public async Task<ExperienceDto> GetExperienceByIdAsync(int experienceId)
+        public async Task<ExperienceResponse> GetExperienceByIdAsync(int experienceId)
         {
             var experienceModel = await _unitOfWork.Experience.FirstOrDefaultAsync(n => n.Id == experienceId);
 
             var tagModel = await (from tag in _unitOfWork.Tag.GetAll()
                                   join combine in _unitOfWork.Tag_Experience.Where(t => t.ExperienceId == experienceModel.Id)
                                       on tag.Id equals combine.TagId
-                                  select new TagDto()
+                                  select new TagResponse()
                                   {
                                       Id = tag.Id,
                                       Name = tag.Name
                                   }).ToListAsync();
 
-            var experienceDomain = _mapper.Map<ExperienceDto>(experienceModel);
-            experienceDomain.Tags = _mapper.Map<ICollection<TagDto>>(tagModel);
+            var experienceResponse = _mapper.Map<ExperienceResponse>(experienceModel);
+            experienceResponse.Tags = _mapper.Map<ICollection<TagResponse>>(tagModel);
 
-            return experienceDomain;
+            return experienceResponse;
         }
 
         /// <summary>
         /// 查詢所有經歷
         /// </summary>
         /// <returns></returns>
-        public async Task<IEnumerable<ExperienceDto>> GetExperiencesAsync()
+        public async Task<IEnumerable<ExperienceResponse>> GetExperiencesAsync()
         {
             var experienceModel = await _unitOfWork.Experience.ToListAsync();
-            var experienceDto = _mapper.Map<List<ExperienceDto>>(experienceModel);
+            var experienceDto = _mapper.Map<List<ExperienceResponse>>(experienceModel);
             var tagModel = await (from tag in _unitOfWork.Tag.GetAll()
                                   join _ in _unitOfWork.Tag_Experience.GetAll() on tag.Id equals _.TagId into groupjoin
                                   from combine in groupjoin.DefaultIfEmpty()
@@ -105,7 +107,7 @@ namespace Application.Services
                 var tagList = tagModel.Where(t => t.ExpId == exp.Id)
                                       .Select(t => new Tag { Id = t.Id, Name = t.Name })
                                       .ToList();
-                exp.Tags = _mapper.Map<ICollection<TagDto>>(tagList);
+                exp.Tags = _mapper.Map<ICollection<TagResponse>>(tagList);
             }
 
             return experienceDto;

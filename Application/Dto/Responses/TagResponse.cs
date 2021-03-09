@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Application.Dtos
+namespace Application.Dto
 {
-    public class TagDto
+    public class TagResponse
     {
         public int Id { get; set; }
         public string Name { get; set; }
