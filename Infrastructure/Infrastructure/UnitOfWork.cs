@@ -1,16 +1,12 @@
-﻿
-using Infrastructure.Database;
+﻿using Infrastructure.Database;
 using Infrastructure.Models;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Infrastructure.Infrastructure
 {
     public class UnitOfWork : IUnitOfWork
     {
-
         private bool disposed = false;
         public AppDbContext _context { get; private set; }
 
@@ -30,7 +26,6 @@ namespace Infrastructure.Infrastructure
             this.Tag = tagRepository;
             this.Tag_Experience = tag_ExperienceRepository;
         }
-
 
         /// <summary>
         /// Dispose

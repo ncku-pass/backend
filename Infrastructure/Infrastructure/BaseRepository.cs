@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Infrastructure.Infrastructure
@@ -13,10 +12,12 @@ namespace Infrastructure.Infrastructure
     public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : class
     {
         private readonly AppDbContext _context;
+
         public BaseRepository(AppDbContext context)
         {
             this._context = context;
         }
+
         public void Add(TEntity entity)
         {
             if (entity == null)
@@ -26,6 +27,7 @@ namespace Infrastructure.Infrastructure
 
             _context.Set<TEntity>().Add(entity);
         }
+
         public void Remove(TEntity entity)
         {
             if (entity == null)
@@ -35,6 +37,7 @@ namespace Infrastructure.Infrastructure
 
             this._context.Entry(entity).State = EntityState.Deleted;
         }
+
         public void Update(TEntity entity)
         {
             if (entity == null)
@@ -44,6 +47,7 @@ namespace Infrastructure.Infrastructure
 
             this._context.Entry(entity).State = EntityState.Modified;
         }
+
         public bool Contains(Expression<Func<TEntity, bool>> predicate)
         {
             return this._context.Set<TEntity>().Any(predicate);
@@ -53,6 +57,7 @@ namespace Infrastructure.Infrastructure
         {
             return await this._context.Set<TEntity>().AnyAsync(predicate);
         }
+
         public IQueryable<TEntity> GetAll()
         {
             return this._context.Set<TEntity>();

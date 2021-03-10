@@ -1,17 +1,13 @@
-﻿using Application.Services.Interface;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using System.Linq;
-using System.Collections;
+﻿using Application.Dto.Messages;
+using Application.Dto.Responses;
+using Application.Services.Interface;
 using AutoMapper;
 using Infrastructure.Infrastructure;
-using Microsoft.EntityFrameworkCore;
-using Application.Dto;
 using Infrastructure.Models;
-using Application.Dto.Messages;
-using Application.Dto.Responses;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Application.Services
 {

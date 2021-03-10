@@ -1,10 +1,5 @@
 ﻿using Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
 
 namespace Infrastructure.Database
 {
@@ -13,7 +8,6 @@ namespace Infrastructure.Database
         public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options)
         {
-
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

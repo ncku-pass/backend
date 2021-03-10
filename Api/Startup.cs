@@ -1,8 +1,10 @@
+using Api.Profiles;
 using Application.Services;
 using Application.Services.Interface;
 using AutoMapper;
 using Infrastructure.Database;
 using Infrastructure.Infrastructure;
+using Infrastructure.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -14,8 +16,6 @@ using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Serialization;
 using System;
 using System.IO;
-using Infrastructure.Models;
-using Api.Profiles;
 
 namespace Api
 {

@@ -1,15 +1,11 @@
 ﻿using Api.RequestModel.Parameters;
 using Api.RequestModel.ViewModels;
-using Application.Dto;
 using Application.Dto.Messages;
 using Application.Dto.Responses;
 using Application.Services.Interface;
 using AutoMapper;
-using Infrastructure.Models;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Api.Controllers
@@ -66,6 +62,7 @@ namespace Api.Controllers
             var ExperienceViewModel = this._mapper.Map<ExperienceViewModel>(ExperienceResponse);
             return this.Ok(ExperienceViewModel);
         }
+
         /// <summary>
         /// 新增經歷
         /// </summary>
@@ -83,6 +80,7 @@ namespace Api.Controllers
                 experienceViewModel
             );
         }
+
         /// <summary>
         /// 刪除經歷
         /// </summary>
