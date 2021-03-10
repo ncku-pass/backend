@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Application.Dto
+namespace Application.Dto.Responses
 {
     public class ExperienceResponse
     {

@@ -2,6 +2,7 @@
 using Api.RequestModel.ViewModels;
 using Application.Dto;
 using Application.Dto.Messages;
+using Application.Dto.Responses;
 using AutoMapper;
 using Infrastructure.Models;
 using System;

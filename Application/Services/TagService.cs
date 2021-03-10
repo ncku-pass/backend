@@ -3,10 +3,14 @@ using Application.Dto.Messages;
 using Application.Services.Interface;
 using AutoMapper;
 using Infrastructure.Infrastructure;
+using Infrastructure.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using Application.Dto.Responses;
 
 namespace Application.Services
 {
@@ -21,20 +25,36 @@ namespace Application.Services
             this._mapper = mapper;
         }
 
-
-        public Task<TagResponse> AddTagAsync(ICollection<TagCreateMessage> tags)
+        public async Task<bool> SaveAsync()
         {
-            throw new NotImplementedException();
+            return await _unitOfWork.SaveChangeAsync();
         }
 
-        public Task<bool> DeleteTagAsync(int tagId)
+        public Tag AddTagAsync(TagCreateMessage tags)
         {
-            throw new NotImplementedException();
+            var tagModel = this._mapper.Map<Tag>(tags);
+            tagModel.UserId = 1;
+            this._unitOfWork.Tag.Add(tagModel);
+            return tagModel;
         }
 
-        public Task<IEnumerable<TagResponse>> GetExperienceTagsAsync(int experienceId)
+        public async void DeleteTagAsync(int tagId)
         {
-            throw new NotImplementedException();
+            var tagModel = await _unitOfWork.Tag.FirstOrDefaultAsync(t => t.Id == tagId);
+            this._unitOfWork.Tag.Remove(tagModel);
+        }
+
+        public async Task<IEnumerable<TagResponse>> GetExperienceTagsAsync(int experienceId)
+        {
+            var tagsResponse = await (from tag in _unitOfWork.Tag.GetAll()
+                                      join combine in _unitOfWork.Tag_Experience.Where(t => t.ExperienceId == experienceId)
+                                          on tag.Id equals combine.TagId
+                                      select new TagResponse()
+                                      {
+                                          Id = tag.Id,
+                                          Name = tag.Name
+                                      }).ToListAsync();
+            return tagsResponse;
         }
 
         public Task<TagResponse> GetTagByIdAsync(int tagId)

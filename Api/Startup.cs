@@ -51,6 +51,7 @@ namespace Api
             // Service用Scoped:每個Request刷新
             // Repo用Transient:每個子任務刷新
             services.AddScoped<IExperienceService, ExperienceService>();
+            services.AddScoped<ITagService, TagService>();
             services.AddTransient<IBaseRepository<Experience>, BaseRepository<Experience>>();
             services.AddTransient<IBaseRepository<Tag>, BaseRepository<Tag>>();
             services.AddTransient<IBaseRepository<Tag_Experience>, BaseRepository<Tag_Experience>>();

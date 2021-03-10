@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Infrastructure.Models.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -27,6 +28,9 @@ namespace Infrastructure.Models
         public string Semester { get; set; }
         [Url]
         public string Link { get; set; }
+        
+        // TODO:加上類別
+        //public ExperienceType ExperienceType { get; set; }
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd HH:mm:ss}", ApplyFormatInEditMode = true)]
         public DateTime CreateTime { get; set; }

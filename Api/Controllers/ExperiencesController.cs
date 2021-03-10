@@ -2,6 +2,7 @@
 using Api.RequestModel.ViewModels;
 using Application.Dto;
 using Application.Dto.Messages;
+using Application.Dto.Responses;
 using Application.Services.Interface;
 using AutoMapper;
 using Infrastructure.Models;
@@ -18,14 +19,17 @@ namespace Api.Controllers
     {
         private IExperienceService _experienceService;
         private readonly IMapper _mapper;
+        private readonly ITagService _tagService;
 
         public ExperiencesController(
             IExperienceService experienceRepository,
-            IMapper mapper
+            IMapper mapper,
+            ITagService tagService
             )
         {
             this._experienceService = experienceRepository;
             this._mapper = mapper;
+            this._tagService = tagService;
         }
 
         /// get api/experiences
@@ -54,19 +58,19 @@ namespace Api.Controllers
         [HttpGet("{experienceId}", Name = "GetExperienceById")]
         public async Task<IActionResult> GetExperienceById([FromRoute] int experienceId)
         {
-            var ExperienceResponse = await _experienceService.GetExperienceByIdAsync(experienceId);
-            if (ExperienceResponse == null)
+            if (!await _experienceService.ExperienceExistsAsync(experienceId))
             {
                 return this.NotFound("查無此經歷=>Id:" + experienceId);
             }
+            var ExperienceResponse = await _experienceService.GetExperienceByIdAsync(experienceId);
             var ExperienceViewModel = this._mapper.Map<ExperienceViewModel>(ExperienceResponse);
             return this.Ok(ExperienceViewModel);
         }
-
-        //Task<bool> ExperienceExistsAsync(int experienceId);
-        //void AddExperience(ExperienceDtoCreate experience);
-        //void DeleteExperienceAsync(int experienceId);
-
+        /// <summary>
+        /// 新增經歷
+        /// </summary>
+        /// <param name="experienceCreateParameter"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> CreateExperience([FromBody] ExperienceCreateParameter experienceCreateParameter)
         {
@@ -78,6 +82,21 @@ namespace Api.Controllers
                 new { experienceId = experienceViewModel.Id },
                 experienceViewModel
             );
+        }
+        /// <summary>
+        /// 刪除經歷
+        /// </summary>
+        /// <param name="experienceId"></param>
+        /// <returns></returns>
+        [HttpDelete("{experienceId}")]
+        public async Task<IActionResult> DeleteExperience([FromRoute] int experienceId)
+        {
+            if (!await _experienceService.ExperienceExistsAsync(experienceId))
+            {
+                return this.NotFound("查無此經歷=>Id:" + experienceId);
+            }
+            var experienceResponse = await _experienceService.DeleteExperienceAsync(experienceId);
+            return this.NoContent();
         }
     }
 }
