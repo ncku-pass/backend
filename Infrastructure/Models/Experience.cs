@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Infrastructure.Models.Enums;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Infrastructure.Models
 {
-    public class Experience
+    public class Experience : BaseModel
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -32,15 +33,7 @@ namespace Infrastructure.Models
         [Url]
         public string Link { get; set; }
 
-        // TODO:加上類別
-        //public ExperienceType ExperienceType { get; set; }
-        [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd HH:mm:ss}", ApplyFormatInEditMode = true)]
-        public DateTime CreateTime { get; set; }
-
-        [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd HH:mm:ss}", ApplyFormatInEditMode = true)]
-        public DateTime? UpdateTime { get; set; }
+        public ExperienceType ExperienceType { get; set; }
 
         [ForeignKey("UserId")]
         public virtual User User { get; set; }
