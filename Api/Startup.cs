@@ -46,7 +46,7 @@ namespace Api
                 option.UseMySql(Configuration["DbContext:MySQLConnectionString"]);
             });
 
-            // TODO:問家駿這邊該怎麼做
+            // TODO:問家駿這邊該怎麼簡化
             // DI註冊
             // Service用Scoped:每個Request刷新
             // Repo用Transient:每個子任務刷新

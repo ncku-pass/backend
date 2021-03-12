@@ -11,8 +11,8 @@ namespace Api.Profiles
     {
         public TagProfile()
         {
-            CreateMap<TagCreateParameter, TagCreateMessage>();
-            CreateMap<TagCreateMessage, Tag>();
+            CreateMap<TagManipulateParameter, TagManipulateMessage>();
+            CreateMap<TagManipulateMessage, Tag>();
             CreateMap<Tag, TagResponse>();
             CreateMap<TagResponse, TagViewModel>();
         }

@@ -24,8 +24,16 @@ namespace Infrastructure.Infrastructure
             {
                 throw new ArgumentNullException("entity");
             }
+            this._context.Entry(entity).State = EntityState.Added;
+        }
 
-            _context.Set<TEntity>().Add(entity);
+        public void AddRange(IEnumerable<TEntity> entities)
+        {
+            if (entities == null)
+            {
+                throw new ArgumentNullException("entity");
+            }
+            this._context.Entry(entities).State = EntityState.Added;
         }
 
         public void Remove(TEntity entity)
@@ -34,8 +42,16 @@ namespace Infrastructure.Infrastructure
             {
                 throw new ArgumentNullException("entity");
             }
-
             this._context.Entry(entity).State = EntityState.Deleted;
+        }
+
+        public void RemoveRange(IEnumerable<TEntity> entities)
+        {
+            if (entities == null)
+            {
+                throw new ArgumentNullException("entity");
+            }
+            this._context.Entry(entities).State = EntityState.Deleted;
         }
 
         public void Update(TEntity entity)
@@ -70,11 +86,11 @@ namespace Infrastructure.Infrastructure
 
         public async Task<int> CountAsync(Expression<Func<TEntity, bool>> predicate)
         {
-            return await this._context.Set<TEntity>().AsNoTracking().Where(predicate ?? (x => true)).CountAsync();
+            return await this._context.Set<TEntity>().Where(predicate).CountAsync();
         }
 
         public Task<TEntity> SingleOrDefaultAsync(Expression<Func<TEntity, bool>> predicate)
-            => this._context.Set<TEntity>().AsNoTracking().SingleOrDefaultAsync(predicate ?? (x => true));
+            => this._context.Set<TEntity>().SingleOrDefaultAsync(predicate);
 
         public async Task<List<TEntity>> ToListAsync()
         {

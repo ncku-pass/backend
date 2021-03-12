@@ -13,7 +13,11 @@ namespace Api.Profiles
         {
             CreateMap<ExperienceCreateParameter, ExperienceCreateMessage>();
             CreateMap<ExperienceCreateMessage, Experience>();
-            CreateMap<Experience, ExperienceResponse>();
+            CreateMap<Experience, ExperienceResponse>()
+                .ForMember(
+                    dest => dest.ExperienceType,
+                    opt => opt.MapFrom(src => src.ExperienceType.ToString())
+                ); ; ;
             CreateMap<ExperienceResponse, ExperienceViewModel>();
 
             //CreateMap<TouristRouteForCreationDto, TouristRoute>().

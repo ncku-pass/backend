@@ -10,15 +10,17 @@ namespace Application.Services.Interface
     {
         Task<TagResponse> GetTagByIdAsync(int tagId);
 
-        Task<IEnumerable<TagResponse>> GetExperienceTagsAsync(int experienceId);
+        Task<ICollection<TagResponse>> GetExperienceTagsAsync(int experienceId);
 
         Task<bool> TagExistsAsync(int tagId);
+        Task<ICollection<TagResponse>> GetTagsAsync();
 
-        //Task<TagResponse> AddTagAsync(ICollection<TagCreateMessage> tags);
-        //Task<bool> DeleteTagAsync(int tagId);
 
-        Tag AddTagAsync(TagCreateMessage tags);
+        Task<ICollection<Tag>> AddTagAsync(string[] tagNames);
 
-        Task<bool> SaveAsync();
+        Task<bool> DeleteTagAsync(int tagId);
+
+        Task<ICollection<int>> TagsExistsAsync(int[] tagIds);
+
     }
 }

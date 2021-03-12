@@ -18,8 +18,6 @@ namespace Infrastructure.Database
             => optionsBuilder
                 .UseSnakeCaseNamingConvention();
 
-        // TODO:自動更新Create、Update Time
-        // https://www.entityframeworktutorial.net/faq/set-created-and-modified-date-in-efcore.aspx
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             var entries = ChangeTracker

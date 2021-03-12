@@ -5,7 +5,6 @@ using AutoMapper;
 using Infrastructure.Infrastructure;
 using Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -23,26 +22,22 @@ namespace Application.Services
             this._mapper = mapper;
         }
 
-        public async Task<bool> SaveAsync()
+        public async Task<ICollection<Tag>> AddTagAsync(string[] tagNames)
         {
-            return await _unitOfWork.SaveChangeAsync();
+            var tagModels = tagNames.Select(tag => new Tag { Id = 0, Name = tag }).ToList();
+            this._unitOfWork.Tag.AddRange(tagModels);
+            await this._unitOfWork.SaveChangeAsync();
+            return tagModels;
         }
 
-        public Tag AddTagAsync(TagCreateMessage tags)
-        {
-            var tagModel = this._mapper.Map<Tag>(tags);
-            tagModel.UserId = 1;
-            this._unitOfWork.Tag.Add(tagModel);
-            return tagModel;
-        }
-
-        public async void DeleteTagAsync(int tagId)
+        public async Task<bool> DeleteTagAsync(int tagId)
         {
             var tagModel = await _unitOfWork.Tag.FirstOrDefaultAsync(t => t.Id == tagId);
             this._unitOfWork.Tag.Remove(tagModel);
+            return await this._unitOfWork.SaveChangeAsync();
         }
 
-        public async Task<IEnumerable<TagResponse>> GetExperienceTagsAsync(int experienceId)
+        public async Task<ICollection<TagResponse>> GetExperienceTagsAsync(int experienceId)
         {
             var tagsResponse = await (from tag in _unitOfWork.Tag.GetAll()
                                       join combine in _unitOfWork.Tag_Experience.Where(t => t.ExperienceId == experienceId)
@@ -55,14 +50,29 @@ namespace Application.Services
             return tagsResponse;
         }
 
-        public Task<TagResponse> GetTagByIdAsync(int tagId)
+        public async Task<TagResponse> GetTagByIdAsync(int tagId)
         {
-            throw new NotImplementedException();
+            var tagModel = await _unitOfWork.Tag.FirstOrDefaultAsync(t => t.Id == tagId);
+            var tagResponse = _mapper.Map<TagResponse>(tagModel);
+            return tagResponse;
         }
 
-        public Task<bool> TagExistsAsync(int tagId)
+        public async Task<ICollection<TagResponse>> GetTagsAsync()
         {
-            throw new NotImplementedException();
+            var tagModel = await _unitOfWork.Tag.GetAll().ToListAsync();
+            var tagResponse = _mapper.Map<ICollection<TagResponse>>(tagModel);
+            return tagResponse;
+        }
+
+        public async Task<bool> TagExistsAsync(int tagId)
+        {
+            return await _unitOfWork.Tag.AnyAsync(t => t.Id == tagId);
+        }
+
+        public async Task<ICollection<int>> TagsExistsAsync(int[] tagIds)
+        {
+            var tagNotExist = tagIds.Except(await _unitOfWork.Tag.GetAll().Select(t => t.Id).ToListAsync()).ToList();
+            return tagNotExist;
         }
     }
 }
