@@ -33,7 +33,7 @@ namespace Infrastructure.Infrastructure
             {
                 throw new ArgumentNullException("entity");
             }
-            this._context.Entry(entities).State = EntityState.Added;
+            this._context.AddRange(entities);
         }
 
         public void Remove(TEntity entity)
@@ -51,7 +51,7 @@ namespace Infrastructure.Infrastructure
             {
                 throw new ArgumentNullException("entity");
             }
-            this._context.Entry(entities).State = EntityState.Deleted;
+            this._context.RemoveRange(entities);
         }
 
         public void Update(TEntity entity)

@@ -71,6 +71,10 @@ namespace Application.Services
 
         public async Task<ICollection<int>> TagsExistsAsync(int[] tagIds)
         {
+            if (tagIds.Length <= 0)
+            {
+                return new List<int> { };
+            }
             var tagNotExist = tagIds.Except(await _unitOfWork.Tag.GetAll().Select(t => t.Id).ToListAsync()).ToList();
             return tagNotExist;
         }

@@ -4,6 +4,7 @@ using Application.Dto.Messages;
 using Application.Dto.Responses;
 using Application.Services.Interface;
 using AutoMapper;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
@@ -94,28 +95,83 @@ namespace Api.Controllers
             );
         }
 
-        //[HttpPut("{experienceId}")]
-        //public async Task<IActionResult> UpdateExperience(
-        //    [FromRoute] int experienceId,
-        //    [FromBody] ExperienceUpdateParameter experienceUpdateParameter
-        //)
-        //{
-        //    if (!await _experienceService.ExperienceExistsAsync(experienceId))
-        //    {
-        //        return this.NotFound("查無此經歷=>Id:" + experienceId);
-        //    }
+        [HttpPut("{experienceId}")]
+        public async Task<IActionResult> UpdateExperience(
+            [FromRoute] int experienceId,
+            [FromBody] ExperienceUpdateParameter experienceUpdateParameter
+        )
+        {
+            if (!await _experienceService.ExperienceExistsAsync(experienceId))
+            {
+                return this.NotFound("查無此經歷=>Id:" + experienceId);
+            }
+            // 檢查Tag是否皆存在
+            var AddTags = await _tagService.TagsExistsAsync(experienceUpdateParameter.AddTags);
+            var DropTags = await _tagService.TagsExistsAsync(experienceUpdateParameter.DropTags);
+            // TODO:檢查是否已存在關聯
+            if (AddTags.Count() > 0 || DropTags.Count() > 0)
+            {
+                string addStr = "";
+                string dropStr = "";
+                AddTags.ToList().ForEach(i => addStr += i + ",");
+                DropTags.ToList().ForEach(i => dropStr += i + ",");
+                return this.NotFound($"查無此tags=>\n\tAddTags:{addStr}\n\tDropTags:{dropStr}");
+            }
 
-        //    var touristRouteFromRepo = await _touristRouteRepository.GetTouristRouteAsync(touristRouteId);
-        //    // 1. 映射Dto
-        //    // 2. 更新Dto
-        //    // 3. 映射Model
-        //    // mapper一步做完
-        //    _mapper.Map(touristRouteForUpdateDto, touristRouteFromRepo);
+            // 更新此Exp
+            var experienceUpdateMessage = _mapper.Map<ExperienceUpdateMessage>(experienceUpdateParameter);
+            experienceUpdateMessage.Id = experienceId;
+            var experienceResponse = await _experienceService.UpdateExperienceAsync(experienceUpdateMessage);
 
-        //    await _touristRouteRepository.SaveAsync();
+            var experienceViewModel = _mapper.Map<ExperienceViewModel>(experienceResponse);
+            return this.CreatedAtRoute(
+                "GetExperienceById",
+                new { experienceId = experienceViewModel.Id },
+                experienceViewModel
+            );
+        }
 
-        //    return this.NoContent();
-        //}
+        [HttpPatch("{experienceId}")]
+        public async Task<IActionResult> PartiallyExperience(
+            [FromRoute] int experienceId,
+            [FromBody] JsonPatchDocument<ExperienceUpdateParameter> patchDocument
+        )
+        {
+            if (!await _experienceService.ExperienceExistsAsync(experienceId))
+            {
+                return this.NotFound("查無此經歷=>Id:" + experienceId);
+            }
+
+            // 搜出指定待更新Exp
+            var experienceToPatch = await _experienceService.GetExperienceByIdAsync(experienceId);
+            var experienceUpdateParameter = _mapper.Map<ExperienceUpdateParameter>(experienceToPatch);
+            patchDocument.ApplyTo(experienceUpdateParameter, ModelState);
+
+            // 檢查Tag是否皆存在
+            var AddTags = await _tagService.TagsExistsAsync(experienceUpdateParameter.AddTags ?? new int[] { });
+            var DropTags = await _tagService.TagsExistsAsync(experienceUpdateParameter.DropTags ?? new int[] { });
+            // TODO:檢查是否已存在關聯
+            if (AddTags.Count() > 0 || DropTags.Count() > 0)
+            {
+                string addStr = "";
+                string dropStr = "";
+                AddTags.ToList().ForEach(i => addStr += i + ",");
+                DropTags.ToList().ForEach(i => dropStr += i + ",");
+                return this.NotFound($"查無此tags=>\n\tAddTags:{addStr}\n\tDropTags:{dropStr}");
+            }
+
+            // 更新此Exp
+            var experienceUpdateMessage = _mapper.Map<ExperienceUpdateMessage>(experienceUpdateParameter);
+            experienceUpdateMessage.Id = experienceId;
+            var experienceResponse = await _experienceService.UpdateExperienceAsync(experienceUpdateMessage);
+
+            var experienceViewModel = _mapper.Map<ExperienceViewModel>(experienceResponse);
+            return this.CreatedAtRoute(
+                "GetExperienceById",
+                new { experienceId = experienceViewModel.Id },
+                experienceViewModel
+            );
+        }
 
         /// <summary>
         /// 刪除經歷

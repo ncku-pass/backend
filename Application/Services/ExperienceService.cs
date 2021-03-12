@@ -49,65 +49,55 @@ namespace Application.Services
             return experienceResponse;
         }
 
+        // TODO:移到Tag_ExpService
         public async void ManipulateExp_TagRelation(int ExperienceId, int[] addTagIds, int[] dropTagIds)
         {
-            foreach (var id in addTagIds)
-            {
-                _unitOfWork.Tag_Experience.Add(new Tag_Experience { ExperienceId = ExperienceId, TagId = id });
-            }
-            foreach (var id in dropTagIds)
-            {
-                var tagModel = await _unitOfWork.Tag_Experience
-                                                .Where(n => n.ExperienceId == ExperienceId && dropTagIds.Contains(n.TagId))
-                                                .ToListAsync();
-                _unitOfWork.Tag_Experience.RemoveRange(tagModel);
-            }
+            // 待加入關聯Model
+            var addTagModels = addTagIds.Select(tid => new Tag_Experience { ExperienceId = ExperienceId, TagId = tid }).ToList();
+            _unitOfWork.Tag_Experience.AddRange(addTagModels);
+
+            // 待刪除關聯Model
+            var dropTagModels = await _unitOfWork.Tag_Experience
+                                            .Where(n => n.ExperienceId == ExperienceId && dropTagIds.Contains(n.TagId))
+                                            .ToListAsync();
+            _unitOfWork.Tag_Experience.RemoveRange(dropTagModels);
         }
 
         /// <summary>
         /// 修改經歷
         /// </summary>
         /// <param name="experienceMessage"></param>
-        //public async Task<ExperienceResponse> UpdateExperienceAsync(ExperienceUpdateMessage experienceUpdateMessage)
+        public async Task<ExperienceResponse> UpdateExperienceAsync(ExperienceUpdateMessage experienceUpdateMessage)
+        {
+            // 取得Exp原檔將Update映射上去
+            var experienceModel = await this._unitOfWork.Experience.FirstOrDefaultAsync(n => n.Id == experienceUpdateMessage.Id);
+            _mapper.Map(experienceUpdateMessage, experienceModel);
+
+            // 新增、刪除Exp_Tag關聯
+            ManipulateExp_TagRelation(experienceModel.Id, experienceUpdateMessage.AddTags, experienceUpdateMessage.DropTags);
+            await this._unitOfWork.SaveChangeAsync();
+
+            var experienceResponse = _mapper.Map<ExperienceResponse>(experienceModel);
+            experienceResponse.Tags = await _tagService.GetExperienceTagsAsync(experienceModel.Id);
+            return experienceResponse;
+        }
+
+        ///// <summary>
+        ///// 修改經歷
+        ///// </summary>
+        ///// <param name="experienceMessage"></param>
+        //public async Task<ExperienceResponse> PartialUpdateExperienceAsync(ExperienceUpdateMessage experienceUpdateMessage)
         //{
-        //    // 取得Exp原檔將Update Patech映射上去
+        //    // 取得Exp原檔將Update映射上去
         //    var experienceModel = await this._unitOfWork.Experience.FirstOrDefaultAsync(n => n.Id == experienceUpdateMessage.Id);
         //    _mapper.Map(experienceUpdateMessage, experienceModel);
 
-        //    // Tag分類   
-        //    var tagCreateModels = new List<Tag>();      // 全新Tags新增、加關聯
-        //    var tagDropRelateModels = new List<Tag>();  // 現有Tags移除關聯
-        //    var tagAddRelateModels = new List<Tag>();   // 現有Tags加關聯
-
-        //    foreach (var tag in experienceUpdateMessage.Tags)
-        //    {
-        //        // Id為0是EF core預設新增
-        //        if (tag.Id == 0)
-        //        {
-        //            tagCreateModels.Add(_mapper.Map<Tag>(tag));
-        //        }
-        //        else if (tag.IsDrop)
-        //        {
-        //            tagDropRelateModels.Add(_mapper.Map<Tag>(tag));
-        //        }
-        //        else
-        //        {
-        //            tagAddRelateModels.Add(_mapper.Map<Tag>(tag));
-        //        }
-        //    }
-
-        //    // 全新Tags新增到資料庫
-        //    await this._unitOfWork.SaveChangeAsync();
-
-        //    // 新增Exp_Tag關聯
-        //    foreach (var tag in tagModels)
-        //    {
-        //        AddTagToExperience(experienceModel.Id, tag);
-        //    }
+        //    // 新增、刪除Exp_Tag關聯
+        //    ManipulateExp_TagRelation(experienceModel.Id, experienceUpdateMessage.AddTags, experienceUpdateMessage.DropTags);
         //    await this._unitOfWork.SaveChangeAsync();
 
         //    var experienceResponse = _mapper.Map<ExperienceResponse>(experienceModel);
-        //    experienceResponse.Tags = _mapper.Map<ICollection<TagResponse>>(tagModels);
+        //    experienceResponse.Tags = await _tagService.GetExperienceTagsAsync(experienceModel.Id);
         //    return experienceResponse;
         //}
 
@@ -119,10 +109,7 @@ namespace Application.Services
         {
             // 移除該Exp全部的Tag關聯
             var experience_TagModels = await this._unitOfWork.Tag_Experience.Where(n => n.ExperienceId == experienceId).ToListAsync();
-            foreach (var exp_tag in experience_TagModels)
-            {
-                _unitOfWork.Tag_Experience.Remove(exp_tag);
-            }
+            this._unitOfWork.Tag_Experience.RemoveRange(experience_TagModels);
 
             // 移除Exp
             var experienceModel = await this._unitOfWork.Experience.FirstOrDefaultAsync(e => e.Id == experienceId);

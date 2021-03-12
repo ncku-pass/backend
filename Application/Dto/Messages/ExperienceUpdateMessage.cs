@@ -16,7 +16,7 @@ namespace Application.Dto.Messages
         public string Link { get; set; }
         public ExperienceType ExperienceType { get; set; }
 
-        public int?[] AddTags { get; set; }
-        public int?[] DropTags { get; set; }
+        public int[] AddTags { get; set; }
+        public int[] DropTags { get; set; }
     }
 }
