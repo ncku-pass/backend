@@ -95,6 +95,12 @@ namespace Api.Controllers
             );
         }
 
+        /// <summary>
+        /// 完整更新經歷
+        /// </summary>
+        /// <param name="experienceId"></param>
+        /// <param name="experienceUpdateParameter"></param>
+        /// <returns></returns>
         [HttpPut("{experienceId}")]
         public async Task<IActionResult> UpdateExperience(
             [FromRoute] int experienceId,
@@ -131,6 +137,12 @@ namespace Api.Controllers
             );
         }
 
+        /// <summary>
+        /// 部分更新經歷
+        /// </summary>
+        /// <param name="experienceId"></param>
+        /// <param name="patchDocument"></param>
+        /// <returns></returns>
         [HttpPatch("{experienceId}")]
         public async Task<IActionResult> PartiallyExperience(
             [FromRoute] int experienceId,
@@ -187,6 +199,24 @@ namespace Api.Controllers
             }
             var experienceResponse = await _experienceService.DeleteExperienceAsync(experienceId);
             return this.NoContent();
+        }
+
+        /// get api/experiences/1
+        /// <summary>
+        /// 根據經歷Id取得經歷
+        /// </summary>
+        /// <param name="experienceId">經歷Id</param>
+        /// <returns></returns>
+        [HttpGet("{experienceId}/Tags", Name = "GetTagByExperienceId")]
+        public async Task<IActionResult> GetTagByExperienceId([FromRoute] int experienceId)
+        {
+            if (!await _experienceService.ExperienceExistsAsync(experienceId))
+            {
+                return this.NotFound("查無此經驗=>Id:" + experienceId);
+            }
+            var tagResponse = await _tagService.GetExperienceTagsAsync(experienceId);
+            var tagViewModels = _mapper.Map<ICollection<TagViewModel>>(tagResponse);
+            return this.Ok(tagViewModels);
         }
     }
 }

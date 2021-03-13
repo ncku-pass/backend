@@ -82,25 +82,6 @@ namespace Application.Services
             return experienceResponse;
         }
 
-        ///// <summary>
-        ///// 修改經歷
-        ///// </summary>
-        ///// <param name="experienceMessage"></param>
-        //public async Task<ExperienceResponse> PartialUpdateExperienceAsync(ExperienceUpdateMessage experienceUpdateMessage)
-        //{
-        //    // 取得Exp原檔將Update映射上去
-        //    var experienceModel = await this._unitOfWork.Experience.FirstOrDefaultAsync(n => n.Id == experienceUpdateMessage.Id);
-        //    _mapper.Map(experienceUpdateMessage, experienceModel);
-
-        //    // 新增、刪除Exp_Tag關聯
-        //    ManipulateExp_TagRelation(experienceModel.Id, experienceUpdateMessage.AddTags, experienceUpdateMessage.DropTags);
-        //    await this._unitOfWork.SaveChangeAsync();
-
-        //    var experienceResponse = _mapper.Map<ExperienceResponse>(experienceModel);
-        //    experienceResponse.Tags = await _tagService.GetExperienceTagsAsync(experienceModel.Id);
-        //    return experienceResponse;
-        //}
-
         /// <summary>
         /// 刪除經歷
         /// </summary>
@@ -160,7 +141,7 @@ namespace Application.Services
                                       ExpId = combine.ExperienceId,
                                       Id = tag.Id,
                                       Name = tag.Name
-                                  }).ToListAsync();
+                                  }).OrderBy(t => t.Id).ToListAsync();
             foreach (var exp in experiencesResponse)
             {
                 var tagList = tagModel.Where(t => t.ExpId == exp.Id)

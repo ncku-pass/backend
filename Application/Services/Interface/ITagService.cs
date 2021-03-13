@@ -1,6 +1,5 @@
 ﻿using Application.Dto.Messages;
 using Application.Dto.Responses;
-using Infrastructure.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -16,7 +15,8 @@ namespace Application.Services.Interface
         Task<ICollection<TagResponse>> GetTagsAsync();
 
 
-        Task<ICollection<Tag>> AddTagAsync(string[] tagNames);
+        Task<ICollection<TagResponse>> AddTagAsync(string[] tagNames);
+        Task<TagResponse> UpdateTagAsync(TagUpdateMessage updateTagMessage);
 
         Task<bool> DeleteTagAsync(int tagId);
 

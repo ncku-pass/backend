@@ -22,21 +22,28 @@ namespace Application.Services
             this._mapper = mapper;
         }
 
-        public async Task<ICollection<Tag>> AddTagAsync(string[] tagNames)
+        public async Task<ICollection<TagResponse>> AddTagAsync(string[] tagNames)
         {
-            var tagModels = tagNames.Select(tag => new Tag { Id = 0, Name = tag }).ToList();
+            var tagModels = tagNames.Select(tag => new Tag { Id = 0, Name = tag, UserId = 1 }).ToList();
             this._unitOfWork.Tag.AddRange(tagModels);
             await this._unitOfWork.SaveChangeAsync();
-            return tagModels;
+            var tagResponse = this._mapper.Map<ICollection<TagResponse>>(tagModels);
+            return tagResponse;
         }
 
         public async Task<bool> DeleteTagAsync(int tagId)
         {
+            // 移除該Exp全部的Tag關聯
+            var tag_ExperienceModels = await this._unitOfWork.Tag_Experience.Where(n => n.TagId == tagId).ToListAsync();
+            this._unitOfWork.Tag_Experience.RemoveRange(tag_ExperienceModels);
+
+            // 移除Tag
             var tagModel = await _unitOfWork.Tag.FirstOrDefaultAsync(t => t.Id == tagId);
             this._unitOfWork.Tag.Remove(tagModel);
             return await this._unitOfWork.SaveChangeAsync();
         }
 
+        // TODO:獨立出Tag_Experience Service
         public async Task<ICollection<TagResponse>> GetExperienceTagsAsync(int experienceId)
         {
             var tagsResponse = await (from tag in _unitOfWork.Tag.GetAll()
@@ -46,7 +53,7 @@ namespace Application.Services
                                       {
                                           Id = tag.Id,
                                           Name = tag.Name
-                                      }).ToListAsync();
+                                      }).OrderBy(t => t.Id).ToListAsync();
             return tagsResponse;
         }
 
@@ -77,6 +84,15 @@ namespace Application.Services
             }
             var tagNotExist = tagIds.Except(await _unitOfWork.Tag.GetAll().Select(t => t.Id).ToListAsync()).ToList();
             return tagNotExist;
+        }
+
+        public async Task<TagResponse> UpdateTagAsync(TagUpdateMessage updateTagMessage)
+        {
+            var tagModel = await _unitOfWork.Tag.SingleOrDefaultAsync(t => t.Id == updateTagMessage.Id);
+            this._mapper.Map(updateTagMessage, tagModel);
+            this._unitOfWork.SaveChangeAsync();
+            var tagResponse = _mapper.Map<TagResponse>(tagModel);
+            return tagResponse;
         }
     }
 }

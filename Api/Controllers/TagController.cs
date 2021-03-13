@@ -51,7 +51,7 @@ namespace Api.Controllers
 
         /// get api/experiences/1
         /// <summary>
-        /// 根據Id取得經歷
+        /// 根據標籤Id取得經歷
         /// </summary>
         /// <param name="tagId">標籤Id</param>
         /// <returns></returns>
@@ -62,10 +62,12 @@ namespace Api.Controllers
             {
                 return this.NotFound("查無此標籤=>Id:" + tagId);
             }
-            var ExperienceResponse = await _tagService.GetTagByIdAsync(tagId);
-            var ExperienceViewModel = _mapper.Map<ExperienceViewModel>(ExperienceResponse);
-            return this.Ok(ExperienceViewModel);
+            var tagResponse = await _tagService.GetTagByIdAsync(tagId);
+            var tagViewModel = _mapper.Map<TagViewModel>(tagResponse);
+            return this.Ok(tagViewModel);
         }
+
+
 
         /// <summary>
         /// 新增標籤
@@ -75,9 +77,38 @@ namespace Api.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateTags([FromBody] string[] tagNames)
         {
+            if (tagNames.Length <= 0)
+            {
+                return this.NotFound("tagNames為空");
+            }
             var tagResponse = await _tagService.AddTagAsync(tagNames);
-            var tagViewModel = _mapper.Map<ExperienceViewModel>(tagResponse);
+            var tagViewModel = _mapper.Map<ICollection<TagViewModel>>(tagResponse);
             return this.Ok(tagViewModel);
+        }
+
+        /// <summary>
+        /// 修改標籤
+        /// </summary>
+        /// <param name="tagId">目標修改Id</param>
+        /// <param name="tagName">新標籤名稱</param>
+        /// <returns></returns>
+        [HttpPut("{tagId}")]
+        public async Task<IActionResult> UpdateTags(
+            [FromRoute] int tagId,
+            [FromBody] string tagName
+            )
+        {
+            if (!await _tagService.TagExistsAsync(tagId))
+            {
+                return this.NotFound("查無此標籤=>Id:" + tagId);
+            }
+            var tagResponse = await _tagService.UpdateTagAsync(new TagUpdateMessage { Id = tagId, Name = tagName });
+            var tagViewModel = _mapper.Map<TagViewModel>(tagResponse);
+            return this.CreatedAtRoute(
+                "GetTagById",
+                new { tagId = tagViewModel.Id },
+                tagViewModel
+            );
         }
 
         /// <summary>
