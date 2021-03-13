@@ -90,7 +90,7 @@ namespace Application.Services
         {
             var tagModel = await _unitOfWork.Tag.SingleOrDefaultAsync(t => t.Id == updateTagMessage.Id);
             this._mapper.Map(updateTagMessage, tagModel);
-            this._unitOfWork.SaveChangeAsync();
+            await this._unitOfWork.SaveChangeAsync();
             var tagResponse = _mapper.Map<TagResponse>(tagModel);
             return tagResponse;
         }

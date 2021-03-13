@@ -15,13 +15,13 @@ namespace Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TagController : ControllerBase
+    public class TagsController : ControllerBase
     {
         private IExperienceService _experienceService;
         private readonly IMapper _mapper;
         private readonly ITagService _tagService;
 
-        public TagController(
+        public TagsController(
             IExperienceService experienceRepository,
             IMapper mapper,
             ITagService tagService
