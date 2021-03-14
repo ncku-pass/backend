@@ -70,20 +70,7 @@ namespace Api
             // Add Swagger相關設定
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc(
-                    // name: 攸關 SwaggerDocument 的 URL 位置。
-                    name: "v1",
-                    // info: 是用於 SwaggerDocument 版本資訊的顯示(內容非必填)。
-                    info: new OpenApiInfo
-                    {
-                        Title = "Malaysia API",
-                        Version = "1.0.0",
-                        Description = "This is ASP.NET Core Malaysia API.",
-                    }
-                );
-
-                var filePath = Path.Combine(PlatformServices.Default.Application.ApplicationBasePath, "Api.xml");
-                c.IncludeXmlComments(filePath);
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
             });
         }
 
@@ -92,13 +79,13 @@ namespace Api
         {
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c =>
-                {
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-                });
             }
+            app.UseDeveloperExceptionPage();
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+            });
 
             app.UseHttpsRedirection();
 
