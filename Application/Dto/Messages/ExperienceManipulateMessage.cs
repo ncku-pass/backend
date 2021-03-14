@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace Api.RequestModel.Parameters
+namespace Application.Dto.Messages
 {
-    public abstract class ExperienceManipulateParameter
+    public abstract class ExperienceManipulateMessage
     {
         public string Name { get; set; }
         public string Position { get; set; }
@@ -11,6 +13,5 @@ namespace Api.RequestModel.Parameters
         public string Semester { get; set; }
         public string Link { get; set; }
         public string ExperienceType { get; set; }
-
     }
 }

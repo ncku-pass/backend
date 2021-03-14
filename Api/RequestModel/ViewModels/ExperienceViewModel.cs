@@ -11,6 +11,7 @@ namespace Api.RequestModel.ViewModels
         public string Feedback { get; set; }
         public string Semester { get; set; }
         public string Link { get; set; }
+        public string ExperienceType { get; set; }
         public ICollection<TagViewModel> Tags { get; set; }
     }
 }

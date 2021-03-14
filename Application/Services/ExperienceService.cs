@@ -41,7 +41,7 @@ namespace Application.Services
             await this._unitOfWork.SaveChangeAsync();
 
             // 新增、刪除Exp_Tag關聯
-            ManipulateExp_TagRelation(experienceModel.Id, experienceMessage.AddTags, experienceMessage.DropTags);
+            ManipulateExp_TagRelation(experienceModel.Id, experienceMessage.AddTags, null);
             await this._unitOfWork.SaveChangeAsync();
 
             var experienceResponse = _mapper.Map<ExperienceResponse>(experienceModel);
@@ -52,15 +52,20 @@ namespace Application.Services
         // TODO:移到Tag_ExpService
         public async void ManipulateExp_TagRelation(int ExperienceId, int[] addTagIds, int[] dropTagIds)
         {
-            // 待加入關聯Model
-            var addTagModels = addTagIds.Select(tid => new Tag_Experience { ExperienceId = ExperienceId, TagId = tid }).ToList();
+            // 建立待加入的關聯Models，並排除Tag_Exp中已有的Models
+            var addTagModels = addTagIds.Select(tid => new Tag_Experience { ExperienceId = ExperienceId, TagId = tid })
+                                        .Except(await _unitOfWork.Tag_Experience.Where(n => n.ExperienceId == ExperienceId).ToListAsync())
+                                        .ToList();
             _unitOfWork.Tag_Experience.AddRange(addTagModels);
 
             // 待刪除關聯Model
-            var dropTagModels = await _unitOfWork.Tag_Experience
-                                            .Where(n => n.ExperienceId == ExperienceId && dropTagIds.Contains(n.TagId))
-                                            .ToListAsync();
-            _unitOfWork.Tag_Experience.RemoveRange(dropTagModels);
+            if (dropTagIds != null)
+            {
+                var dropTagModels = await _unitOfWork.Tag_Experience
+                                                     .Where(n => n.ExperienceId == ExperienceId && dropTagIds.Contains(n.TagId))
+                                                     .ToListAsync();
+                _unitOfWork.Tag_Experience.RemoveRange(dropTagModels);
+            }
         }
 
         /// <summary>

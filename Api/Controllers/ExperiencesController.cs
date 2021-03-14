@@ -74,15 +74,12 @@ namespace Api.Controllers
         public async Task<IActionResult> CreateExperience([FromBody] ExperienceCreateParameter experienceCreateParameter)
         {
             var AddTags = await _tagService.TagsExistsAsync(experienceCreateParameter.AddTags);
-            var DropTags = await _tagService.TagsExistsAsync(experienceCreateParameter.DropTags);
 
-            if (AddTags.Count() > 0 || DropTags.Count() > 0)
+            if (AddTags.Count() > 0)
             {
                 string addStr = "";
-                string dropStr = "";
                 AddTags.ToList().ForEach(i => addStr += i + ",");
-                DropTags.ToList().ForEach(i => dropStr += i + ",");
-                return this.NotFound($"查無此tags=>\n\tAddTags:{addStr}\n\tDropTags:{dropStr}");
+                return this.NotFound($"查無此tags=>\n\tAddTags:{addStr}");
             }
 
             var experienceModel = _mapper.Map<ExperienceCreateMessage>(experienceCreateParameter);
