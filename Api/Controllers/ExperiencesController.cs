@@ -4,6 +4,7 @@ using Application.Dto.Messages;
 using Application.Dto.Responses;
 using Application.Services.Interface;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -12,6 +13,9 @@ using System.Threading.Tasks;
 
 namespace Api.Controllers
 {
+    [Authorize]
+    //[Authorize(Roles = "Admin")]
+    [ApiController]
     [Route("api/[controller]")]
     public class ExperiencesController : Controller
     {

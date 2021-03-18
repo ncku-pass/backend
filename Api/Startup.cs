@@ -1,3 +1,4 @@
+using Api.Attributes.HeaderFilter;
 using Api.Profiles;
 using Application.Services;
 using Application.Services.Interface;
@@ -5,6 +6,7 @@ using AutoMapper;
 using Infrastructure.Database;
 using Infrastructure.Infrastructure;
 using Infrastructure.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -12,10 +14,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.PlatformAbstractions;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Serialization;
 using System;
 using System.IO;
+using System.Text;
 
 namespace Api
 {
@@ -71,12 +75,52 @@ namespace Api
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+                // add JWT Authentication
+                var securityScheme = new OpenApiSecurityScheme
+                {
+                    Name = "JWT Authentication",
+                    Description = "Enter JWT Bearer token **_only_**",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "bearer", // must be lower case
+                    BearerFormat = "JWT",
+                    Reference = new OpenApiReference
+                    {
+                        Id = JwtBearerDefaults.AuthenticationScheme,
+                        Type = ReferenceType.SecurityScheme
+                    }
+                };
+                c.AddSecurityDefinition(securityScheme.Reference.Id, securityScheme);
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {securityScheme, new string[] { }}
+    });
             });
+
+            // JWT登入服務注入
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    var secretByte = Encoding.UTF8.GetBytes(Configuration["Authentication:SecretKey"]);
+                    options.TokenValidationParameters = new TokenValidationParameters()
+                    {
+                        ValidateIssuer = true,
+                        ValidIssuer = Configuration["Authentication:Issuer"],
+
+                        ValidateAudience = true,
+                        ValidAudience = Configuration["Authentication:Audience"],
+
+                        ValidateLifetime = true,
+
+                        IssuerSigningKey = new SymmetricSecurityKey(secretByte)
+                    };
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            // TODO:Docker設定環境變數
             if (env.IsDevelopment())
             {
             }
@@ -89,8 +133,11 @@ namespace Api
 
             app.UseHttpsRedirection();
 
+            // 路徑引導
             app.UseRouting();
-
+            // 確認身分
+            app.UseAuthentication();
+            // 權限組態
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

@@ -4,6 +4,7 @@ using Application.Dto.Messages;
 using Application.Dto.Responses;
 using Application.Services.Interface;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -13,8 +14,9 @@ using System.Threading.Tasks;
 
 namespace Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Authorize]
     [ApiController]
+    [Route("api/[controller]")]
     public class TagsController : ControllerBase
     {
         private IExperienceService _experienceService;
