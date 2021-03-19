@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 namespace Api.Controllers
 {
     [Authorize]
+    [Authorize(AuthenticationSchemes ="Bearer")]
     [ApiController]
     [Route("api/[controller]")]
     public class TagsController : ControllerBase

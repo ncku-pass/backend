@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 namespace Api.Controllers
 {
     [Authorize]
+    [Authorize(AuthenticationSchemes ="Bearer")]
     //[Authorize(Roles = "Admin")]
     [ApiController]
     [Route("api/[controller]")]
