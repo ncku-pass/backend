@@ -1,4 +1,3 @@
-using Api.Attributes.HeaderFilter;
 using Api.Profiles;
 using Application.Services;
 using Application.Services.Interface;
@@ -9,6 +8,7 @@ using Infrastructure.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,10 +27,10 @@ namespace Api
     {
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            this._configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
+        public IConfiguration _configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -47,7 +47,7 @@ namespace Api
             // Add MySQL相關設定
             services.AddDbContext<AppDbContext>(option =>
             {
-                option.UseMySql(Configuration["DbContext:MySQLConnectionString"]);
+                option.UseMySql(this._configuration["DbContext:MySQLConnectionString"]);
             });
 
             // TODO:問家駿這邊該怎麼簡化
@@ -91,30 +91,31 @@ namespace Api
                     }
                 };
                 c.AddSecurityDefinition(securityScheme.Reference.Id, securityScheme);
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {securityScheme, new string[] { }}
-    });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement { { securityScheme, new string[] { } } });
             });
 
             // JWT登入服務注入
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
-                    var secretByte = Encoding.UTF8.GetBytes(Configuration["Authentication:SecretKey"]);
+                    var secretByte = Encoding.UTF8.GetBytes(_configuration["Authentication:SecretKey"]);
                     options.TokenValidationParameters = new TokenValidationParameters()
                     {
                         ValidateIssuer = true,
-                        ValidIssuer = Configuration["Authentication:Issuer"],
+                        ValidIssuer = _configuration["Authentication:Issuer"],
 
                         ValidateAudience = true,
-                        ValidAudience = Configuration["Authentication:Audience"],
+                        ValidAudience = _configuration["Authentication:Audience"],
 
                         ValidateLifetime = true,
 
                         IssuerSigningKey = new SymmetricSecurityKey(secretByte)
                     };
                 });
+
+            // 使用Asp.Net core Identity身分認證框架
+            services.AddIdentity<IdentityUser, IdentityRole>()
+                .AddEntityFrameworkStores<AppDbContext>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
