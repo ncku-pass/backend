@@ -27,5 +27,7 @@ namespace Infrastructure.Models
 
         [EmailAddress]
         public string Email { get; set; }
+        //[Required]
+        public Guid AspNetId { get; set; }
     }
 }

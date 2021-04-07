@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Api.RequestModel.Parameters
 {
-    public class LoginParameter
+    public class AuthenticateLoginParameter
     {
         [Required]
-        public string Email { get; set; }
+        public string StudentId { get; set; }
         [Required]
-        public string PassWord { get; set; }
+        public string Password { get; set; }
     }
 }

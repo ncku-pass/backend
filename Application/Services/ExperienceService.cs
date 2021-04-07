@@ -4,25 +4,30 @@ using Application.Services.Interface;
 using AutoMapper;
 using Infrastructure.Infrastructure;
 using Infrastructure.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Application.Services
 {
     public class ExperienceService : IExperienceService
     {
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly ITagService _tagService;
 
         public ExperienceService(
+            IHttpContextAccessor httpContextAccessor,
             IUnitOfWork unitOfWork,
             IMapper mapper,
             ITagService tagService
             )
         {
+            this._httpContextAccessor = httpContextAccessor;
             this._unitOfWork = unitOfWork;
             this._mapper = mapper;
             this._tagService = tagService;
@@ -36,7 +41,7 @@ namespace Application.Services
         {
             // 新增Exp到資料庫
             var experienceModel = _mapper.Map<Experience>(experienceMessage);
-            experienceModel.UserId = 1;
+            experienceModel.UserId = int.Parse(this._httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
             this._unitOfWork.Experience.Add(experienceModel);
             await this._unitOfWork.SaveChangeAsync();
 
@@ -74,8 +79,10 @@ namespace Application.Services
         /// <param name="experienceMessage"></param>
         public async Task<ExperienceResponse> UpdateExperienceAsync(ExperienceUpdateMessage experienceUpdateMessage)
         {
+            var userId = int.Parse(this._httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
             // 取得Exp原檔將Update映射上去
-            var experienceModel = await this._unitOfWork.Experience.FirstOrDefaultAsync(n => n.Id == experienceUpdateMessage.Id);
+            var experienceModel = await this._unitOfWork.Experience.FirstOrDefaultAsync(n => n.Id == experienceUpdateMessage.Id && n.UserId == userId);
             _mapper.Map(experienceUpdateMessage, experienceModel);
 
             // 新增、刪除Exp_Tag關聯
@@ -93,12 +100,15 @@ namespace Application.Services
         /// <param name="experience"></param>
         public async Task<bool> DeleteExperienceAsync(int experienceId)
         {
+            // 找出該Exp
+            var userId = int.Parse(this._httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var experienceModel = await this._unitOfWork.Experience.FirstOrDefaultAsync(e => e.Id == experienceId && e.UserId == userId);
+
             // 移除該Exp全部的Tag關聯
             var experience_TagModels = await this._unitOfWork.Tag_Experience.Where(n => n.ExperienceId == experienceId).ToListAsync();
             this._unitOfWork.Tag_Experience.RemoveRange(experience_TagModels);
 
             // 移除Exp
-            var experienceModel = await this._unitOfWork.Experience.FirstOrDefaultAsync(e => e.Id == experienceId);
             this._unitOfWork.Experience.Remove(experienceModel);
             return await this._unitOfWork.SaveChangeAsync();
         }
@@ -110,7 +120,8 @@ namespace Application.Services
         /// <returns></returns>
         public async Task<bool> ExperienceExistsAsync(int experienceId)
         {
-            return await this._unitOfWork.Experience.AnyAsync(e => e.Id == experienceId);
+            var userId = int.Parse(this._httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            return await this._unitOfWork.Experience.AnyAsync(e => e.Id == experienceId && e.UserId == userId);
         }
 
         /// <summary>
@@ -120,7 +131,8 @@ namespace Application.Services
         /// <returns></returns>
         public async Task<ExperienceResponse> GetExperienceByIdAsync(int experienceId)
         {
-            var experienceModel = await this._unitOfWork.Experience.FirstOrDefaultAsync(n => n.Id == experienceId);
+            var userId = int.Parse(this._httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var experienceModel = await this._unitOfWork.Experience.FirstOrDefaultAsync(e => e.Id == experienceId && e.UserId == userId);
             var tagModel = await this._tagService.GetExperienceTagsAsync(experienceId);
 
             var experienceResponse = _mapper.Map<ExperienceResponse>(experienceModel);
@@ -135,7 +147,8 @@ namespace Application.Services
         /// <returns></returns>
         public async Task<IEnumerable<ExperienceResponse>> GetExperiencesAsync()
         {
-            var experienceModels = await _unitOfWork.Experience.ToListAsync();
+            var userId = int.Parse(this._httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var experienceModels = await _unitOfWork.Experience.Where(e => e.UserId == userId).ToListAsync();
             var experiencesResponse = _mapper.Map<List<ExperienceResponse>>(experienceModels);
             // TODO:可以將TagSerivce.GetExperienceTagsAsync改成傳入多筆資料
             var tagModel = await (from tag in _unitOfWork.Tag.GetAll()

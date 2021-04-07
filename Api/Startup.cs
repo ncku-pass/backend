@@ -54,12 +54,15 @@ namespace Api
             // DI註冊
             // Service用Scoped:每個Request刷新
             // Repo用Transient:每個子任務刷新
-            services.AddScoped<IExperienceService, ExperienceService>();
-            services.AddScoped<ITagService, TagService>();
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddTransient<IBaseRepository<Experience>, BaseRepository<Experience>>();
             services.AddTransient<IBaseRepository<Tag>, BaseRepository<Tag>>();
             services.AddTransient<IBaseRepository<Tag_Experience>, BaseRepository<Tag_Experience>>();
-            services.AddTransient<IUnitOfWork, UnitOfWork>();
+            services.AddTransient<IBaseRepository<User>, BaseRepository<User>>();
+
+            services.AddScoped<IAuthenticateService, AuthenticateService>();
+            services.AddScoped<IExperienceService, ExperienceService>();
+            services.AddScoped<ITagService, TagService>();
 
             // Add Auto Mapper Configurations
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -67,6 +70,7 @@ namespace Api
             {
                 mc.AddProfile(new ExperienceProfile());
                 mc.AddProfile(new TagProfile());
+                mc.AddProfile(new AuthenticationProfile());
             });
             IMapper mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);

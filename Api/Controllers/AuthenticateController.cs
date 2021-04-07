@@ -1,4 +1,7 @@
 ﻿using Api.RequestModel.Parameters;
+using Application.Dto.Messages;
+using Application.Services.Interface;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -20,93 +23,51 @@ namespace Api.Controllers
     public class AuthenticateController : ControllerBase
     {
         private readonly IConfiguration _configuration;
+        private readonly IAuthenticateService _authenticateService;
+        private readonly IMapper _mapper;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
 
         public AuthenticateController(
             IConfiguration configuration,
+            IAuthenticateService authenticateService,
+            IMapper mapper,
             UserManager<IdentityUser> userManager,
             SignInManager<IdentityUser> signInManager
             )
         {
             this._configuration = configuration;
+            this._authenticateService = authenticateService;
+            this._mapper = mapper;
             this._userManager = userManager;
             this._signInManager = signInManager;
         }
 
         [AllowAnonymous]
         [HttpPost("login")]
-        public async Task<IActionResult> LoginAsync([FromBody] LoginParameter loginParameter)
+        public async Task<IActionResult> LoginAsync([FromBody] AuthenticateLoginParameter loginParameter)
         {
-            //1 驗證帳密
-            var loginResult = await _signInManager.PasswordSignInAsync(
-                                                loginParameter.Email,
-                                                loginParameter.PassWord,
-                                                false,
-                                                false
-                                                );
-            if (!loginResult.Succeeded)
+            var loginMessage = this._mapper.Map<AuthenticateLoginMessage>(loginParameter);
+            var loginResponse = await this._authenticateService.Login(loginMessage);
+            if (!loginResponse.Succeeded)
             {
                 return this.BadRequest();
             }
-            var user = await this._userManager.FindByNameAsync(loginParameter.Email);
+            return this.Ok(loginResponse);
 
-            //2 創建JWT
-            //header
-            var signingAlgorithm = SecurityAlgorithms.HmacSha256;
-            //payload
-            var claims = new List<Claim>
-            {
-                //sub
-                new Claim(JwtRegisteredClaimNames.Sub, "1"),
-            };
-            var roleNames = await this._userManager.GetRolesAsync(user);
-            foreach (var roleName in roleNames)
-            {
-                var roleClaim = new Claim(ClaimTypes.Role, roleName);
-                claims.Add(roleClaim);
-            }
-            //signiture
-            var serectByte = Encoding.UTF8.GetBytes(_configuration["Authentication:SecretKey"]);
-            var signatureKey = new SymmetricSecurityKey(serectByte);
-            var singingCredentials = new SigningCredentials(signatureKey, signingAlgorithm);
-
-            var token = new JwtSecurityToken(
-                issuer: _configuration["Authentication:Issuer"], // 發布者
-                audience: _configuration["Authentication:Audience"], // 要求使用者
-                claims: claims,
-                notBefore: DateTime.UtcNow,
-                expires: DateTime.UtcNow.AddDays(1),
-                singingCredentials
-            );
-
-            var tokenStr = new JwtSecurityTokenHandler().WriteToken(token);
-
-            //3 回傳200ok + JWT
-            return this.Ok(tokenStr);
         }
 
         [AllowAnonymous]
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterParameter registerParameter)
+        public async Task<IActionResult> Register([FromBody] AuthenticateRegisterParameter registerParameter)
         {
-            // 1 使用用戶名創建對象
-            var user = new IdentityUser
-            {
-                UserName = registerParameter.Email,
-                Email = registerParameter.Email
-            };
-
-            // 2 Hash密碼,保存用戶
-            var result = await _userManager.CreateAsync(user, registerParameter.Password);
-            if (!result.Succeeded)
+            var registerMessage = this._mapper.Map<AuthenticateRegisterMessage>(registerParameter);
+            var registerResponse = await this._authenticateService.Register(registerMessage);
+            if (!registerResponse.Succeeded)
             {
                 return this.BadRequest();
             }
-            // 3 return
             return this.Ok();
-
-
         }
     }
 }
