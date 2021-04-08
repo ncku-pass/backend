@@ -46,8 +46,8 @@ namespace Application.Services
             await this._unitOfWork.SaveChangeAsync();
 
             // 新增、刪除Exp_Tag關聯
-            ManipulateExp_TagRelation(experienceModel.Id, experienceMessage.AddTags, null);
-            await this._unitOfWork.SaveChangeAsync();
+            await ManipulateExp_TagRelation(experienceModel.Id, experienceMessage.AddTags, null);
+
 
             var experienceResponse = _mapper.Map<ExperienceResponse>(experienceModel);
             experienceResponse.Tags = await _tagService.GetExperienceTagsAsync(experienceModel.Id);
@@ -55,22 +55,30 @@ namespace Application.Services
         }
 
         // TODO:移到Tag_ExpService
-        public async void ManipulateExp_TagRelation(int ExperienceId, int[] addTagIds, int[] dropTagIds)
+        public async Task ManipulateExp_TagRelation(int experienceId, int[] addTagIds, int[] dropTagIds)
         {
             // 建立待加入的關聯Models，並排除Tag_Exp中已有的Models
-            var addTagModels = addTagIds.Select(tid => new Tag_Experience { ExperienceId = ExperienceId, TagId = tid })
-                                        .Except(await _unitOfWork.Tag_Experience.Where(n => n.ExperienceId == ExperienceId).ToListAsync())
-                                        .ToList();
-            _unitOfWork.Tag_Experience.AddRange(addTagModels);
+            if (addTagIds != null && addTagIds.Count() != 0)
+            {
+                var currentTagIds = (await _unitOfWork.Tag_Experience.Where(n => n.ExperienceId == experienceId).ToListAsync())
+                                    .Select(t => t.TagId).ToList();
+
+                var addTagModels = addTagIds.Except(currentTagIds)
+                                            .Select(tid => new Tag_Experience { ExperienceId = experienceId, TagId = tid })
+                                            .ToList();
+                _unitOfWork.Tag_Experience.AddRange(addTagModels);
+            }
+            var _ = dropTagIds.Count();
 
             // 待刪除關聯Model
-            if (dropTagIds != null)
+            if (dropTagIds != null && dropTagIds.Count() != 0)
             {
                 var dropTagModels = await _unitOfWork.Tag_Experience
-                                                     .Where(n => n.ExperienceId == ExperienceId && dropTagIds.Contains(n.TagId))
+                                                     .Where(n => n.ExperienceId == experienceId && dropTagIds.Contains(n.TagId))
                                                      .ToListAsync();
                 _unitOfWork.Tag_Experience.RemoveRange(dropTagModels);
             }
+            await this._unitOfWork.SaveChangeAsync();
         }
 
         /// <summary>
@@ -86,8 +94,7 @@ namespace Application.Services
             _mapper.Map(experienceUpdateMessage, experienceModel);
 
             // 新增、刪除Exp_Tag關聯
-            ManipulateExp_TagRelation(experienceModel.Id, experienceUpdateMessage.AddTags, experienceUpdateMessage.DropTags);
-            await this._unitOfWork.SaveChangeAsync();
+            await ManipulateExp_TagRelation(experienceModel.Id, experienceUpdateMessage.AddTags, experienceUpdateMessage.DropTags);
 
             var experienceResponse = _mapper.Map<ExperienceResponse>(experienceModel);
             experienceResponse.Tags = await _tagService.GetExperienceTagsAsync(experienceModel.Id);
