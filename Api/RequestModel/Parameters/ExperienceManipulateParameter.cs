@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Api.RequestModel.Parameters
+﻿namespace Api.RequestModel.Parameters
 {
     public abstract class ExperienceManipulateParameter
     {
@@ -11,6 +9,5 @@ namespace Api.RequestModel.Parameters
         public string Semester { get; set; }
         public string Link { get; set; }
         public string ExperienceType { get; set; }
-
     }
 }

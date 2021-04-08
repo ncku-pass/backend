@@ -48,7 +48,6 @@ namespace Application.Services
             // 新增、刪除Exp_Tag關聯
             await ManipulateExp_TagRelation(experienceModel.Id, experienceMessage.AddTags, null);
 
-
             var experienceResponse = _mapper.Map<ExperienceResponse>(experienceModel);
             experienceResponse.Tags = await _tagService.GetExperienceTagsAsync(experienceModel.Id);
             return experienceResponse;

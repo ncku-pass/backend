@@ -16,6 +16,7 @@ namespace Application.Services.Interface
         Task<ExperienceResponse> AddExperienceAsync(ExperienceCreateMessage experience);
 
         Task<bool> DeleteExperienceAsync(int experienceId);
+
         Task<ExperienceResponse> UpdateExperienceAsync(ExperienceUpdateMessage experienceUpdateMessage);
     }
 }

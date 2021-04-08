@@ -1,15 +1,10 @@
-﻿using Api.RequestModel.Parameters;
-using Api.RequestModel.ViewModels;
+﻿using Api.RequestModel.ViewModels;
 using Application.Dto.Messages;
-using Application.Dto.Responses;
 using Application.Services.Interface;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Api.Controllers
@@ -69,8 +64,6 @@ namespace Api.Controllers
             var tagViewModel = _mapper.Map<TagViewModel>(tagResponse);
             return this.Ok(tagViewModel);
         }
-
-
 
         /// <summary>
         /// 新增標籤

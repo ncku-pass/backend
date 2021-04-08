@@ -1,18 +1,18 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Application.Services.Interface;
-using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using Application.Dto.Messages;
+﻿using Application.Dto.Messages;
 using Application.Dto.Responses;
-using System.Security.Claims;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
+using Application.Services.Interface;
+using AutoMapper;
 using Infrastructure.Infrastructure;
 using Infrastructure.Models;
-using AutoMapper;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Application.Services
 {
@@ -91,7 +91,6 @@ namespace Application.Services
                 Succeeded = true,
                 TokenStr = tokenStr
             };
-
         }
 
         public async Task<AuthenticateRegisterResponse> Register(AuthenticateRegisterMessage registerParameter)
@@ -116,8 +115,6 @@ namespace Application.Services
             this._unitOfWork.User.Add(userModel);
             await this._unitOfWork.SaveChangeAsync();
             return new AuthenticateRegisterResponse() { Succeeded = true };
-
-
         }
     }
 }

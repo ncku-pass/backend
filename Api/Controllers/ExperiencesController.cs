@@ -1,7 +1,6 @@
 ﻿using Api.RequestModel.Parameters;
 using Api.RequestModel.ViewModels;
 using Application.Dto.Messages;
-using Application.Dto.Responses;
 using Application.Services.Interface;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -14,7 +13,7 @@ using System.Threading.Tasks;
 namespace Api.Controllers
 {
     [Authorize]
-    [Authorize(AuthenticationSchemes ="Bearer")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     //[Authorize(Roles = "Admin")]
     [ApiController]
     [Route("api/experiences")]

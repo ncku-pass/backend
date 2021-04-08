@@ -26,8 +26,6 @@ namespace Api.Profiles
 
             CreateMap<ExperienceResponse, ExperienceUpdateParameter>();
 
-
-
             //CreateMap<TouristRouteForCreationDto, TouristRoute>().
             //    ForMember(
             //        dest => dest.Id,

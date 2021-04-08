@@ -1,5 +1,4 @@
-﻿using Api.RequestModel.Parameters;
-using Api.RequestModel.ViewModels;
+﻿using Api.RequestModel.ViewModels;
 using Application.Dto.Messages;
 using Application.Dto.Responses;
 using AutoMapper;
