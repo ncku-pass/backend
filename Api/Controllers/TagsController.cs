@@ -15,9 +15,9 @@ using System.Threading.Tasks;
 namespace Api.Controllers
 {
     [Authorize]
-    [Authorize(AuthenticationSchemes ="Bearer")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/tags")]
     public class TagsController : ControllerBase
     {
         private IExperienceService _experienceService;

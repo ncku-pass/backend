@@ -17,7 +17,7 @@ namespace Api.Controllers
     [Authorize(AuthenticationSchemes ="Bearer")]
     //[Authorize(Roles = "Admin")]
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/experiences")]
     public class ExperiencesController : Controller
     {
         private IExperienceService _experienceService;

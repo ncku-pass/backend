@@ -18,29 +18,20 @@ using System.Threading.Tasks;
 
 namespace Api.Controllers
 {
-    [Route("auth")]
+    [Route("api/auth")]
     [ApiController]
     public class AuthenticateController : ControllerBase
     {
-        private readonly IConfiguration _configuration;
         private readonly IAuthenticateService _authenticateService;
         private readonly IMapper _mapper;
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
 
         public AuthenticateController(
-            IConfiguration configuration,
             IAuthenticateService authenticateService,
-            IMapper mapper,
-            UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager
+            IMapper mapper
             )
         {
-            this._configuration = configuration;
             this._authenticateService = authenticateService;
             this._mapper = mapper;
-            this._userManager = userManager;
-            this._signInManager = signInManager;
         }
 
         [AllowAnonymous]
