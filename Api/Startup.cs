@@ -118,6 +118,15 @@ namespace Api
             // 使用Asp.Net core Identity身分認證框架
             services.AddIdentity<IdentityUser, IdentityRole>()
                 .AddEntityFrameworkStores<AppDbContext>();
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.Password.RequireDigit = true;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequiredLength = 8;
+                options.Password.RequiredUniqueChars = 1;
+            });
 
             // 跨域請求Cors設定
             services.AddCors(options =>

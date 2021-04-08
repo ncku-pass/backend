@@ -42,13 +42,14 @@ namespace Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetExperiences()
         {
-            var ExperiencesResponse = await _experienceService.GetExperiencesAsync();
-            if (ExperiencesResponse == null)
+            var experiencesResponse = await _experienceService.GetExperiencesAsync();
+            if (experiencesResponse == null)
             {
                 return this.NotFound("查無經歷");
             }
-            var ExperienceViewModel = this._mapper.Map<List<ExperienceViewModel>>(ExperiencesResponse);
-            return this.Ok(ExperienceViewModel);
+            var experienceViewModel = this._mapper.Map<List<ExperienceViewModel>>(experiencesResponse);
+            var experienceClassifiedViewModel = this._mapper.Map<ExperienceClassifiedViewModel>(experienceViewModel);
+            return this.Ok(experienceClassifiedViewModel);
         }
 
         /// get api/experiences/1
@@ -77,12 +78,12 @@ namespace Api.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateExperience([FromBody] ExperienceCreateParameter experienceCreateParameter)
         {
-            var AddTags = await _tagService.TagsExistsAsync(experienceCreateParameter.AddTags);
+            var addTags = await _tagService.TagsExistsAsync(experienceCreateParameter.AddTags);
 
-            if (AddTags.Count() > 0)
+            if (addTags.Count() > 0)
             {
                 string addStr = "";
-                AddTags.ToList().ForEach(i => addStr += i + ",");
+                addTags.ToList().ForEach(i => addStr += i + ",");
                 return this.NotFound($"查無此tags=>\n\tAddTags:{addStr}");
             }
 
@@ -113,15 +114,15 @@ namespace Api.Controllers
                 return this.NotFound("查無此經歷=>Id:" + experienceId);
             }
             // 檢查Tag是否皆存在
-            var AddTags = await _tagService.TagsExistsAsync(experienceUpdateParameter.AddTags);
-            var DropTags = await _tagService.TagsExistsAsync(experienceUpdateParameter.DropTags);
+            var addTags = await _tagService.TagsExistsAsync(experienceUpdateParameter.AddTags);
+            var dropTags = await _tagService.TagsExistsAsync(experienceUpdateParameter.DropTags);
             // TODO:檢查是否已存在關聯
-            if (AddTags.Count() > 0 || DropTags.Count() > 0)
+            if (addTags.Count() > 0 || dropTags.Count() > 0)
             {
                 string addStr = "";
                 string dropStr = "";
-                AddTags.ToList().ForEach(i => addStr += i + ",");
-                DropTags.ToList().ForEach(i => dropStr += i + ",");
+                addTags.ToList().ForEach(i => addStr += i + ",");
+                dropTags.ToList().ForEach(i => dropStr += i + ",");
                 return this.NotFound($"查無此tags=>\n\tAddTags:{addStr}\n\tDropTags:{dropStr}");
             }
 
@@ -161,15 +162,15 @@ namespace Api.Controllers
             patchDocument.ApplyTo(experienceUpdateParameter, ModelState);
 
             // 檢查Tag是否皆存在
-            var AddTags = await _tagService.TagsExistsAsync(experienceUpdateParameter.AddTags ?? new int[] { });
-            var DropTags = await _tagService.TagsExistsAsync(experienceUpdateParameter.DropTags ?? new int[] { });
+            var addTags = await _tagService.TagsExistsAsync(experienceUpdateParameter.AddTags ?? new int[] { });
+            var dropTags = await _tagService.TagsExistsAsync(experienceUpdateParameter.DropTags ?? new int[] { });
             // TODO:檢查是否已存在關聯
-            if (AddTags.Count() > 0 || DropTags.Count() > 0)
+            if (addTags.Count() > 0 || dropTags.Count() > 0)
             {
                 string addStr = "";
                 string dropStr = "";
-                AddTags.ToList().ForEach(i => addStr += i + ",");
-                DropTags.ToList().ForEach(i => dropStr += i + ",");
+                addTags.ToList().ForEach(i => addStr += i + ",");
+                dropTags.ToList().ForEach(i => dropStr += i + ",");
                 return this.NotFound($"查無此tags=>\n\tAddTags:{addStr}\n\tDropTags:{dropStr}");
             }
 
@@ -198,7 +199,7 @@ namespace Api.Controllers
             {
                 return this.NotFound("查無此經歷=>Id:" + experienceId);
             }
-            var experienceResponse = await _experienceService.DeleteExperienceAsync(experienceId);
+            await _experienceService.DeleteExperienceAsync(experienceId);
             return this.NoContent();
         }
 
