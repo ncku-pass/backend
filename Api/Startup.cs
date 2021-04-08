@@ -118,6 +118,19 @@ namespace Api
             // 使用Asp.Net core Identity身分認證框架
             services.AddIdentity<IdentityUser, IdentityRole>()
                 .AddEntityFrameworkStores<AppDbContext>();
+
+            // 跨域請求Cors設定
+            services.AddCors(options =>
+            {
+                // CorsPolicy 是自訂的 Policy 名稱
+                options.AddPolicy("CorsPolicy", policy =>
+                {
+                    policy.WithOrigins("http://localhost:8080")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod()
+                          .AllowCredentials();
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -138,6 +151,8 @@ namespace Api
 
             // 路徑引導
             app.UseRouting();
+            // 跨域請求規則
+            app.UseCors("CorsPolicy");
             // 確認身分
             app.UseAuthentication();
             // 權限組態
