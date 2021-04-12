@@ -28,27 +28,27 @@ namespace Api.Profiles
 
             CreateMap<List<ExperienceViewModel>, ExperienceClassifiedViewModel>()
                 .ForMember(
-                    dest => dest.Courses,
+                    dest => dest.Course,
                     opt => opt.MapFrom(src => src.Where(e => e.ExperienceType == "course").ToList())
                 )
                 .ForMember(
-                    dest => dest.Activities,
+                    dest => dest.Activity,
                     opt => opt.MapFrom(src => src.Where(e => e.ExperienceType == "activity").ToList())
                 )
                 .ForMember(
-                    dest => dest.Competitions,
+                    dest => dest.Competition,
                     opt => opt.MapFrom(src => src.Where(e => e.ExperienceType == "competition").ToList())
                 )
                 .ForMember(
-                    dest => dest.Works,
+                    dest => dest.Work,
                     opt => opt.MapFrom(src => src.Where(e => e.ExperienceType == "work").ToList())
                 )
                 .ForMember(
-                    dest => dest.Certificates,
+                    dest => dest.Certificate,
                     opt => opt.MapFrom(src => src.Where(e => e.ExperienceType == "certificate").ToList())
                 )
                 .ForMember(
-                    dest => dest.Others,
+                    dest => dest.Other,
                     opt => opt.MapFrom(src => src.Where(e => e.ExperienceType == "other").ToList())
                 );
 

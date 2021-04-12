@@ -18,6 +18,7 @@ using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Serialization;
 using System;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Api
 {
@@ -112,6 +113,14 @@ namespace Api
                         ValidateLifetime = true,
 
                         IssuerSigningKey = new SymmetricSecurityKey(secretByte)
+                    };
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            context.Token = context.Request.Cookies["JWTToken"];
+                            return Task.CompletedTask;
+                        },
                     };
                 });
 
