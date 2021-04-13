@@ -67,7 +67,6 @@ namespace Application.Services
                                             .ToList();
                 _unitOfWork.Tag_Experience.AddRange(addTagModels);
             }
-            var _ = dropTagIds.Count();
 
             // 待刪除關聯Model
             if (dropTagIds != null && dropTagIds.Count() != 0)
