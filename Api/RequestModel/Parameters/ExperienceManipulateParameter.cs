@@ -9,5 +9,6 @@
         public string Semester { get; set; }
         public string Link { get; set; }
         public string ExperienceType { get; set; }
+        public int[] Tags { get; set; }
     }
 }

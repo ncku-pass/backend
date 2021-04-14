@@ -78,7 +78,7 @@ namespace Api.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateExperience([FromBody] ExperienceCreateParameter experienceCreateParameter)
         {
-            var addTags = await _tagService.TagsExistsAsync(experienceCreateParameter.AddTags);
+            var addTags = await _tagService.TagsExistsAsync(experienceCreateParameter.Tags);
 
             if (addTags.Count() > 0)
             {
@@ -114,16 +114,12 @@ namespace Api.Controllers
                 return this.NotFound("查無此經歷=>Id:" + experienceId);
             }
             // 檢查Tag是否皆存在
-            var addTags = await _tagService.TagsExistsAsync(experienceUpdateParameter.AddTags);
-            var dropTags = await _tagService.TagsExistsAsync(experienceUpdateParameter.DropTags);
-            // TODO:檢查是否已存在關聯
-            if (addTags.Count() > 0 || dropTags.Count() > 0)
+            var notExistTags = await _tagService.TagsExistsAsync(experienceUpdateParameter.Tags);
+            if (notExistTags.Count() > 0)
             {
-                string addStr = "";
-                string dropStr = "";
-                addTags.ToList().ForEach(i => addStr += i + ",");
-                dropTags.ToList().ForEach(i => dropStr += i + ",");
-                return this.NotFound($"查無此tags=>\n\tAddTags:{addStr}\n\tDropTags:{dropStr}");
+                string notExistTagsStr = "";
+                notExistTags.ToList().ForEach(i => notExistTagsStr += i + ",");
+                return this.NotFound($"查無此tags=>\n\tTags:{notExistTagsStr}");
             }
 
             // 更新此Exp
@@ -162,16 +158,12 @@ namespace Api.Controllers
             patchDocument.ApplyTo(experienceUpdateParameter, ModelState);
 
             // 檢查Tag是否皆存在
-            var addTags = await _tagService.TagsExistsAsync(experienceUpdateParameter.AddTags ?? new int[] { });
-            var dropTags = await _tagService.TagsExistsAsync(experienceUpdateParameter.DropTags ?? new int[] { });
-            // TODO:檢查是否已存在關聯
-            if (addTags.Count() > 0 || dropTags.Count() > 0)
+            var notExistTags = await _tagService.TagsExistsAsync(experienceUpdateParameter.Tags);
+            if (notExistTags.Count() > 0)
             {
-                string addStr = "";
-                string dropStr = "";
-                addTags.ToList().ForEach(i => addStr += i + ",");
-                dropTags.ToList().ForEach(i => dropStr += i + ",");
-                return this.NotFound($"查無此tags=>\n\tAddTags:{addStr}\n\tDropTags:{dropStr}");
+                string notExistTagsStr = "";
+                notExistTags.ToList().ForEach(i => notExistTagsStr += i + ",");
+                return this.NotFound($"查無此tags=>\n\tTags:{notExistTagsStr}");
             }
 
             // 更新此Exp

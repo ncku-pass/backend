@@ -52,7 +52,11 @@ namespace Api.Profiles
                     opt => opt.MapFrom(src => src.Where(e => e.ExperienceType == "other").ToList())
                 );
 
-            CreateMap<ExperienceResponse, ExperienceUpdateParameter>();
+            CreateMap<ExperienceResponse, ExperienceUpdateParameter>()
+                .ForMember(
+                    dest => dest.Tags,
+                    opt => opt.Ignore()
+                );
         }
     }
 }
