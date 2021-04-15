@@ -83,6 +83,7 @@ namespace Application.Services
             // 取得Exp原檔將Update映射上去
             var experienceModel = await this._unitOfWork.Experience.FirstOrDefaultAsync(n => n.Id == experienceUpdateMessage.Id && n.UserId == userId);
             _mapper.Map(experienceUpdateMessage, experienceModel);
+            await this._unitOfWork.SaveChangeAsync();
 
             // 新增、刪除Exp_Tag關聯
             await ManipulateExp_TagRelation(experienceModel.Id, experienceUpdateMessage.Tags);

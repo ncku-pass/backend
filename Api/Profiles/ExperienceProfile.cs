@@ -55,7 +55,7 @@ namespace Api.Profiles
             CreateMap<ExperienceResponse, ExperienceUpdateParameter>()
                 .ForMember(
                     dest => dest.Tags,
-                    opt => opt.Ignore()
+                    opt => opt.MapFrom(src => src.Tags.Select(t => t.Id).ToList())
                 );
         }
     }
