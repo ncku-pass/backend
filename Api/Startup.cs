@@ -143,7 +143,7 @@ namespace Api
                 // CorsPolicy 是自訂的 Policy 名稱
                 options.AddPolicy("CorsPolicy", policy =>
                 {
-                    policy.WithOrigins("http://localhost:8080")
+                    policy.WithOrigins("https://e-portfolio-tomatoguy.vercel.app", "http://localhost:8080")
                           .AllowAnyHeader()
                           .AllowAnyMethod()
                           .AllowCredentials();
