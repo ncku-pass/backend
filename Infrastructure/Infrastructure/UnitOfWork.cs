@@ -14,13 +14,19 @@ namespace Infrastructure.Infrastructure
         public IBaseRepository<Experience_Tag> Experience_Tag { get; private set; }
         public IBaseRepository<Tag> Tag { get; private set; }
         public IBaseRepository<User> User { get; }
+        public IBaseRepository<Resume> Resume { get; }
+        public IBaseRepository<Topic> Topic { get; }
+        public IBaseRepository<Topic_Experience> Topic_Experience { get; }
 
         public UnitOfWork(
             AppDbContext context,
             IBaseRepository<Experience> experienceRepository,
             IBaseRepository<Experience_Tag> experience_Tag,
             IBaseRepository<Tag> tagRepository,
-            IBaseRepository<User> userRepository
+            IBaseRepository<User> userRepository,
+            IBaseRepository<Resume> resume,
+            IBaseRepository<Topic> topic,
+            IBaseRepository<Topic_Experience> topic_Experience
             )
         {
             this._context = context;
@@ -28,6 +34,9 @@ namespace Infrastructure.Infrastructure
             this.Experience_Tag = experience_Tag;
             this.Tag = tagRepository;
             this.User = userRepository;
+            this.Resume = resume;
+            this.Topic = topic;
+            this.Topic_Experience = topic_Experience;
         }
 
         /// <summary>

@@ -58,6 +58,9 @@ namespace Api
             services.AddTransient<IBaseRepository<Experience_Tag>, BaseRepository<Experience_Tag>>();
             services.AddTransient<IBaseRepository<Tag>, BaseRepository<Tag>>();
             services.AddTransient<IBaseRepository<User>, BaseRepository<User>>();
+            services.AddTransient<IBaseRepository<Resume>, BaseRepository<Resume>>();
+            services.AddTransient<IBaseRepository<Topic>, BaseRepository<Topic>>();
+            services.AddTransient<IBaseRepository<Topic_Experience>, BaseRepository<Topic_Experience>>();
 
             services.AddScoped<IAuthenticateService, AuthenticateService>();
             services.AddScoped<IExperienceService, ExperienceService>();
