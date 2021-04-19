@@ -55,8 +55,8 @@ namespace Api
             // Repo用Transient:每個子任務刷新
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddTransient<IBaseRepository<Experience>, BaseRepository<Experience>>();
+            services.AddTransient<IBaseRepository<Experience_Tag>, BaseRepository<Experience_Tag>>();
             services.AddTransient<IBaseRepository<Tag>, BaseRepository<Tag>>();
-            services.AddTransient<IBaseRepository<Tag_Experience>, BaseRepository<Tag_Experience>>();
             services.AddTransient<IBaseRepository<User>, BaseRepository<User>>();
 
             services.AddScoped<IAuthenticateService, AuthenticateService>();

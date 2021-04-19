@@ -8,7 +8,7 @@ namespace Infrastructure.Infrastructure
     {
         IBaseRepository<Experience> Experience { get; }
         IBaseRepository<Tag> Tag { get; }
-        IBaseRepository<Tag_Experience> Tag_Experience { get; }
+        IBaseRepository<Experience_Tag> Experience_Tag { get; }
         IBaseRepository<User> User { get; }
 
         /// <summary>

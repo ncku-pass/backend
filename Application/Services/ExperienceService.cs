@@ -57,17 +57,17 @@ namespace Application.Services
         public async Task ManipulateExp_TagRelation(int experienceId, int[] tagIds)
         {
             // 建立待加入的關聯Models，並排除Tag_Exp中已有的Models
-            var currentTagIds = await _unitOfWork.Tag_Experience.Where(n => n.ExperienceId == experienceId).ToListAsync();
+            var currentTagIds = await _unitOfWork.Experience_Tag.Where(n => n.ExperienceId == experienceId).ToListAsync();
             var addTagModels = tagIds.Except(currentTagIds.Select(t => t.TagId))
-                                     .Select(tid => new Tag_Experience { ExperienceId = experienceId, TagId = tid })
+                                     .Select(tid => new Experience_Tag { ExperienceId = experienceId, TagId = tid })
                                      .ToList();
             var dropTagModels = currentTagIds.Where(t => !tagIds.Contains(t.TagId))
                                              .ToList();
 
             if (addTagModels.Count() != 0 || dropTagModels.Count() != 0)
             {
-                _unitOfWork.Tag_Experience.AddRange(addTagModels);
-                _unitOfWork.Tag_Experience.RemoveRange(dropTagModels);
+                _unitOfWork.Experience_Tag.AddRange(addTagModels);
+                _unitOfWork.Experience_Tag.RemoveRange((IEnumerable<Experience_Tag>)dropTagModels);
                 await this._unitOfWork.SaveChangeAsync();
             }
         }
@@ -104,8 +104,8 @@ namespace Application.Services
             var experienceModel = await this._unitOfWork.Experience.FirstOrDefaultAsync(e => e.Id == experienceId && e.UserId == userId);
 
             // 移除該Exp全部的Tag關聯
-            var experience_TagModels = await this._unitOfWork.Tag_Experience.Where(n => n.ExperienceId == experienceId).ToListAsync();
-            this._unitOfWork.Tag_Experience.RemoveRange(experience_TagModels);
+            var experience_TagModels = await this._unitOfWork.Experience_Tag.Where(n => n.ExperienceId == experienceId).ToListAsync();
+            this._unitOfWork.Experience_Tag.RemoveRange((IEnumerable<Experience_Tag>)experience_TagModels);
 
             // 移除Exp
             this._unitOfWork.Experience.Remove(experienceModel);
@@ -151,7 +151,7 @@ namespace Application.Services
             var experiencesResponse = _mapper.Map<List<ExperienceResponse>>(experienceModels);
             // TODO:可以將TagSerivce.GetExperienceTagsAsync改成傳入多筆資料
             var tagModel = await (from tag in _unitOfWork.Tag.GetAll()
-                                  join _ in _unitOfWork.Tag_Experience.GetAll() on tag.Id equals _.TagId into groupjoin
+                                  join _ in _unitOfWork.Experience_Tag.GetAll() on tag.Id equals _.TagId into groupjoin
                                   from combine in groupjoin.DefaultIfEmpty()
                                   select new
                                   {

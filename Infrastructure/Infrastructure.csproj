@@ -12,6 +12,19 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20210419154142_renameExp_Tag.cs" />
+    <Compile Remove="Migrations\20210419154142_renameExp_Tag.Designer.cs" />
+    <Compile Remove="Migrations\20210419154331_renameExp_Tag.cs" />
+    <Compile Remove="Migrations\20210419154331_renameExp_Tag.Designer.cs" />
+    <Compile Remove="Migrations\20210419154433_renameExp_Tag.cs" />
+    <Compile Remove="Migrations\20210419154433_renameExp_Tag.Designer.cs" />
+    <Compile Remove="Migrations\20210419154550_renameExp_Tag.cs" />
+    <Compile Remove="Migrations\20210419154550_renameExp_Tag.Designer.cs" />
+    <Compile Remove="Migrations\20210419161211_renameExp_Tag.cs" />
+    <Compile Remove="Migrations\20210419161211_renameExp_Tag.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
     <PackageReference Include="EFCore.NamingConventions" Version="1.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.3" />

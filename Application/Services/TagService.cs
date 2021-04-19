@@ -47,8 +47,8 @@ namespace Application.Services
             var tagModel = await _unitOfWork.Tag.FirstOrDefaultAsync(t => t.Id == tagId && t.UserId == userId);
 
             // 移除該Exp全部的Tag關聯
-            var tag_ExperienceModels = await this._unitOfWork.Tag_Experience.Where(n => n.TagId == tagId).ToListAsync();
-            this._unitOfWork.Tag_Experience.RemoveRange(tag_ExperienceModels);
+            var tag_ExperienceModels = await this._unitOfWork.Experience_Tag.Where(n => n.TagId == tagId).ToListAsync();
+            this._unitOfWork.Experience_Tag.RemoveRange(tag_ExperienceModels);
 
             // 移除Tag
             this._unitOfWork.Tag.Remove(tagModel);
@@ -59,7 +59,7 @@ namespace Application.Services
         {
             var userId = int.Parse(this._httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
             var tagsResponse = await (from tag in _unitOfWork.Tag.Where(t => t.UserId == userId)
-                                      join combine in _unitOfWork.Tag_Experience.Where(t => t.ExperienceId == experienceId)
+                                      join combine in _unitOfWork.Experience_Tag.Where(t => t.ExperienceId == experienceId)
                                           on tag.Id equals combine.TagId
                                       select new TagResponse()
                                       {

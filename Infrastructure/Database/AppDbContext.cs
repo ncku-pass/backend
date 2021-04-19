@@ -43,7 +43,9 @@ namespace Infrastructure.Database
 
         public DbSet<Experience> Experiences { get; set; }
         public DbSet<Tag> Tags { get; set; }
-        public DbSet<Tag_Experience> Tag_Experiences { get; set; }
+        //public DbSet<Tag_Experience> Tag_Experiences { get; set; }
+        public DbSet<Experience_Tag> Experience_Tags { get; set; }
+        
         public DbSet<User> User { get; set; }
     }
 }

@@ -11,22 +11,22 @@ namespace Infrastructure.Infrastructure
         public AppDbContext _context { get; private set; }
 
         public IBaseRepository<Experience> Experience { get; private set; }
+        public IBaseRepository<Experience_Tag> Experience_Tag { get; private set; }
         public IBaseRepository<Tag> Tag { get; private set; }
-        public IBaseRepository<Tag_Experience> Tag_Experience { get; private set; }
         public IBaseRepository<User> User { get; }
 
         public UnitOfWork(
             AppDbContext context,
             IBaseRepository<Experience> experienceRepository,
+            IBaseRepository<Experience_Tag> experience_Tag,
             IBaseRepository<Tag> tagRepository,
-            IBaseRepository<Tag_Experience> tag_ExperienceRepository,
             IBaseRepository<User> userRepository
             )
         {
             this._context = context;
             this.Experience = experienceRepository;
+            this.Experience_Tag = experience_Tag;
             this.Tag = tagRepository;
-            this.Tag_Experience = tag_ExperienceRepository;
             this.User = userRepository;
         }
 
