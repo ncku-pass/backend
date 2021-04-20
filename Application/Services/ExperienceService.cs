@@ -19,6 +19,7 @@ namespace Application.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly ITagService _tagService;
+        private readonly int _userId;
 
         public ExperienceService(
             IHttpContextAccessor httpContextAccessor,
@@ -31,6 +32,7 @@ namespace Application.Services
             this._unitOfWork = unitOfWork;
             this._mapper = mapper;
             this._tagService = tagService;
+            this._userId = int.Parse(this._httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
         }
 
         /// <summary>
@@ -78,10 +80,8 @@ namespace Application.Services
         /// <param name="experienceMessage"></param>
         public async Task<ExperienceResponse> UpdateExperienceAsync(ExperienceUpdateMessage experienceUpdateMessage)
         {
-            var userId = int.Parse(this._httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
-
             // 取得Exp原檔將Update映射上去
-            var experienceModel = await this._unitOfWork.Experience.FirstOrDefaultAsync(n => n.Id == experienceUpdateMessage.Id && n.UserId == userId);
+            var experienceModel = await this._unitOfWork.Experience.FirstOrDefaultAsync(n => n.Id == experienceUpdateMessage.Id && n.UserId == this._userId);
             _mapper.Map(experienceUpdateMessage, experienceModel);
             await this._unitOfWork.SaveChangeAsync();
 
@@ -100,8 +100,7 @@ namespace Application.Services
         public async Task<bool> DeleteExperienceAsync(int experienceId)
         {
             // 找出該Exp
-            var userId = int.Parse(this._httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            var experienceModel = await this._unitOfWork.Experience.FirstOrDefaultAsync(e => e.Id == experienceId && e.UserId == userId);
+            var experienceModel = await this._unitOfWork.Experience.FirstOrDefaultAsync(e => e.Id == experienceId && e.UserId == this._userId);
 
             // 移除該Exp全部的Tag關聯
             var experience_TagModels = await this._unitOfWork.Experience_Tag.Where(n => n.ExperienceId == experienceId).ToListAsync();
@@ -119,8 +118,7 @@ namespace Application.Services
         /// <returns></returns>
         public async Task<bool> ExperienceExistsAsync(int experienceId)
         {
-            var userId = int.Parse(this._httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            return await this._unitOfWork.Experience.AnyAsync(e => e.Id == experienceId && e.UserId == userId);
+            return await this._unitOfWork.Experience.AnyAsync(e => e.Id == experienceId && e.UserId == this._userId);
         }
 
         /// <summary>
@@ -130,8 +128,7 @@ namespace Application.Services
         /// <returns></returns>
         public async Task<ExperienceResponse> GetExperienceByIdAsync(int experienceId)
         {
-            var userId = int.Parse(this._httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            var experienceModel = await this._unitOfWork.Experience.FirstOrDefaultAsync(e => e.Id == experienceId && e.UserId == userId);
+            var experienceModel = await this._unitOfWork.Experience.FirstOrDefaultAsync(e => e.Id == experienceId && e.UserId == this._userId);
             var tagModel = await this._tagService.GetExperienceTagsAsync(experienceId);
 
             var experienceResponse = _mapper.Map<ExperienceResponse>(experienceModel);
@@ -146,8 +143,7 @@ namespace Application.Services
         /// <returns></returns>
         public async Task<IEnumerable<ExperienceResponse>> GetExperiencesAsync()
         {
-            var userId = int.Parse(this._httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            var experienceModels = await _unitOfWork.Experience.Where(e => e.UserId == userId).ToListAsync();
+            var experienceModels = await _unitOfWork.Experience.Where(e => e.UserId == this._userId).ToListAsync();
             var experiencesResponse = _mapper.Map<List<ExperienceResponse>>(experienceModels);
             // TODO:可以將TagSerivce.GetExperienceTagsAsync改成傳入多筆資料
             var tagModel = await (from tag in _unitOfWork.Tag.GetAll()

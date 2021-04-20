@@ -18,6 +18,7 @@ namespace Application.Services
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly int _userId;
 
         public TagService(
             IHttpContextAccessor httpContextAccessor,
@@ -28,12 +29,12 @@ namespace Application.Services
             this._httpContextAccessor = httpContextAccessor;
             this._unitOfWork = unitOfWork;
             this._mapper = mapper;
+            this._userId = int.Parse(this._httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
         }
 
         public async Task<ICollection<TagResponse>> AddTagAsync(string[] tagNames)
         {
-            var userId = int.Parse(this._httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            var tagModels = tagNames.Select(tag => new Tag { Id = 0, Name = tag, UserId = userId }).ToList();
+            var tagModels = tagNames.Select(tag => new Tag { Id = 0, Name = tag, UserId = this._userId }).ToList();
             this._unitOfWork.Tag.AddRange(tagModels);
             await this._unitOfWork.SaveChangeAsync();
             var tagResponse = this._mapper.Map<ICollection<TagResponse>>(tagModels);
@@ -43,8 +44,7 @@ namespace Application.Services
         public async Task<bool> DeleteTagAsync(int tagId)
         {
             //找出該Tag
-            var userId = int.Parse(this._httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            var tagModel = await _unitOfWork.Tag.FirstOrDefaultAsync(t => t.Id == tagId && t.UserId == userId);
+            var tagModel = await _unitOfWork.Tag.FirstOrDefaultAsync(t => t.Id == tagId && t.UserId == this._userId);
 
             // 移除該Exp全部的Tag關聯
             var tag_ExperienceModels = await this._unitOfWork.Experience_Tag.Where(n => n.TagId == tagId).ToListAsync();
@@ -57,8 +57,7 @@ namespace Application.Services
 
         public async Task<ICollection<TagResponse>> GetExperienceTagsAsync(int experienceId)
         {
-            var userId = int.Parse(this._httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            var tagsResponse = await (from tag in _unitOfWork.Tag.Where(t => t.UserId == userId)
+            var tagsResponse = await (from tag in _unitOfWork.Tag.Where(t => t.UserId == this._userId)
                                       join combine in _unitOfWork.Experience_Tag.Where(t => t.ExperienceId == experienceId)
                                           on tag.Id equals combine.TagId
                                       select new TagResponse()
@@ -71,24 +70,21 @@ namespace Application.Services
 
         public async Task<TagResponse> GetTagByIdAsync(int tagId)
         {
-            var userId = int.Parse(this._httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            var tagModel = await _unitOfWork.Tag.FirstOrDefaultAsync(t => t.Id == tagId && t.UserId == userId);
+            var tagModel = await _unitOfWork.Tag.FirstOrDefaultAsync(t => t.Id == tagId && t.UserId == this._userId);
             var tagResponse = _mapper.Map<TagResponse>(tagModel);
             return tagResponse;
         }
 
         public async Task<ICollection<TagResponse>> GetTagsAsync()
         {
-            var userId = int.Parse(this._httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            var tagModel = await _unitOfWork.Tag.Where(t => t.UserId == userId).ToListAsync();
+            var tagModel = await _unitOfWork.Tag.Where(t => t.UserId == this._userId).ToListAsync();
             var tagResponse = _mapper.Map<ICollection<TagResponse>>(tagModel);
             return tagResponse;
         }
 
         public async Task<bool> TagExistsAsync(int tagId)
         {
-            var userId = int.Parse(this._httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            return await _unitOfWork.Tag.AnyAsync(t => t.Id == tagId && t.UserId == userId);
+            return await _unitOfWork.Tag.AnyAsync(t => t.Id == tagId && t.UserId == this._userId);
         }
 
         public async Task<ICollection<int>> TagsExistsAsync(int[] tagIds)
@@ -97,16 +93,14 @@ namespace Application.Services
             {
                 return new List<int> { };
             }
-            var userId = int.Parse(this._httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            var userTagsList = await _unitOfWork.Tag.Where(t => t.UserId == userId).Select(t => t.Id).ToListAsync();
+            var userTagsList = await _unitOfWork.Tag.Where(t => t.UserId == this._userId).Select(t => t.Id).ToListAsync();
             var tagNotExist = tagIds.Except(userTagsList).ToList();
             return tagNotExist;
         }
 
         public async Task<TagResponse> UpdateTagAsync(TagUpdateMessage updateTagMessage)
         {
-            var userId = int.Parse(this._httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            var tagModel = await _unitOfWork.Tag.SingleOrDefaultAsync(t => t.Id == updateTagMessage.Id && t.UserId == userId);
+            var tagModel = await _unitOfWork.Tag.SingleOrDefaultAsync(t => t.Id == updateTagMessage.Id && t.UserId == this._userId);
             this._mapper.Map(updateTagMessage, tagModel);
             await this._unitOfWork.SaveChangeAsync();
             var tagResponse = _mapper.Map<TagResponse>(tagModel);
