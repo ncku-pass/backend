@@ -24,4 +24,4 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 # ENTRYPOINT ["ASPNETCORE_URLS=http://*:$PORT","dotnet", "Api.dll","--environment=Development"]
-CMD ASPNETCORE_URLS=http://*:$PORT dotnet Api.dll
+CMD ASPNETCORE_URLS=http://*:$PORT dotnet Api.dll --environment=Development

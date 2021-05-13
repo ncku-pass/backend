@@ -65,6 +65,7 @@ namespace Api
             services.AddScoped<IAuthenticateService, AuthenticateService>();
             services.AddScoped<IExperienceService, ExperienceService>();
             services.AddScoped<ITagService, TagService>();
+            services.AddScoped<IPortfolioService, PortfolioService>();
 
             // Add Auto Mapper Configurations
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -73,6 +74,7 @@ namespace Api
                 mc.AddProfile(new ExperienceProfile());
                 mc.AddProfile(new TagProfile());
                 mc.AddProfile(new AuthenticationProfile());
+                mc.AddProfile(new PortfolioProfile());
             });
             IMapper mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
@@ -82,6 +84,7 @@ namespace Api
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
                 // add JWT Authentication
+                var test = Environment.GetEnvironmentVariable("DATABASE_URL");
                 var securityScheme = new OpenApiSecurityScheme
                 {
                     Name = "JWT Authentication",

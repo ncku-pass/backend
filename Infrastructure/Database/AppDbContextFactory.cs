@@ -12,11 +12,15 @@ namespace Infrastructure.Database
         {
             this._configuration = configuration;
         }
+        public AppDbContextFactory()
+        {
+
+        }
 
         public AppDbContext CreateDbContext(string[] args)
         {
             var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
-            optionsBuilder.UseMySql(this._configuration["DbContext:MySQLConnectionString"])
+            optionsBuilder.UseMySql("server=localhost; database=Test_Portfolio; uid=root; pwd=123456")
                             .UseSnakeCaseNamingConvention();
             return new AppDbContext(optionsBuilder.Options);
         }
