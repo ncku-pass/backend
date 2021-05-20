@@ -12,10 +12,12 @@ namespace Infrastructure.Models
         [Required]
         [MaxLength(30)]
         public string Name { get; set; }
+
         [ForeignKey("ResumeId")]
         public virtual Resume Resume { get; set; }
 
         public int ResumeId { get; set; }
+
         [ForeignKey("UserId")]
         public virtual User User { get; set; }
 

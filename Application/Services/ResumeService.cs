@@ -1,15 +1,15 @@
-﻿using Application.Dto.Responses;
+﻿using Application.Dto.Messages;
+using Application.Dto.Responses;
 using Application.Services.Interface;
 using AutoMapper;
 using Infrastructure.Infrastructure;
+using Infrastructure.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
-using System.Security.Claims;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
-using Infrastructure.Models;
-using Application.Dto.Messages;
 
 namespace Application.Services
 {
@@ -34,6 +34,7 @@ namespace Application.Services
             this._experienceService = experienceService;
             this._userId = int.Parse(this._httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
         }
+
         /// <summary>
         /// 取得全部履歷
         /// </summary>
@@ -57,12 +58,12 @@ namespace Application.Services
 
             foreach (var resume in resumeResponses)
             {
-
                 resume.Topics = topicResponses.Where(t => t.ResumeId == resume.Id).ToList();
             }
 
             return resumeResponses;
         }
+
         /// <summary>
         /// 依Id取得履歷
         /// </summary>
@@ -88,6 +89,7 @@ namespace Application.Services
 
             return resumeResponse;
         }
+
         /// <summary>
         /// 儲存履歷
         /// </summary>
@@ -108,7 +110,6 @@ namespace Application.Services
             }
             //this._unitOfWork.SaveChange();
             await this._unitOfWork.SaveChangeAsync();
-
 
             // 建立or更新資料庫的Topic
             var topicMediatorModels = (from topic in resumeSaveMessage.Topics

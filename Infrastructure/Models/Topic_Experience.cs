@@ -13,10 +13,10 @@ namespace Infrastructure.Models
         public virtual Topic Topic { get; set; }
 
         public int TopicId { get; set; }
+
         [ForeignKey("ExperienceId")]
         public virtual Experience Experience { get; set; }
 
         public int ExperienceId { get; set; }
-
     }
 }

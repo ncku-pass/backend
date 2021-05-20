@@ -21,7 +21,6 @@ namespace Api.Profiles
             CreateMap<ResumeSaveMessage, Resume>();
             CreateMap<TopicSaveParameter, TopicSaveMessage>();
             CreateMap<TopicSaveMessage, Topic>();
-
         }
     }
 }

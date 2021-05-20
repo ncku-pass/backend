@@ -12,9 +12,9 @@ namespace Infrastructure.Database
         {
             this._configuration = configuration;
         }
+
         public AppDbContextFactory()
         {
-
         }
 
         public AppDbContext CreateDbContext(string[] args)
