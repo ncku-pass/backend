@@ -12,6 +12,7 @@ namespace Application.Services.Interface
         Task<IEnumerable<ExperienceResponse>> GetExperiencesAsync();
 
         Task<bool> ExperienceExistsAsync(int experienceId);
+        Task<ICollection<int>> ExperiencesExistsAsync(int[] expIds);
 
         Task<ExperienceResponse> AddExperienceAsync(ExperienceCreateMessage experience);
 

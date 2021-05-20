@@ -13,10 +13,10 @@ namespace Infrastructure.Infrastructure
         public IBaseRepository<Experience> Experience { get; private set; }
         public IBaseRepository<Experience_Tag> Experience_Tag { get; private set; }
         public IBaseRepository<Tag> Tag { get; private set; }
-        public IBaseRepository<User> User { get; }
-        public IBaseRepository<Resume> Resume { get; }
-        public IBaseRepository<Topic> Topic { get; }
-        public IBaseRepository<Topic_Experience> Topic_Experience { get; }
+        public IBaseRepository<User> User { get; private set; }
+        public IBaseRepository<Resume> Resume { get; private set; }
+        public IBaseRepository<Topic> Topic { get; private set; }
+        public IBaseRepository<Topic_Experience> Topic_Experience { get; private set; }
 
         public UnitOfWork(
             AppDbContext context,

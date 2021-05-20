@@ -33,6 +33,10 @@ namespace Infrastructure.Infrastructure
             {
                 throw new ArgumentNullException("entity");
             }
+            foreach (var item in entities)
+            {
+                this._context.Entry(item).State = EntityState.Added;
+            }
             this._context.AddRange(entities);
         }
 
@@ -51,6 +55,10 @@ namespace Infrastructure.Infrastructure
             {
                 throw new ArgumentNullException("entity");
             }
+            foreach (var item in entities)
+            {
+                this._context.Entry(item).State = EntityState.Deleted;
+            }
             this._context.RemoveRange(entities);
         }
 
@@ -60,8 +68,20 @@ namespace Infrastructure.Infrastructure
             {
                 throw new ArgumentNullException("entity");
             }
-
             this._context.Entry(entity).State = EntityState.Modified;
+        }
+
+        public void UpdateRange(IEnumerable<TEntity> entities)
+        {
+            if (entities == null)
+            {
+                throw new ArgumentNullException("entity");
+            }
+            foreach (var item in entities)
+            {
+                this._context.Entry(item).State = EntityState.Modified;
+            }
+            this._context.UpdateRange(entities);
         }
 
         public bool Contains(Expression<Func<TEntity, bool>> predicate)

@@ -122,6 +122,22 @@ namespace Application.Services
         }
 
         /// <summary>
+        /// 依Id List查詢經歷是否存在
+        /// </summary>
+        /// <param name="expIds"></param>
+        /// <returns></returns>
+        public async Task<ICollection<int>> ExperiencesExistsAsync(int[] expIds)
+        {
+            if (expIds.Length <= 0)
+            {
+                return new List<int> { };
+            }
+            var userExpsList = await _unitOfWork.Experience.Where(t => t.UserId == this._userId).Select(t => t.Id).ToListAsync();
+            var expNotExist = expIds.Except(userExpsList).ToList();
+            return expNotExist;
+        }
+
+        /// <summary>
         /// 依Id查詢經歷
         /// </summary>
         /// <param name="experienceId">經歷Id</param>

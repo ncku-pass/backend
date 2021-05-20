@@ -1,4 +1,6 @@
-﻿using Api.RequestModel.ViewModels;
+﻿using Api.RequestModel.Parameters;
+using Api.RequestModel.ViewModels;
+using Application.Dto.Messages;
 using Application.Dto.Responses;
 using AutoMapper;
 using Infrastructure.Models;
@@ -14,6 +16,12 @@ namespace Api.Profiles
 
             CreateMap<Resume, ResumeResponse>();
             CreateMap<ResumeResponse, ResumeViewModel>();
+
+            CreateMap<PortfolioSaveParameter, PortfolioSaveMessage>();
+            CreateMap<PortfolioSaveMessage, Resume>();
+            CreateMap<TopicSaveParameter, TopicSaveMessage>();
+            CreateMap<TopicSaveMessage, Topic>();
+
         }
     }
 }

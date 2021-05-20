@@ -20,7 +20,7 @@ namespace Infrastructure.Database
         public AppDbContext CreateDbContext(string[] args)
         {
             var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
-            optionsBuilder.UseMySql("server=localhost; database=Test_Portfolio; uid=root; pwd=123456")
+            optionsBuilder.UseMySql("server=localhost; database=0521; uid=root; pwd=123456")
                             .UseSnakeCaseNamingConvention();
             return new AppDbContext(optionsBuilder.Options);
         }

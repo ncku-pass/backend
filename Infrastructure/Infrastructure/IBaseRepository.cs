@@ -14,6 +14,8 @@ namespace Infrastructure.Infrastructure
 
         void Update(TEntity entity);
 
+        void UpdateRange(IEnumerable<TEntity> entities);
+
         void Remove(TEntity entity);
 
         void RemoveRange(IEnumerable<TEntity> entities);

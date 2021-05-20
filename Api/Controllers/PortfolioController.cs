@@ -1,4 +1,6 @@
-﻿using Api.RequestModel.ViewModels;
+﻿using Api.RequestModel.Parameters;
+using Api.RequestModel.ViewModels;
+using Application.Dto.Messages;
 using Application.Services.Interface;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -13,7 +15,7 @@ namespace Api.Controllers
 {
     [Authorize]
     [Authorize(AuthenticationSchemes = "Bearer")]
-    [Route("api/[controller]")]
+    [Route("api/portfolios")]
     [ApiController]
     public class PortfolioController : ControllerBase
     {
@@ -35,7 +37,7 @@ namespace Api.Controllers
             this._tagService = tagService;
         }
 
-        /// get api/Portfolios
+        /// get api/portfolios
         /// <summary>
         /// 取得所有履歷
         /// </summary>
@@ -48,9 +50,47 @@ namespace Api.Controllers
             {
                 return this.NotFound("查無履歷");
             }
-            // TODO:此非ViewModel待轉換
-            //var resumeViewModel = this._mapper.Map<List<ResumeViewModel>>(resumeResponse);
+            var resumeViewModel = this._mapper.Map<List<ResumeViewModel>>(resumeResponse);
             return this.Ok(resumeResponse);
+        }
+
+        // post api/portfolios/{id}/save
+        /// <summary>
+        /// 儲存履歷
+        /// </summary>
+        /// <param name="resumeId"></param>
+        /// <param name="portfolioSaveParameter"></param>
+        /// <returns></returns>
+        [HttpPost("{resumeId}/Save")]
+        public async Task<IActionResult> SaveResumes(
+            [FromRoute] int resumeId,
+            [FromBody] PortfolioSaveParameter portfolioSaveParameter
+            )
+        {
+            var expNotExist = await this._experienceService.ExperiencesExistsAsync(PickExpInTopic(portfolioSaveParameter));
+
+            if (expNotExist.Count() > 0)
+            {
+                string expStr = "";
+                expNotExist.ToList().ForEach(i => expStr += i + ",");
+                return this.NotFound($"查無此exps=>{expStr}");
+            }
+
+            var portfolioSaveMessage = _mapper.Map<PortfolioSaveMessage>(portfolioSaveParameter);
+            portfolioSaveMessage.Id = resumeId;
+            var portfolioResponse = await this._portfolioService.SaveResumesAsync(portfolioSaveMessage);
+
+            return this.Ok(portfolioResponse);
+        }
+
+        int[] PickExpInTopic(PortfolioSaveParameter portfolioSaveParameter)
+        {
+            List<int> expIds = new List<int>();
+            foreach (var topic in portfolioSaveParameter.Topics)
+            {
+                expIds.AddRange(topic.ExperienceId);
+            }
+            return expIds.Distinct().ToArray();
         }
     }
 }
