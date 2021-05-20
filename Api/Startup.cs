@@ -65,7 +65,7 @@ namespace Api
             services.AddScoped<IAuthenticateService, AuthenticateService>();
             services.AddScoped<IExperienceService, ExperienceService>();
             services.AddScoped<ITagService, TagService>();
-            services.AddScoped<IPortfolioService, PortfolioService>();
+            services.AddScoped<IResumeService, ResumeService>();
 
             // Add Auto Mapper Configurations
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -74,7 +74,7 @@ namespace Api
                 mc.AddProfile(new ExperienceProfile());
                 mc.AddProfile(new TagProfile());
                 mc.AddProfile(new AuthenticationProfile());
-                mc.AddProfile(new PortfolioProfile());
+                mc.AddProfile(new ResumeProfile());
             });
             IMapper mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);

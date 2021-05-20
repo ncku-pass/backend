@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Application.Services.Interface
 {
-    public interface IPortfolioService
+    public interface IResumeService
     {
         Task<ICollection<ResumeResponse>> GetResumesAsync();
-        Task<ResumeResponse> SaveResumesAsync(PortfolioSaveMessage portfolioSaveMessage);
+        Task<ResumeResponse> SaveResumesAsync(ResumeSaveMessage resumeSaveMessage);
     }
 }

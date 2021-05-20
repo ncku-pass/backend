@@ -15,29 +15,29 @@ namespace Api.Controllers
 {
     [Authorize]
     [Authorize(AuthenticationSchemes = "Bearer")]
-    [Route("api/portfolios")]
+    [Route("api/resumes")]
     [ApiController]
-    public class PortfolioController : ControllerBase
+    public class ResumeController : ControllerBase
     {
         private readonly IExperienceService _experienceService;
-        private readonly IPortfolioService _portfolioService;
+        private readonly IResumeService _resumeService;
         private readonly IMapper _mapper;
         private readonly ITagService _tagService;
 
-        public PortfolioController(
+        public ResumeController(
             IExperienceService experienceRepository,
-            IPortfolioService portfolioService,
+            IResumeService resumeService,
             IMapper mapper,
             ITagService tagService
             )
         {
             this._experienceService = experienceRepository;
-            this._portfolioService = portfolioService;
+            this._resumeService = resumeService;
             this._mapper = mapper;
             this._tagService = tagService;
         }
 
-        /// get api/portfolios
+        /// get api/resumes
         /// <summary>
         /// 取得所有履歷
         /// </summary>
@@ -45,7 +45,7 @@ namespace Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetResumes()
         {
-            var resumeResponse = await _portfolioService.GetResumesAsync();
+            var resumeResponse = await _resumeService.GetResumesAsync();
             if (resumeResponse == null)
             {
                 return this.NotFound("查無履歷");
@@ -54,20 +54,20 @@ namespace Api.Controllers
             return this.Ok(resumeResponse);
         }
 
-        // post api/portfolios/{id}/save
+        // post api/resumes/{id}/save
         /// <summary>
         /// 儲存履歷
         /// </summary>
         /// <param name="resumeId"></param>
-        /// <param name="portfolioSaveParameter"></param>
+        /// <param name="resumeSaveParameter"></param>
         /// <returns></returns>
         [HttpPost("{resumeId}/Save")]
         public async Task<IActionResult> SaveResumes(
             [FromRoute] int resumeId,
-            [FromBody] PortfolioSaveParameter portfolioSaveParameter
+            [FromBody] ResumeSaveParameter resumeSaveParameter
             )
         {
-            var expNotExist = await this._experienceService.ExperiencesExistsAsync(PickExpInTopic(portfolioSaveParameter));
+            var expNotExist = await this._experienceService.ExperiencesExistsAsync(PickExpInTopic(resumeSaveParameter));
 
             if (expNotExist.Count() > 0)
             {
@@ -76,17 +76,17 @@ namespace Api.Controllers
                 return this.NotFound($"查無此exps=>{expStr}");
             }
 
-            var portfolioSaveMessage = _mapper.Map<PortfolioSaveMessage>(portfolioSaveParameter);
-            portfolioSaveMessage.Id = resumeId;
-            var portfolioResponse = await this._portfolioService.SaveResumesAsync(portfolioSaveMessage);
+            var resumeSaveMessage = _mapper.Map<ResumeSaveMessage>(resumeSaveParameter);
+            resumeSaveMessage.Id = resumeId;
+            var resueResponse = await this._resumeService.SaveResumesAsync(resumeSaveMessage);
 
-            return this.Ok(portfolioResponse);
+            return this.Ok(resueResponse);
         }
 
-        int[] PickExpInTopic(PortfolioSaveParameter portfolioSaveParameter)
+        int[] PickExpInTopic(ResumeSaveParameter resumeSaveParameter)
         {
             List<int> expIds = new List<int>();
-            foreach (var topic in portfolioSaveParameter.Topics)
+            foreach (var topic in resumeSaveParameter.Topics)
             {
                 expIds.AddRange(topic.ExperienceId);
             }

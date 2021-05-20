@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Application.Dto.Messages
 {
-    public class PortfolioSaveMessage
+    public class ResumeSaveMessage
     {
         public int Id { get; set; }
         public string Name { get; set; }

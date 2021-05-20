@@ -13,7 +13,7 @@ using Application.Dto.Messages;
 
 namespace Application.Services
 {
-    public class PortfolioService : IPortfolioService
+    public class ResumeService : IResumeService
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IUnitOfWork _unitOfWork;
@@ -21,7 +21,7 @@ namespace Application.Services
         private readonly IExperienceService _experienceService;
         private readonly int _userId;
 
-        public PortfolioService(
+        public ResumeService(
             IHttpContextAccessor httpContextAccessor,
             IUnitOfWork unitOfWork,
             IMapper mapper,
@@ -34,7 +34,10 @@ namespace Application.Services
             this._experienceService = experienceService;
             this._userId = int.Parse(this._httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
         }
-
+        /// <summary>
+        /// 取得全部履歷
+        /// </summary>
+        /// <returns></returns>
         public async Task<ICollection<ResumeResponse>> GetResumesAsync()
         {
             var resumeModels = await _unitOfWork.Resume.Where(e => e.UserId == this._userId).ToListAsync();
@@ -60,7 +63,11 @@ namespace Application.Services
 
             return resumeResponses;
         }
-
+        /// <summary>
+        /// 依Id取得履歷
+        /// </summary>
+        /// <param name="resumeId"></param>
+        /// <returns></returns>
         public async Task<ResumeResponse> GetResumeByIdAsync(int resumeId)
         {
             var resumeModel = await _unitOfWork.Resume.SingleOrDefaultAsync(e => e.UserId == this._userId && e.Id == resumeId);
@@ -81,11 +88,15 @@ namespace Application.Services
 
             return resumeResponse;
         }
-
-        public async Task<ResumeResponse> SaveResumesAsync(PortfolioSaveMessage portfolioSaveMessage)
+        /// <summary>
+        /// 儲存履歷
+        /// </summary>
+        /// <param name="resumeSaveMessage"></param>
+        /// <returns></returns>
+        public async Task<ResumeResponse> SaveResumesAsync(ResumeSaveMessage resumeSaveMessage)
         {
             // 建立or更新資料庫的Resume
-            var resumeModel = _mapper.Map<Resume>(portfolioSaveMessage);
+            var resumeModel = _mapper.Map<Resume>(resumeSaveMessage);
             resumeModel.UserId = this._userId;
             if (resumeModel.Id == 0)//// 新Resume
             {
@@ -100,7 +111,7 @@ namespace Application.Services
 
 
             // 建立or更新資料庫的Topic
-            var topicMediatorModels = (from topic in portfolioSaveMessage.Topics
+            var topicMediatorModels = (from topic in resumeSaveMessage.Topics
                                        select new
                                        {
                                            Topic = new Topic { Id = topic.Id, Name = topic.Name, ResumeId = resumeModel.Id, UserId = this._userId },

@@ -7,9 +7,9 @@ using Infrastructure.Models;
 
 namespace Api.Profiles
 {
-    public class PortfolioProfile : Profile
+    public class ResumeProfile : Profile
     {
-        public PortfolioProfile()
+        public ResumeProfile()
         {
             CreateMap<Topic, TopicResponse>();
             CreateMap<TopicResponse, TopicViewModel>();
@@ -17,8 +17,8 @@ namespace Api.Profiles
             CreateMap<Resume, ResumeResponse>();
             CreateMap<ResumeResponse, ResumeViewModel>();
 
-            CreateMap<PortfolioSaveParameter, PortfolioSaveMessage>();
-            CreateMap<PortfolioSaveMessage, Resume>();
+            CreateMap<ResumeSaveParameter, ResumeSaveMessage>();
+            CreateMap<ResumeSaveMessage, Resume>();
             CreateMap<TopicSaveParameter, TopicSaveMessage>();
             CreateMap<TopicSaveMessage, Topic>();
 
