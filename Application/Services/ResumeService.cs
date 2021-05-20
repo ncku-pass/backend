@@ -160,5 +160,66 @@ namespace Application.Services
 
             return _ = await GetResumeByIdAsync(resumeModel.Id);
         }
+
+        /// <summary>
+        /// 依Id查詢履歷是否存在
+        /// </summary>
+        /// <param name="resumeId"></param>
+        /// <returns></returns>
+        public async Task<bool> ResumeExistsAsync(int resumeId)
+        {
+            return await this._unitOfWork.Resume.AnyAsync(e => e.UserId == this._userId && e.Id == resumeId);
+        }
+
+        /// <summary>
+        /// 移除Resume
+        /// </summary>
+        /// <param name="resumeId"></param>
+        /// <returns></returns>
+        public async Task<bool> DeleteResumeAsync(int resumeId)
+        {
+            var resumeModel = await this._unitOfWork.Resume.SingleOrDefaultAsync(t => t.Id == resumeId && t.UserId == this._userId);
+            var topicModels = await this._unitOfWork.Topic.Where(t => t.UserId == this._userId && t.ResumeId == resumeId).ToListAsync();
+
+            // 移除該Resume全部的Topic以及其topic_exp關聯
+            foreach (var item in topicModels)
+            {
+                await this.DeleteTopicAsync(resumeId, item.Id);
+            }
+
+            // 移除Exp
+            this._unitOfWork.Resume.Remove(resumeModel);
+            return await this._unitOfWork.SaveChangeAsync();
+        }
+
+        /// <summary>
+        /// 移除Topic
+        /// </summary>
+        /// <param name="resumeId"></param>
+        /// <param name="topicId"></param>
+        /// <returns></returns>
+        public async Task<bool> DeleteTopicAsync(int resumeId, int topicId)
+        {
+            var topicModel = await this._unitOfWork.Topic.SingleOrDefaultAsync(t => t.Id == topicId && t.UserId == this._userId && t.ResumeId == resumeId);
+
+            // 移除該Exp全部的Tag關聯
+            var topic_ExpModels = await this._unitOfWork.Topic_Experience.Where(n => n.TopicId == topicId).ToListAsync();
+            this._unitOfWork.Topic_Experience.RemoveRange(topic_ExpModels);
+
+            // 移除Exp
+            this._unitOfWork.Topic.Remove(topicModel);
+            return await this._unitOfWork.SaveChangeAsync();
+        }
+
+        /// <summary>
+        /// 依Id查詢主題是否存在
+        /// </summary>
+        /// <param name="resumeId"></param>
+        /// <param name="topicId"></param>
+        /// <returns></returns>
+        public async Task<bool> TopicExistsAsync(int resumeId, int topicId)
+        {
+            return await this._unitOfWork.Topic.AnyAsync(e => e.UserId == this._userId && e.Id == topicId && e.ResumeId == resumeId);
+        }
     }
 }
