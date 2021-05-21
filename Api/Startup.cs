@@ -112,12 +112,10 @@ namespace Api
                     {
                         ValidateIssuer = true,
                         ValidIssuer = _configuration["Authentication:Issuer"],
-
                         ValidateAudience = true,
                         ValidAudience = _configuration["Authentication:Audience"],
-
                         ValidateLifetime = true,
-
+                        ClockSkew = TimeSpan.Zero,
                         IssuerSigningKey = new SymmetricSecurityKey(secretByte)
                     };
                     options.Events = new JwtBearerEvents

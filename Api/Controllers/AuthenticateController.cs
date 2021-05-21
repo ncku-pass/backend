@@ -39,7 +39,7 @@ namespace Api.Controllers
 
         [AllowAnonymous]
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] AuthenticateRegisterParameter registerParameter)
+        public async Task<IActionResult> RegisterAsync([FromBody] AuthenticateRegisterParameter registerParameter)
         {
             var registerMessage = this._mapper.Map<AuthenticateRegisterMessage>(registerParameter);
             var registerResponse = await this._authenticateService.Register(registerMessage);
@@ -47,6 +47,14 @@ namespace Api.Controllers
             {
                 return this.BadRequest();
             }
+            return this.Ok();
+        }
+
+        [Authorize]
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        [HttpPost("check-token")]
+        public IActionResult CheckToken()
+        {
             return this.Ok();
         }
     }
