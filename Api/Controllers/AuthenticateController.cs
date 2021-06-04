@@ -45,9 +45,16 @@ namespace Api.Controllers
             var registerResponse = await this._authenticateService.Register(registerMessage);
             if (!registerResponse.Succeeded)
             {
-                return this.BadRequest();
+                return this.BadRequest(registerResponse);
             }
-            return this.Ok();
+
+            var loginMessage = this._mapper.Map<AuthenticateLoginMessage>(registerParameter);
+            var loginResponse = await this._authenticateService.Login(loginMessage);
+            if (!loginResponse.Succeeded)
+            {
+                return this.BadRequest("Login Fail");
+            }
+            return this.Ok(loginResponse);
         }
 
         [Authorize]

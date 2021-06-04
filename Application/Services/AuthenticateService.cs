@@ -13,6 +13,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace Application.Services
 {
@@ -106,7 +107,8 @@ namespace Application.Services
             var result = await _userManager.CreateAsync(user, registerParameter.Password);
             if (!result.Succeeded)
             {
-                return new AuthenticateRegisterResponse() { Succeeded = false };
+                var errorMessage = result.Errors.Select(e => e.Code + ": " + e.Description).ToList();
+                return new AuthenticateRegisterResponse() { Succeeded = false, ErrorMessage = errorMessage };
             }
 
             // 3 在UserTable保存用戶 return

@@ -10,7 +10,9 @@ namespace Api.Profiles
         public AuthenticationProfile()
         {
             CreateMap<AuthenticateLoginParameter, AuthenticateLoginMessage>();
+
             CreateMap<AuthenticateRegisterParameter, AuthenticateRegisterMessage>();
+            CreateMap<AuthenticateRegisterParameter, AuthenticateLoginMessage>();
             CreateMap<AuthenticateRegisterMessage, User>();
         }
     }
