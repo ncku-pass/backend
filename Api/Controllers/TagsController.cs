@@ -36,7 +36,7 @@ namespace Api.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> GetTags()
+        public async Task<IActionResult> GetTagsAsync()
         {
             var tagResponse = await _tagService.GetTagsAsync();
             if (tagResponse == null)
@@ -54,7 +54,7 @@ namespace Api.Controllers
         /// <param name="tagId">標籤Id</param>
         /// <returns></returns>
         [HttpGet("{tagId}", Name = "GetTagById")]
-        public async Task<IActionResult> GetTagById([FromRoute] int tagId)
+        public async Task<IActionResult> GetTagByIdAsync([FromRoute] int tagId)
         {
             if (!await _tagService.TagExistsAsync(tagId))
             {
@@ -71,7 +71,7 @@ namespace Api.Controllers
         /// <param name="tagNames">標籤名稱集合</param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> CreateTags([FromBody] string[] tagNames)
+        public async Task<IActionResult> CreateTagsAsync([FromBody] string[] tagNames)
         {
             if (tagNames.Length <= 0)
             {
@@ -89,7 +89,7 @@ namespace Api.Controllers
         /// <param name="tagName">新標籤名稱</param>
         /// <returns></returns>
         [HttpPut("{tagId}")]
-        public async Task<IActionResult> UpdateTags(
+        public async Task<IActionResult> UpdateTagsAsync(
             [FromRoute] int tagId,
             [FromBody] string tagName
             )
@@ -108,12 +108,12 @@ namespace Api.Controllers
         }
 
         /// <summary>
-        /// 刪除經歷
+        /// 刪除標籤
         /// </summary>
         /// <param name="tagId">指定刪除標籤Id</param>
         /// <returns></returns>
         [HttpDelete("{tagId}")]
-        public async Task<IActionResult> DeleteExperience([FromRoute] int tagId)
+        public async Task<IActionResult> DeleteTagAsync([FromRoute] int tagId)
         {
             if (!await _tagService.TagExistsAsync(tagId))
             {
@@ -121,6 +121,14 @@ namespace Api.Controllers
             }
             var experienceResponse = await _tagService.DeleteTagAsync(tagId);
             return this.NoContent();
+        }
+
+        //搜尋標籤
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchTagAsync([FromQuery] string name)
+        {
+            var experienceResponse = await _tagService.SearchTagAsync(name);
+            return this.Ok(experienceResponse);
         }
     }
 }

@@ -82,6 +82,8 @@ namespace Application.Services
             return tagResponse;
         }
 
+
+
         public async Task<bool> TagExistsAsync(int tagId)
         {
             return await _unitOfWork.Tag.AnyAsync(t => t.Id == tagId && t.UserId == this._userId);
@@ -105,6 +107,34 @@ namespace Application.Services
             await this._unitOfWork.SaveChangeAsync();
             var tagResponse = _mapper.Map<TagResponse>(tagModel);
             return tagResponse;
+        }
+
+        public async Task<List<TagSearchResponse>> SearchTagAsync(string keyword)
+        {
+            // 撈出含有關鍵字的Tag
+            var tagModels = await _unitOfWork.Tag.Where(t => t.Name.Contains(keyword)).ToListAsync();
+
+            // 整理格式成TagSearchResponse
+            var tagSearchResponse = new List<TagSearchResponse>();
+            foreach (var tag in tagModels)
+            {
+                tagSearchResponse.Add(new TagSearchResponse
+                {
+                    Id = tag.UserId == this._userId ? tag.Id : 0, // 是自己的Tag保留Id，否則設為0
+                    Name = tag.Name,
+                    Count = await this._unitOfWork.Experience_Tag.CountAsync(et => et.TagId == tag.Id)
+                });
+            }
+
+            // GroupBy TagName並加總Id和count
+            tagSearchResponse = tagSearchResponse.GroupBy(x => x.Name, (name, tag) => new TagSearchResponse
+            {
+                Id = tag.Sum(t => t.Id), // 加總Id，若不是自己的則加總為0
+                Name = name,
+                Count = tag.Sum(t => t.Count)
+            }).OrderBy(t => t.Count).ToList();
+
+            return tagSearchResponse;
         }
     }
 }

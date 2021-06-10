@@ -104,6 +104,11 @@ namespace Infrastructure.Infrastructure
             return this._context.Set<TEntity>().Where(predicate);
         }
 
+        public int Count(Expression<Func<TEntity, bool>> predicate)
+        {
+            return this._context.Set<TEntity>().Where(predicate).Count();
+        }
+
         public async Task<int> CountAsync(Expression<Func<TEntity, bool>> predicate)
         {
             return await this._context.Set<TEntity>().Where(predicate).CountAsync();
