@@ -1,4 +1,5 @@
 ﻿using Infrastructure.Models.Enums;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -19,10 +20,10 @@ namespace Infrastructure.Models
         public string Position { get; set; }
 
         [Required]
-        [MaxLength(100)]
+        [MaxLength(250)]
         public string Description { get; set; }
 
-        [MaxLength(150)]
+        [MaxLength(250)]
         public string Feedback { get; set; }
 
         [Required]
@@ -30,9 +31,19 @@ namespace Infrastructure.Models
         public string Semester { get; set; }
 
         [Url]
+        [Column(TypeName = "Text")]
         public string Link { get; set; }
 
         public ExperienceType ExperienceType { get; set; }
+
+        [Required]
+        [Column(TypeName = "Date")]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        public DateTime DateStart { get; set; }
+
+        [Column(TypeName = "Date")]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        public DateTime? DateEnd { get; set; }
 
         [ForeignKey("UserId")]
         public virtual User User { get; set; }
