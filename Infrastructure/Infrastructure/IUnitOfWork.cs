@@ -11,8 +11,8 @@ namespace Infrastructure.Infrastructure
         IBaseRepository<Tag> Tag { get; }
         IBaseRepository<User> User { get; }
         IBaseRepository<Resume> Resume { get; }
-        IBaseRepository<Topic> Topic { get; }
-        IBaseRepository<Topic_Experience> Topic_Experience { get; }
+        IBaseRepository<Card> Card { get; }
+        IBaseRepository<Card_Experience> Card_Experience { get; }
 
         /// <summary>
         /// Saves the change.

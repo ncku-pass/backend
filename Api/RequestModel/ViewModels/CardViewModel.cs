@@ -2,10 +2,11 @@
 
 namespace Api.RequestModel.ViewModels
 {
-    public class TopicViewModel
+    public class CardViewModel
     {
+        public string Type { get; set; }
         public int Id { get; set; }
         public string Name { get; set; }
-        public ICollection<ExperienceViewModel> Experiences { get; set; }
+        public List<ExpInCardViewModel> Experiences { get; set; }
     }
 }

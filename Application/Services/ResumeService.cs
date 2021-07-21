@@ -42,27 +42,39 @@ namespace Application.Services
         public async Task<ICollection<ResumeResponse>> GetResumesAsync()
         {
             var resumeModels = await _unitOfWork.Resume.Where(e => e.UserId == this._userId).ToListAsync();
-            var topicModels = await this._unitOfWork.Topic.Where(e => e.UserId == this._userId).ToListAsync();
-            var topicIds = topicModels.Select(t => t.Id).ToList();
-            var top_ExpModels = await _unitOfWork.Topic_Experience.Where(te => topicIds.Contains(te.TopicId)).ToListAsync();
+            var cardModels = await this._unitOfWork.Card.Where(e => e.UserId == this._userId).ToListAsync();
+            var cardIds = cardModels.Select(t => t.Id).ToList();
+            var card_ExpModels = await _unitOfWork.Card_Experience.Where(ce => cardIds.Contains(ce.CardId)).ToListAsync();
+            var expModels = await _unitOfWork.Experience.Where(e => e.UserId == this._userId).ToListAsync();
 
             var resumeResponses = _mapper.Map<List<ResumeResponse>>(resumeModels);
-            var topicResponses = _mapper.Map<List<TopicResponse>>(topicModels);
-            var allExpResponses = await this._experienceService.GetExperiencesAsync();
+            var cardResponses = _mapper.Map<List<CardResponse>>(cardModels);
 
-            foreach (var item in topicResponses)
+            // 填入每張card的expInCard
+            foreach (var card in cardResponses)
             {
-                var expIds = top_ExpModels.Where(te => te.TopicId == item.Id).Select(te => te.ExperienceId).ToList();
-                item.Experiences = allExpResponses.Where(e => expIds.Contains(e.Id)).ToList();
+                var expInCardList = new List<ExpInCardResponse>() { };
+                var card_expModels = card_ExpModels.Where(ce => ce.CardId == card.Id).ToList();
+                foreach (var card_exp in card_expModels)
+                {
+                    var expInCardResponse = new ExpInCardResponse() { };
+                    var expModel = expModels.SingleOrDefault(e => e.Id == card_exp.ExperienceId);
+                    this._mapper.Map(card_exp, expInCardResponse);
+                    this._mapper.Map(expModel, expInCardResponse);
+                    expInCardList.Add(expInCardResponse);
+                }
+                card.Experiences = expInCardList;
             }
 
             foreach (var resume in resumeResponses)
             {
-                resume.Topics = topicResponses.Where(t => t.ResumeId == resume.Id).ToList();
+                resume.Cards = cardResponses.Where(c => c.ResumeId == resume.Id).OrderBy(c => c.Order).ToList();
             }
 
             return resumeResponses;
         }
+
+
 
         /// <summary>
         /// 依Id取得履歷
@@ -72,31 +84,45 @@ namespace Application.Services
         public async Task<ResumeResponse> GetResumeByIdAsync(int resumeId)
         {
             var resumeModel = await _unitOfWork.Resume.SingleOrDefaultAsync(e => e.UserId == this._userId && e.Id == resumeId);
-            var topicModels = await this._unitOfWork.Topic.Where(e => e.ResumeId == resumeId).ToListAsync();
-            var topicIds = topicModels.Select(t => t.Id).ToList();
-            var top_ExpModels = await _unitOfWork.Topic_Experience.Where(te => topicIds.Contains(te.TopicId)).ToListAsync();
+            var cardModels = await this._unitOfWork.Card.Where(e => e.ResumeId == resumeId).ToListAsync();
+            var cardIds = cardModels.Select(t => t.Id).ToList();
+            var card_ExpModels = await _unitOfWork.Card_Experience.Where(te => cardIds.Contains(te.CardId)).ToListAsync();
+            var expModels = await _unitOfWork.Experience.Where(e => e.UserId == this._userId).ToListAsync();
 
             var resumeResponse = _mapper.Map<ResumeResponse>(resumeModel);
-            var topicResponses = _mapper.Map<List<TopicResponse>>(topicModels);
-            var allExpResponses = await this._experienceService.GetExperiencesAsync();
+            var cardResponses = _mapper.Map<List<CardResponse>>(cardModels);
 
-            foreach (var topic in topicResponses)
+            foreach (var card in cardResponses)
             {
-                var expIds = top_ExpModels.Where(te => te.TopicId == topic.Id).Select(te => te.ExperienceId).ToList();
-                topic.Experiences = allExpResponses.Where(e => expIds.Contains(e.Id)).ToList();
+                var expInCardList = new List<ExpInCardResponse>() { };
+                var card_expModels = card_ExpModels.Where(te => te.CardId == card.Id).ToList();
+                foreach (var card_exp in card_expModels)
+                {
+                    var expInCardResponse = new ExpInCardResponse() { };
+                    var expModel = expModels.SingleOrDefault(e => e.Id == card_exp.ExperienceId);
+                    this._mapper.Map(card_exp, expInCardResponse);
+                    this._mapper.Map(expModel, expInCardResponse);
+                    expInCardList.Add(expInCardResponse);
+                }
+                card.Experiences = expInCardList;
             }
-            resumeResponse.Topics = topicResponses;
+            resumeResponse.Cards = cardResponses;
 
             return resumeResponse;
         }
+
+
 
         /// <summary>
         /// 儲存履歷
         /// </summary>
         /// <param name="resumeSaveMessage"></param>
         /// <returns></returns>
-        public async Task<ResumeResponse> SaveResumesAsync(ResumeSaveMessage resumeSaveMessage)
+        public async Task<ResumeResponse> SaveResumeAsync(ResumeSaveMessage resumeSaveMessage)
         {
+            // 依Card排序賦值Order
+            resumeSaveMessage.InitCardOrder();
+
             // 建立or更新資料庫的Resume
             var resumeModel = _mapper.Map<Resume>(resumeSaveMessage);
             resumeModel.UserId = this._userId;
@@ -111,51 +137,98 @@ namespace Application.Services
             //this._unitOfWork.SaveChange();
             await this._unitOfWork.SaveChangeAsync();
 
-            // 建立or更新資料庫的Topic
-            var topicMediatorModels = (from topic in resumeSaveMessage.Topics
-                                       select new
-                                       {
-                                           Topic = new Topic { Id = topic.Id, Name = topic.Name, ResumeId = resumeModel.Id, UserId = this._userId },
-                                           ExperienceId = topic.ExperienceId
-                                       }).ToList();
-            foreach (var item in topicMediatorModels)
+            // 建立or更新資料庫的Card
+            var cardModelList = new List<Card>();
+            foreach (var card in resumeSaveMessage.Cards)
             {
-                if (item.Topic.Id == 0)
+                var cardModel = this._mapper.Map<Card>(card);
+                cardModel.UserId = this._userId;
+                cardModel.ResumeId = resumeModel.Id;
+                if (cardModel.Id == 0)
                 {
-                    this._unitOfWork.Topic.Add(item.Topic);
+                    this._unitOfWork.Card.Add(cardModel);
                 }
                 else
                 {
-                    this._unitOfWork.Topic.Update(item.Topic);
+                    this._unitOfWork.Card.Update(cardModel);
                 }
+                cardModelList.Add(cardModel);
             }
-            //this._unitOfWork.SaveChange();
             await this._unitOfWork.SaveChangeAsync();
 
-            // 建立or刪除資料庫的Topic_Exp關聯
-            foreach (var item in topicMediatorModels)
+            // 從剛剛儲存的Model映射CardId到Message
+            using (var message = resumeSaveMessage.Cards.GetEnumerator())
+            using (var model = cardModelList.GetEnumerator())
             {
-                // 建立待新增/刪除Exp清單
-                List<Topic_Experience> currentTop_ExpModels = new List<Topic_Experience> { };
-                List<int> currentExpIds = new List<int> { },
-                          addTop_ExpIds = new List<int> { },
-                          dropTop_ExpIds = new List<int> { }; ;
-                if (await this._unitOfWork.Topic_Experience.AnyAsync(te => te.TopicId == item.Topic.Id))
+                while (message.MoveNext() && model.MoveNext())
                 {
-                    currentTop_ExpModels = await this._unitOfWork.Topic_Experience.Where(te => te.TopicId == item.Topic.Id).ToListAsync();
-                    currentExpIds = currentTop_ExpModels.Select(te => te.ExperienceId).ToList();
+                    message.Current.Id = model.Current.Id;
                 }
-                addTop_ExpIds = item.ExperienceId.Except(currentExpIds).ToList();
-                dropTop_ExpIds = currentExpIds.Where(e => !item.ExperienceId.Contains(e)).ToList();
+            }
 
-                // 加入新增的Exp關聯
-                var addTop_ExpModels = addTop_ExpIds.Select(eId => new Topic_Experience { TopicId = item.Topic.Id, ExperienceId = eId }).ToList();
-                this._unitOfWork.Topic_Experience.AddRange(addTop_ExpModels);
 
-                // 刪除被移除的Exp關聯
-                var dropTop_ExpModels = currentTop_ExpModels.Where(te => dropTop_ExpIds.Contains(te.ExperienceId)).ToList();
-                this._unitOfWork.Topic_Experience.RemoveRange(dropTop_ExpModels);
-                await this._unitOfWork.SaveChangeAsync();
+            // 新增&更新Card_Exp關聯
+            foreach (var card in resumeSaveMessage.Cards)
+            {
+                if (card.Type == "text")
+                {
+                    continue;
+                }
+
+                // 用字典存入現有的card_exp：Key放ExpId，Value放model
+                Dictionary<int, Card_Experience> card_ExpDictionary = new Dictionary<int, Card_Experience>();
+                foreach (var card_exp in await this._unitOfWork.Card_Experience.Where(te => te.CardId == card.Id).ToListAsync())
+                {
+                    card_ExpDictionary.Add(card_exp.ExperienceId, card_exp);
+                }
+
+                foreach (var card_exp in card.Experiences)
+                {
+                    // 從字典檢查是否是現有card_exp
+                    if (card_ExpDictionary.ContainsKey(card_exp.Id))
+                    {
+                        var card_expModel = card_ExpDictionary[card_exp.Id];
+                        card_expModel.ShowFeedback = card_exp.ShowFeedback;
+                        card_expModel.ShowPosition = card_exp.ShowPosition;
+                        this._unitOfWork.Card_Experience.Update(card_expModel);
+                    }
+                    else
+                    {
+                        var card_expModel = new Card_Experience()
+                        {
+                            CardId = card.Id,
+                            ExperienceId = card_exp.Id,
+                            ShowFeedback = card_exp.ShowFeedback,
+                            ShowPosition = card_exp.ShowPosition
+                        };
+                        this._unitOfWork.Card_Experience.Add(card_expModel);
+                    }
+                }
+            }
+            await this._unitOfWork.SaveChangeAsync();
+
+            // 刪除指定Card_Exp關聯
+            foreach (var card in resumeSaveMessage.Cards)
+            {
+                if (card.Type == "text")
+                {
+                    continue;
+                }
+                var currentCard_ExpModels = await this._unitOfWork.Card_Experience.Where(te => te.CardId == card.Id).ToListAsync();
+                foreach (var card_exp in currentCard_ExpModels)
+                {
+                    if (card.DeleteExpIds.Contains(card_exp.ExperienceId))
+                    {
+                        this._unitOfWork.Card_Experience.Remove(card_exp);
+                    }
+                }
+            }
+            await this._unitOfWork.SaveChangeAsync();
+
+            // 刪除Card
+            foreach (var card in resumeSaveMessage.DeleteCards)
+            {
+                await this.DeleteCardAsync(resumeSaveMessage.Id, card.Id);
             }
 
             return _ = await GetResumeByIdAsync(resumeModel.Id);
@@ -179,12 +252,12 @@ namespace Application.Services
         public async Task<bool> DeleteResumeAsync(int resumeId)
         {
             var resumeModel = await this._unitOfWork.Resume.SingleOrDefaultAsync(t => t.Id == resumeId && t.UserId == this._userId);
-            var topicModels = await this._unitOfWork.Topic.Where(t => t.UserId == this._userId && t.ResumeId == resumeId).ToListAsync();
+            var cardModels = await this._unitOfWork.Card.Where(t => t.UserId == this._userId && t.ResumeId == resumeId).ToListAsync();
 
-            // 移除該Resume全部的Topic以及其topic_exp關聯
-            foreach (var item in topicModels)
+            // 移除該Resume全部的Card以及其card_exp關聯
+            foreach (var item in cardModels)
             {
-                await this.DeleteTopicAsync(resumeId, item.Id);
+                await this.DeleteCardAsync(resumeId, item.Id);
             }
 
             // 移除Exp
@@ -193,21 +266,25 @@ namespace Application.Services
         }
 
         /// <summary>
-        /// 移除Topic
+        /// 移除Card
         /// </summary>
         /// <param name="resumeId"></param>
-        /// <param name="topicId"></param>
+        /// <param name="cardId"></param>
         /// <returns></returns>
-        public async Task<bool> DeleteTopicAsync(int resumeId, int topicId)
+        public async Task<bool> DeleteCardAsync(int resumeId, int cardId)
         {
-            var topicModel = await this._unitOfWork.Topic.SingleOrDefaultAsync(t => t.Id == topicId && t.UserId == this._userId && t.ResumeId == resumeId);
+            if (!await this.CardExistsAsync(resumeId, cardId))
+            {
+                return await this._unitOfWork.SaveChangeAsync();
+            }
+            var cardModel = await this._unitOfWork.Card.SingleOrDefaultAsync(t => t.Id == cardId && t.UserId == this._userId && t.ResumeId == resumeId);
 
-            // 移除該Exp全部的Tag關聯
-            var topic_ExpModels = await this._unitOfWork.Topic_Experience.Where(n => n.TopicId == topicId).ToListAsync();
-            this._unitOfWork.Topic_Experience.RemoveRange(topic_ExpModels);
+            // 移除該Card全部的card_exp關聯
+            var card_ExpModels = await this._unitOfWork.Card_Experience.Where(n => n.CardId == cardId).ToListAsync();
+            this._unitOfWork.Card_Experience.RemoveRange(card_ExpModels);
 
             // 移除Exp
-            this._unitOfWork.Topic.Remove(topicModel);
+            this._unitOfWork.Card.Remove(cardModel);
             return await this._unitOfWork.SaveChangeAsync();
         }
 
@@ -215,11 +292,11 @@ namespace Application.Services
         /// 依Id查詢主題是否存在
         /// </summary>
         /// <param name="resumeId"></param>
-        /// <param name="topicId"></param>
+        /// <param name="cardId"></param>
         /// <returns></returns>
-        public async Task<bool> TopicExistsAsync(int resumeId, int topicId)
+        public async Task<bool> CardExistsAsync(int resumeId, int cardId)
         {
-            return await this._unitOfWork.Topic.AnyAsync(e => e.UserId == this._userId && e.Id == topicId && e.ResumeId == resumeId);
+            return await this._unitOfWork.Card.AnyAsync(e => e.UserId == this._userId && e.Id == cardId && e.ResumeId == resumeId);
         }
     }
 }

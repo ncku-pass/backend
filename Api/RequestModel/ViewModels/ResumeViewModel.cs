@@ -6,6 +6,6 @@ namespace Api.RequestModel.ViewModels
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public ICollection<TopicViewModel> Topics { get; set; }
+        public ICollection<CardViewModel> Cards { get; set; }
     }
 }

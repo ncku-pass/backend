@@ -3,115 +3,21 @@ using System;
 using Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210720075327_refactorAndRenameTopicToCard")]
+    partial class refactorAndRenameTopicToCard
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "3.1.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
-
-            modelBuilder.Entity("Infrastructure.Models.Card", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("id")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CardType")
-                        .HasColumnName("card_type")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreateTime")
-                        .HasColumnName("create_time")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("Description")
-                        .HasColumnName("description")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnName("name")
-                        .HasColumnType("varchar(30) CHARACTER SET utf8mb4")
-                        .HasMaxLength(30);
-
-                    b.Property<int>("Order")
-                        .HasColumnName("order")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ResumeId")
-                        .HasColumnName("resume_id")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdateTime")
-                        .HasColumnName("update_time")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<int>("UserId")
-                        .HasColumnName("user_id")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id")
-                        .HasName("pk_cards");
-
-                    b.HasIndex("ResumeId")
-                        .HasName("ix_cards_resume_id");
-
-                    b.HasIndex("UserId")
-                        .HasName("ix_cards_user_id");
-
-                    b.ToTable("cards");
-                });
-
-            modelBuilder.Entity("Infrastructure.Models.Card_Experience", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("id")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CardId")
-                        .HasColumnName("card_id")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreateTime")
-                        .HasColumnName("create_time")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<int>("ExperienceId")
-                        .HasColumnName("experience_id")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("ShowFeedback")
-                        .HasColumnName("show_feedback")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<bool>("ShowPosition")
-                        .HasColumnName("show_position")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<DateTime?>("UpdateTime")
-                        .HasColumnName("update_time")
-                        .HasColumnType("datetime(6)");
-
-                    b.HasKey("Id")
-                        .HasName("pk_card_experiences");
-
-                    b.HasIndex("CardId")
-                        .HasName("ix_card_experiences_card_id");
-
-                    b.HasIndex("ExperienceId")
-                        .HasName("ix_card_experiences_experience_id");
-
-                    b.ToTable("card_experiences");
-                });
 
             modelBuilder.Entity("Infrastructure.Models.Experience", b =>
                 {
@@ -287,6 +193,106 @@ namespace Infrastructure.Migrations
                         .HasName("ix_tags_user_id");
 
                     b.ToTable("tags");
+                });
+
+            modelBuilder.Entity("Infrastructure.Models.Topic", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CardType")
+                        .HasColumnName("card_type")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreateTime")
+                        .HasColumnName("create_time")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Description")
+                        .HasColumnName("description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnName("name")
+                        .HasColumnType("varchar(30) CHARACTER SET utf8mb4")
+                        .HasMaxLength(30);
+
+                    b.Property<int>("Order")
+                        .HasColumnName("order")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ResumeId")
+                        .HasColumnName("resume_id")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdateTime")
+                        .HasColumnName("update_time")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnName("user_id")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id")
+                        .HasName("pk_cards");
+
+                    b.HasIndex("ResumeId")
+                        .HasName("ix_cards_resume_id");
+
+                    b.HasIndex("UserId")
+                        .HasName("ix_cards_user_id");
+
+                    b.ToTable("cards");
+                });
+
+            modelBuilder.Entity("Infrastructure.Models.Topic_Experience", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CardId")
+                        .HasColumnName("card_id")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreateTime")
+                        .HasColumnName("create_time")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("ExperienceId")
+                        .HasColumnName("experience_id")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("ShowFeedback")
+                        .HasColumnName("show_feedback")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("ShowPosition")
+                        .HasColumnName("show_position")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<int?>("TopicId")
+                        .HasColumnName("topic_id")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdateTime")
+                        .HasColumnName("update_time")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id")
+                        .HasName("pk_card_experiences");
+
+                    b.HasIndex("ExperienceId")
+                        .HasName("ix_card_experiences_experience_id");
+
+                    b.HasIndex("TopicId")
+                        .HasName("ix_card_experiences_topic_id");
+
+                    b.ToTable("card_experiences");
                 });
 
             modelBuilder.Entity("Infrastructure.Models.User", b =>
@@ -580,40 +586,6 @@ namespace Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("Infrastructure.Models.Card", b =>
-                {
-                    b.HasOne("Infrastructure.Models.Resume", "Resume")
-                        .WithMany()
-                        .HasForeignKey("ResumeId")
-                        .HasConstraintName("fk_cards_resumes_resume_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Infrastructure.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .HasConstraintName("fk_cards_users_user_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Infrastructure.Models.Card_Experience", b =>
-                {
-                    b.HasOne("Infrastructure.Models.Card", "Card")
-                        .WithMany()
-                        .HasForeignKey("CardId")
-                        .HasConstraintName("fk_card_experiences_cards_card_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Infrastructure.Models.Experience", "Experience")
-                        .WithMany()
-                        .HasForeignKey("ExperienceId")
-                        .HasConstraintName("fk_card_experiences_experiences_experience_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Infrastructure.Models.Experience", b =>
                 {
                     b.HasOne("Infrastructure.Models.User", "User")
@@ -659,6 +631,38 @@ namespace Infrastructure.Migrations
                         .HasConstraintName("fk_tags_users_user_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Infrastructure.Models.Topic", b =>
+                {
+                    b.HasOne("Infrastructure.Models.Resume", "Resume")
+                        .WithMany()
+                        .HasForeignKey("ResumeId")
+                        .HasConstraintName("fk_cards_resumes_resume_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Infrastructure.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .HasConstraintName("fk_cards_users_user_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Infrastructure.Models.Topic_Experience", b =>
+                {
+                    b.HasOne("Infrastructure.Models.Experience", "Experience")
+                        .WithMany()
+                        .HasForeignKey("ExperienceId")
+                        .HasConstraintName("fk_card_experiences_experiences_experience_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Infrastructure.Models.Topic", "Card")
+                        .WithMany()
+                        .HasForeignKey("TopicId")
+                        .HasConstraintName("fk_card_experiences_cards_topic_id");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

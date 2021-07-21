@@ -1,9 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Infrastructure.Models.Enums;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Infrastructure.Models
 {
-    public class Topic : BaseModel
+    public class Card : BaseModel
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -22,5 +23,13 @@ namespace Infrastructure.Models
         public virtual User User { get; set; }
 
         public int UserId { get; set; }
+
+        [Required]
+        public CardType CardType { get; set; }
+
+        [Column(TypeName = "text")]
+        public string Description { get; set; }
+
+        public int Order { get; set; }
     }
 }

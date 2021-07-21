@@ -49,7 +49,24 @@ namespace Api.Controllers
                 return this.NotFound("查無履歷");
             }
             var resumeViewModel = this._mapper.Map<List<ResumeViewModel>>(resumeResponse);
-            return this.Ok(resumeResponse);
+            return this.Ok(resumeViewModel);
+        }
+
+        /// get api/resumes
+        /// <summary>
+        /// 取得指定Id履歷
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("{resumeId}", Name = "GetResumeIdById")]
+        public async Task<IActionResult> GetResumesById([FromRoute] int resumeId)
+        {
+            if (!await _resumeService.ResumeExistsAsync(resumeId))
+            {
+                return this.NotFound("查無此經歷=>Id:" + resumeId);
+            }
+            var resumeResponse = await _resumeService.GetResumeByIdAsync(resumeId);
+            var resumeViewModel = this._mapper.Map<ResumeViewModel>(resumeResponse);
+            return this.Ok(resumeViewModel);
         }
 
         // post api/resumes/{id}/save
@@ -59,18 +76,19 @@ namespace Api.Controllers
         /// <param name="resumeId"></param>
         /// <param name="resumeSaveParameter"></param>
         /// <returns></returns>
-        [HttpPost("{resumeId}/Save")]
+        [HttpPost("{resumeId}")]
         public async Task<IActionResult> SaveResumes(
             [FromRoute] int resumeId,
             [FromBody] ResumeSaveParameter resumeSaveParameter
             )
         {
-            if (!await _resumeService.ResumeExistsAsync(resumeId))
+            if (!await _resumeService.ResumeExistsAsync(resumeId) && resumeId != 0)
             {
                 return this.NotFound("查無此=>resumeId:" + resumeId);
             }
 
-            var expNotExist = await this._experienceService.ExperiencesExistsAsync(PickExpInTopic(resumeSaveParameter));
+            // 檢查是否有不存在的Exp
+            var expNotExist = await this._experienceService.ExperiencesExistsAsync(PickExpInCard(resumeSaveParameter));
             if (expNotExist.Count() > 0)
             {
                 string expStr = "";
@@ -80,17 +98,18 @@ namespace Api.Controllers
 
             var resumeSaveMessage = _mapper.Map<ResumeSaveMessage>(resumeSaveParameter);
             resumeSaveMessage.Id = resumeId;
-            var resueResponse = await this._resumeService.SaveResumesAsync(resumeSaveMessage);
+            var resumeResponse = await this._resumeService.SaveResumeAsync(resumeSaveMessage);
 
-            return this.Ok(resueResponse);
+            return this.Ok(resumeResponse);
         }
 
-        private int[] PickExpInTopic(ResumeSaveParameter resumeSaveParameter)
+        private int[] PickExpInCard(ResumeSaveParameter resumeSaveParameter)
         {
             List<int> expIds = new List<int>();
-            foreach (var topic in resumeSaveParameter.Topics)
+            foreach (var card in resumeSaveParameter.Cards)
             {
-                expIds.AddRange(topic.ExperienceId);
+                var expIdInCard = card.Experiences.Select(e => e.Id).ToList();
+                expIds.AddRange(expIdInCard);
             }
             return expIds.Distinct().ToArray();
         }
@@ -110,36 +129,36 @@ namespace Api.Controllers
             {
                 return this.NotFound("查無此=>resumeId:" + resumeId);
             }
+
             await this._resumeService.DeleteResumeAsync(resumeId);
-
             return this.NoContent();
         }
 
-        // post api/resumes/{resumeId}/topics/{topicId}
-        /// <summary>
-        /// 刪除主題
-        /// </summary>
-        /// <param name="resumeId"></param>
-        /// <param name="topicId"></param>
-        /// <returns></returns>
-        [HttpDelete("{resumeId}/topics/{topicId}")]
-        public async Task<IActionResult> DeleteTopicById(
-            [FromRoute] int resumeId,
-            [FromRoute] int topicId
-            )
-        {
-            if (!await _resumeService.ResumeExistsAsync(resumeId))
-            {
-                return this.NotFound("查無此=>resumeId:" + resumeId);
-            }
-            if (!await _resumeService.TopicExistsAsync(resumeId, topicId))
-            {
-                return this.NotFound("查無此=>topicId:" + topicId);
-            }
+        //// post api/resumes/{resumeId}/topics/{topicId}
+        ///// <summary>
+        ///// 刪除主題
+        ///// </summary>
+        ///// <param name="resumeId"></param>
+        ///// <param name="topicId"></param>
+        ///// <returns></returns>
+        //[HttpDelete("{resumeId}/topics/{topicId}")]
+        //public async Task<IActionResult> DeleteTopicById(
+        //    [FromRoute] int resumeId,
+        //    [FromRoute] int topicId
+        //    )
+        //{
+        //    if (!await _resumeService.ResumeExistsAsync(resumeId))
+        //    {
+        //        return this.NotFound("查無此=>resumeId:" + resumeId);
+        //    }
+        //    if (!await _resumeService.TopicExistsAsync(resumeId, topicId))
+        //    {
+        //        return this.NotFound("查無此=>topicId:" + topicId);
+        //    }
 
-            await this._resumeService.DeleteTopicAsync(resumeId, topicId);
+        //    await this._resumeService.DeleteTopicAsync(resumeId, topicId);
 
-            return this.NoContent();
-        }
+        //    return this.NoContent();
+        //}
     }
 }

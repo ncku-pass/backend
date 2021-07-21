@@ -21,8 +21,8 @@ namespace Infrastructure.Database
         public DbSet<Tag> Tags { get; set; }
         public new DbSet<User> Users { get; set; }
         public DbSet<Resume> Resumes { get; set; }
-        public DbSet<Topic> Topics { get; set; }
-        public DbSet<Topic_Experience> Topic_Experiences { get; set; }
+        public DbSet<Card> Cards { get; set; }
+        public DbSet<Card_Experience> Card_Experiences { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
             => optionsBuilder
