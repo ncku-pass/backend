@@ -23,6 +23,9 @@ namespace Infrastructure.Models
         public string Major { get; set; }
 
         [Required]
+        public int EnrollmentYear { get; set; }
+
+        [Required]
         public int GraduationYear { get; set; }
 
         [EmailAddress]

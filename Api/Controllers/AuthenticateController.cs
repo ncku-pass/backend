@@ -25,6 +25,19 @@ namespace Api.Controllers
         }
 
         [AllowAnonymous]
+        [HttpPost("NCKUPortal-login")]
+        public async Task<IActionResult> LoginByNCKUPortalAsync([FromBody] NCKUPortalTokenParameter loginParameter)
+        {
+            var loginMessage = this._mapper.Map<NCKUPortalTokenMessage>(loginParameter);
+            var loginResponse = await this._authenticateService.LoginByNCKUPortal(loginMessage);
+            if (!loginResponse.Succeeded)
+            {
+                return this.BadRequest(loginResponse);
+            }
+            return this.Ok(loginResponse);
+        }
+
+        [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> LoginAsync([FromBody] AuthenticateLoginParameter loginParameter)
         {
@@ -32,7 +45,7 @@ namespace Api.Controllers
             var loginResponse = await this._authenticateService.Login(loginMessage);
             if (!loginResponse.Succeeded)
             {
-                return this.BadRequest();
+                return this.BadRequest(loginResponse);
             }
             return this.Ok(loginResponse);
         }

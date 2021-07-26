@@ -1,18 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.Extensions.Configuration;
 
 namespace Infrastructure.Database
 {
     public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
     {
-        private readonly IConfiguration _configuration;
-
-        public AppDbContextFactory(IConfiguration configuration)
-        {
-            this._configuration = configuration;
-        }
-
         public AppDbContextFactory()
         {
         }

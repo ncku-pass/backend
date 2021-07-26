@@ -3,6 +3,7 @@
     public class AuthenticateLoginResponse
     {
         public bool Succeeded { get; set; }
+        public string ErrorMessage { get; set; }
         public string TokenStr { get; set; }
     }
 }

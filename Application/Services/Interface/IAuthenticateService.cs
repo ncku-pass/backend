@@ -8,6 +8,8 @@ namespace Application.Services.Interface
     {
         Task<AuthenticateLoginResponse> Login(AuthenticateLoginMessage loginMessage);
 
+        Task<AuthenticateLoginResponse> LoginByNCKUPortal(NCKUPortalTokenMessage message);
+
         Task<AuthenticateRegisterResponse> Register(AuthenticateRegisterMessage registerParameter);
     }
 }

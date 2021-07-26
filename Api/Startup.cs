@@ -5,6 +5,8 @@ using AutoMapper;
 using Infrastructure.Database;
 using Infrastructure.Infrastructure;
 using Infrastructure.Models;
+using Infrastructure.Service;
+using Infrastructure.Service.Interface;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -49,6 +51,9 @@ namespace Api
                 option.UseMySql(this._configuration["DbContext:MySQLConnectionString"]);
             });
 
+            // Add HttpClient調用外部Api
+            services.AddHttpClient();
+
             // TODO:問家駿這邊該怎麼簡化
             // DI註冊
             // Service用Scoped:每個Request刷新
@@ -66,6 +71,9 @@ namespace Api
             services.AddScoped<IExperienceService, ExperienceService>();
             services.AddScoped<ITagService, TagService>();
             services.AddScoped<IResumeService, ResumeService>();
+            services.AddScoped<INCKUPortalService, NCKUPortalService>();
+
+            services.AddScoped<INCKUPortalAPI, NCKUPortalAPI>();
 
             // Add Auto Mapper Configurations
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -75,6 +83,7 @@ namespace Api
                 mc.AddProfile(new TagProfile());
                 mc.AddProfile(new AuthenticationProfile());
                 mc.AddProfile(new ResumeProfile());
+                mc.AddProfile(new NCKUPortalProfile());
             });
             IMapper mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
