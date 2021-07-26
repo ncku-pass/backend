@@ -68,7 +68,8 @@ namespace Application.Services
             // 驗證計中Token是否與屬於當前系統使用者，避免冒用
             var outerStudentId = JwtBuilder.Create()
                                            .Decode<IDictionary<string, object>>(message.KeyVal)["commonname"]
-                                           .ToString();
+                                           .ToString()
+                                           .ToLower();
             var innerStudentId = (await this._unitOfWork.User.FirstOrDefaultAsync(u => u.Id == userId)).StudentId;
             return outerStudentId == innerStudentId;
         }
