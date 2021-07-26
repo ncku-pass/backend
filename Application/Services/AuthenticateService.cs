@@ -10,10 +10,10 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using System.Linq;
 
 namespace Application.Services
 {
@@ -43,7 +43,7 @@ namespace Application.Services
             this._signInManager = signInManager;
         }
 
-        async Task<string> GenerateJWTToken(IdentityUser identityUser, User userModel)
+        private async Task<string> GenerateJWTToken(IdentityUser identityUser, User userModel)
         {
             //header
             var signingAlgorithm = SecurityAlgorithms.HmacSha256;
@@ -76,7 +76,6 @@ namespace Application.Services
             var tokenStr = new JwtSecurityTokenHandler().WriteToken(token);
             return tokenStr;
         }
-
 
         public async Task<AuthenticateLoginResponse> LoginByNCKUPortal(NCKUPortalTokenMessage message)
         {
@@ -111,7 +110,8 @@ namespace Application.Services
                 TokenStr = tokenStr
             };
         }
-        async Task<AuthenticateRegisterResponse> RegisterWithNCKUPortal(NCKUPortalRegisterMessage registerMessage)
+
+        private async Task<AuthenticateRegisterResponse> RegisterWithNCKUPortal(NCKUPortalRegisterMessage registerMessage)
         {
             // 1 使用用戶名創建對象
             var user = new IdentityUser

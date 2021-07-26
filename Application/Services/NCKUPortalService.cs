@@ -3,11 +3,9 @@ using Application.Dto.Responses;
 using Application.Services.Interface;
 using Infrastructure.Infrastructure;
 using Infrastructure.Service.Interface;
-using JWT.Algorithms;
 using JWT.Builder;
 using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -67,14 +65,12 @@ namespace Application.Services
         {
             var userId = int.Parse(this._httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
-
             // 驗證計中Token是否與屬於當前系統使用者，避免冒用
             var outerStudentId = JwtBuilder.Create()
                                            .Decode<IDictionary<string, object>>(message.KeyVal)["commonname"]
                                            .ToString();
             var innerStudentId = (await this._unitOfWork.User.FirstOrDefaultAsync(u => u.Id == userId)).StudentId;
             return outerStudentId == innerStudentId;
-
         }
 
         /// <summary>

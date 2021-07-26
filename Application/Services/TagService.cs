@@ -82,8 +82,6 @@ namespace Application.Services
             return tagResponse;
         }
 
-
-
         public async Task<bool> TagExistsAsync(int tagId)
         {
             return await _unitOfWork.Tag.AnyAsync(t => t.Id == tagId && t.UserId == this._userId);

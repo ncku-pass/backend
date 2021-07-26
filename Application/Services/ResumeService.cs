@@ -74,8 +74,6 @@ namespace Application.Services
             return resumeResponses;
         }
 
-
-
         /// <summary>
         /// 依Id取得履歷
         /// </summary>
@@ -110,8 +108,6 @@ namespace Application.Services
 
             return resumeResponse;
         }
-
-
 
         /// <summary>
         /// 儲存履歷
@@ -165,7 +161,6 @@ namespace Application.Services
                     message.Current.Id = model.Current.Id;
                 }
             }
-
 
             // 新增&更新Card_Exp關聯
             foreach (var card in resumeSaveMessage.Cards)

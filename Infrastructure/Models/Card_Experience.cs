@@ -11,12 +11,13 @@ namespace Infrastructure.Models
 
         [ForeignKey("CardId")]
         public virtual Card Card { get; set; }
+
         public int CardId { get; set; }
 
         [ForeignKey("ExperienceId")]
         public virtual Experience Experience { get; set; }
-        public int ExperienceId { get; set; }
 
+        public int ExperienceId { get; set; }
 
         public bool ShowPosition { get; set; }
         public bool ShowFeedback { get; set; }

@@ -1,9 +1,6 @@
 ﻿using Infrastructure.Service.Interface;
-using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Infrastructure.Service
@@ -11,6 +8,7 @@ namespace Infrastructure.Service
     public class NCKUPortalAPI : INCKUPortalAPI
     {
         private readonly IHttpClientFactory _httpClientFactory;
+
         public NCKUPortalAPI(IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
@@ -31,6 +29,5 @@ namespace Infrastructure.Service
 
             return await response.Content.ReadAsStringAsync();
         }
-
     }
 }

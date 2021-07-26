@@ -3,11 +3,7 @@ using Application.Dto.Messages;
 using Application.Services.Interface;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Api.Controllers
@@ -29,6 +25,7 @@ namespace Api.Controllers
             this._NCKUPortalService = nCKUPortalService;
             this._mapper = mapper;
         }
+
         /// <summary>
         /// 取得在校經歷
         /// </summary>

@@ -23,6 +23,7 @@ namespace Infrastructure.Infrastructure
         bool Contains(Expression<Func<TEntity, bool>> predicate);
 
         int Count(Expression<Func<TEntity, bool>> predicate);
+
         IQueryable<TEntity> GetAll();
 
         IQueryable<TEntity> Where(Expression<Func<TEntity, bool>> predicate);
