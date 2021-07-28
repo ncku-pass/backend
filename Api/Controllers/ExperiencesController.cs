@@ -201,7 +201,7 @@ namespace Api.Controllers
         /// </summary>
         /// <param name="experienceId">經歷Id</param>
         /// <returns></returns>
-        [HttpGet("{experienceId}/Tags", Name = "GetTagByExperienceId")]
+        [HttpGet("{experienceId}/tags", Name = "GetTagByExperienceId")]
         public async Task<IActionResult> GetTagByExperienceId([FromRoute] int experienceId)
         {
             if (!await _experienceService.ExperienceExistsAsync(experienceId))

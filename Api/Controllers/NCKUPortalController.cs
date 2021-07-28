@@ -32,7 +32,7 @@ namespace Api.Controllers
         /// <param name="type">["all", "activity", "course", "club"]</param>
         /// <param name="Parameter"></param>
         /// <returns></returns>
-        [HttpPost("exp-record")]
+        [HttpPost("experiences")]
         public async Task<IActionResult> GetExpRecords(
             [FromQuery] string type,
             [FromBody] NCKUPortalTokenParameter Parameter
