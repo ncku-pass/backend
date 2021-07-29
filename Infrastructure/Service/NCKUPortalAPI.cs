@@ -1,6 +1,7 @@
 ﻿using Infrastructure.Service.Interface;
 using System;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Infrastructure.Service
@@ -18,16 +19,26 @@ namespace Infrastructure.Service
         {
             // 建立 HttpClient 實例
             var httpClient = _httpClientFactory.CreateClient();
+            httpClient.BaseAddress = new Uri("https://i.ncku.edu.tw/");
 
+            
             string boundary = DateTime.Now.Ticks.ToString("X");
             var formData = new MultipartFormDataContent(boundary);
             formData.Add(new StringContent(key), "key");
             formData.Add(new StringContent(keyval), "keyval");
 
-            httpClient.BaseAddress = new Uri("https://i.ncku.edu.tw/");
             var response = await httpClient.PostAsync($"ncku/oauth/eportfolio/getdata.php?type={type}", formData);
-
-            return await response.Content.ReadAsStringAsync();
+            var responseStr = UnicodeConvert(await response.Content.ReadAsStringAsync());
+            return responseStr;
+        }
+        string UnicodeConvert(string inputstr)
+        {
+            inputstr = Regex.Replace(inputstr, "\\\\u\\w{4}",
+                delegate (Match m)
+                {
+                    return ((char)(int.Parse(m.Value.Substring(2), System.Globalization.NumberStyles.HexNumber))).ToString();
+                });
+            return inputstr;
         }
     }
 }
