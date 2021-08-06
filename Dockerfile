@@ -9,7 +9,6 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
 WORKDIR /src
 COPY ["./Api/Api.csproj", "Api/"]
-# COPY ["./Api/Api.xml", "."]
 COPY ["./Application/Application.csproj", "Application/"]
 COPY ["./Infrastructure/Infrastructure.csproj", "Infrastructure/"]
 RUN dotnet restore "Api/Api.csproj"
@@ -24,4 +23,4 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 # ENTRYPOINT ["ASPNETCORE_URLS=http://*:$PORT","dotnet", "Api.dll","--environment=Development"]
-CMD ASPNETCORE_URLS=http://*:$PORT dotnet Api.dll --environment=Development
+CMD ASPNETCORE_URLS=http://*:$PORT dotnet Api.dll

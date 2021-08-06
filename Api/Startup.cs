@@ -26,12 +26,16 @@ namespace Api
 {
     public class Startup
     {
+        private readonly IConfigurationRoot _configuration;
+
         public Startup(IConfiguration configuration)
         {
-            this._configuration = configuration;
+            this._configuration = new ConfigurationBuilder()
+            .AddJsonFile("appSettings.json", optional: true)
+            .AddJsonFile("appsettings.Development.json", optional: true)
+            .AddEnvironmentVariables()
+            .Build();
         }
-
-        public IConfiguration _configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -45,19 +49,19 @@ namespace Api
                     setupAction.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                 });
 
-            // Add MySQL¬ÛÃö³]©w
+            // Add MySQLç›¸é—œè¨­å®š
             services.AddDbContext<AppDbContext>(option =>
             {
-                option.UseMySql(this._configuration["DbContext:MySQLConnectionString"]);
+                option.UseMySql(this._configuration.GetConnectionString("MySQL"));
             });
 
-            // Add HttpClient½Õ¥Î¥~³¡Api
+            // Add HttpClientèª¿ç”¨å¤–éƒ¨Api
             services.AddHttpClient();
 
-            // TODO:°İ®aÂ@³oÃä¸Ó«ç»òÂ²¤Æ
-            // DIµù¥U
-            // Service¥ÎScoped:¨C­ÓRequest¨ê·s
-            // Repo¥ÎTransient:¨C­Ó¤l¥ô°È¨ê·s
+            // TODO:å•å®¶é§¿é€™é‚Šè©²æ€éº¼ç°¡åŒ–
+            // DIè¨»å†Š
+            // Serviceç”¨Scoped:æ¯å€‹Requeståˆ·æ–°
+            // Repoç”¨Transient:æ¯å€‹å­ä»»å‹™åˆ·æ–°
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddTransient<IBaseRepository<Experience>, BaseRepository<Experience>>();
             services.AddTransient<IBaseRepository<Experience_Tag>, BaseRepository<Experience_Tag>>();
@@ -88,19 +92,18 @@ namespace Api
             IMapper mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
 
-            // Add Swagger¬ÛÃö³]©w
+            // Add Swaggerç›¸é—œè¨­å®š
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
                 // add JWT Authentication
-                var test = Environment.GetEnvironmentVariable("DATABASE_URL");
                 var securityScheme = new OpenApiSecurityScheme
                 {
                     Name = "JWT Authentication",
                     Description = "Enter JWT Bearer token **_only_**",
                     In = ParameterLocation.Header,
                     Type = SecuritySchemeType.Http,
-                    Scheme = "bearer", // must be lower case
+                    Scheme = "bearer",
                     BearerFormat = "JWT",
                     Reference = new OpenApiReference
                     {
@@ -112,16 +115,17 @@ namespace Api
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement { { securityScheme, new string[] { } } });
             });
 
-            // JWTµn¤JªA°Èª`¤J
+            // JWTç™»å…¥æœå‹™æ³¨å…¥
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
                     var secretByte = Encoding.UTF8.GetBytes(_configuration["Authentication:SecretKey"]);
                     options.TokenValidationParameters = new TokenValidationParameters()
                     {
-                        ValidateIssuer = true,
+                        // TODO:å¾…ç¶²åŸŸç¢ºèªæ”¹å›True
+                        ValidateIssuer = false,
                         ValidIssuer = _configuration["Authentication:Issuer"],
-                        ValidateAudience = true,
+                        ValidateAudience = false,
                         ValidAudience = _configuration["Authentication:Audience"],
                         ValidateLifetime = true,
                         ClockSkew = TimeSpan.Zero,
@@ -137,9 +141,9 @@ namespace Api
                     };
                 });
 
-            // ¨Ï¥ÎAsp.Net core Identity¨­¤À»{ÃÒ®Ø¬[
+            // ä½¿ç”¨Asp.Net core Identityèº«åˆ†èªè­‰æ¡†æ¶
             services.AddIdentity<IdentityUser, IdentityRole>()
-                .AddEntityFrameworkStores<AppDbContext>();
+                    .AddEntityFrameworkStores<AppDbContext>();
             services.Configure<IdentityOptions>(options =>
             {
                 options.Password.RequireDigit = true;
@@ -150,13 +154,13 @@ namespace Api
                 options.Password.RequiredUniqueChars = 1;
             });
 
-            // ¸ó°ì½Ğ¨DCors³]©w
+            // è·¨åŸŸè«‹æ±‚Corsè¨­å®š
+            string[] corsOrigins = this._configuration["Cors:AllowOrigin"].Split(',', StringSplitOptions.RemoveEmptyEntries);
             services.AddCors(options =>
             {
-                // CorsPolicy ¬O¦Û­qªº Policy ¦WºÙ
                 options.AddPolicy("CorsPolicy", policy =>
                 {
-                    policy.WithOrigins("https://e-portfolio-tomatoguy.vercel.app", "http://localhost:8080")
+                    policy.WithOrigins(corsOrigins)
                           .AllowAnyHeader()
                           .AllowAnyMethod()
                           .AllowCredentials();
@@ -167,26 +171,32 @@ namespace Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            // TODO:Docker³]©wÀô¹ÒÅÜ¼Æ
+            // Update-database migration
+            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            {
+                var context = serviceScope.ServiceProvider.GetRequiredService<AppDbContext>();
+                context.Database.Migrate();
+            }
+
             if (env.IsDevelopment())
             {
+                app.UseDeveloperExceptionPage();
+                app.UseSwagger();
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                });
             }
-            app.UseDeveloperExceptionPage();
-            app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-            });
 
-            app.UseHttpsRedirection();
+            // app.UseHttpsRedirection();
 
-            // ¸ô®|¤Ş¾É
+            // è·¯å¾‘å¼•å°
             app.UseRouting();
-            // ¸ó°ì½Ğ¨D³W«h
+            // è·¨åŸŸè«‹æ±‚è¦å‰‡
             app.UseCors("CorsPolicy");
-            // ½T»{¨­¤À
+            // ç¢ºèªèº«åˆ†
             app.UseAuthentication();
-            // Åv­­²ÕºA
+            // æ¬Šé™çµ„æ…‹
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
