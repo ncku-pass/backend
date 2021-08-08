@@ -10,6 +10,7 @@ using Infrastructure.Service.Interface;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -48,6 +49,14 @@ namespace Api
                 {
                     setupAction.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                 });
+
+            // Reverse_Proxy forwardheader設定
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+                options.KnownNetworks.Clear();
+                options.KnownProxies.Clear();
+            });
 
             // Add MySQL相關設定
             services.AddDbContext<AppDbContext>(option =>
@@ -177,6 +186,10 @@ namespace Api
                 var context = serviceScope.ServiceProvider.GetRequiredService<AppDbContext>();
                 context.Database.Migrate();
             }
+
+            // Reverse_Proxy forwardheader設定
+            app.UseForwardedHeaders();
+            app.UseCertificateForwarding();
 
             if (env.IsDevelopment())
             {
