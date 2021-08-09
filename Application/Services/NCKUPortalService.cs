@@ -49,7 +49,7 @@ namespace Application.Services
                 StudentId = payload["commonname"].ToString().ToLower(),
                 Email = (payload["commonname"].ToString() + "@gs.ncku.edu.tw").ToLower(),
                 Name = payload["DisplayName"].ToString(),
-                Major = "TODO:待計中新增項目", // payload["Major"].ToString(),
+                Major = payload["studentdeptNo"].ToString(),
                 EnrollmentYear = int.Parse("1" + payload["commonname"].ToString().Substring(3, 2)) // 從學號取入學年，未處裡民國100年前
             };
 
