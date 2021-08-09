@@ -5,7 +5,7 @@ namespace Api.RequestModel.Parameters
     public class AuthenticateRegisterParameter
     {
         [Required]
-        [RegularExpression(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$", ErrorMessage = "Email格式錯誤")]
+        [RegularExpression(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,4})+)$", ErrorMessage = "Email格式錯誤")]
         public string Email { get; set; }
 
         [Required]
