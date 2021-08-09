@@ -19,6 +19,7 @@ namespace Application.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly int _userId;
+        private readonly int _defaultUserId;
 
         public TagService(
             IHttpContextAccessor httpContextAccessor,
@@ -30,6 +31,7 @@ namespace Application.Services
             this._unitOfWork = unitOfWork;
             this._mapper = mapper;
             this._userId = int.Parse(this._httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            this._defaultUserId = 1;
         }
 
         public async Task<ICollection<TagResponse>> AddTagAsync(string[] tagNames)
@@ -57,7 +59,7 @@ namespace Application.Services
 
         public async Task<ICollection<TagResponse>> GetExperienceTagsAsync(int experienceId)
         {
-            var tagsResponse = await (from tag in _unitOfWork.Tag.Where(t => t.UserId == this._userId)
+            var tagsResponse = await (from tag in _unitOfWork.Tag.Where(t => t.UserId == this._userId || t.UserId == _defaultUserId)
                                       join combine in _unitOfWork.Experience_Tag.Where(t => t.ExperienceId == experienceId)
                                           on tag.Id equals combine.TagId
                                       select new TagResponse()
@@ -77,14 +79,29 @@ namespace Application.Services
 
         public async Task<ICollection<TagResponse>> GetTagsAsync()
         {
+            // 自己的Tag(若使用教發Tag這邊不會篩出)
             var tagModel = await _unitOfWork.Tag.Where(t => t.UserId == this._userId).ToListAsync();
             var tagResponse = _mapper.Map<ICollection<TagResponse>>(tagModel);
-            return tagResponse;
+
+            // 使用過且不為自己的的Tag(若有使用教發的Tag則在此篩出)
+            // TODO:作法不簡潔
+            var expIds = await _unitOfWork.Experience.Where(e => e.UserId == this._userId).Select(e => e.Id).ToListAsync();
+            var usedTagIds = await _unitOfWork.Experience_Tag.Where(et => expIds.Contains(et.ExperienceId)).Select(et => et.TagId).Distinct().ToListAsync();
+            var defaultTagModel = await _unitOfWork.Tag.Where(t => usedTagIds.Contains(t.Id) && t.UserId != this._userId).ToListAsync();
+            var defaultTagResponse = _mapper.Map<ICollection<TagResponse>>(defaultTagModel);
+            foreach (var item in defaultTagResponse)
+            {
+                item.IsDefaultTag = true;
+            }
+
+            // 合併回傳
+            var result = tagResponse.Union(defaultTagResponse).ToList();
+            return result;
         }
 
         public async Task<bool> TagExistsAsync(int tagId)
         {
-            return await _unitOfWork.Tag.AnyAsync(t => t.Id == tagId && t.UserId == this._userId);
+            return await _unitOfWork.Tag.AnyAsync(t => t.Id == tagId && (t.UserId == this._userId || t.UserId == _defaultUserId));
         }
 
         public async Task<ICollection<int>> TagsExistsAsync(int[] tagIds)
@@ -94,8 +111,10 @@ namespace Application.Services
                 return new List<int> { };
             }
             var userTagsList = await _unitOfWork.Tag.Where(t => t.UserId == this._userId).Select(t => t.Id).ToListAsync();
-            var tagNotExist = tagIds.Except(userTagsList).ToList();
-            return tagNotExist;
+            var defaultTagsList = await _unitOfWork.Tag.Where(t => t.UserId == this._defaultUserId).Select(t => t.Id).ToListAsync();
+
+            var tagsNotExist = tagIds.Except(userTagsList).Except(defaultTagsList).ToList();
+            return tagsNotExist;
         }
 
         public async Task<TagResponse> UpdateTagAsync(TagUpdateMessage updateTagMessage)

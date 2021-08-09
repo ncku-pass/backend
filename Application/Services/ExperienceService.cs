@@ -43,7 +43,7 @@ namespace Application.Services
         {
             // 新增Exp到資料庫
             var experienceModel = _mapper.Map<Experience>(experienceMessage);
-            experienceModel.UserId = int.Parse(this._httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            experienceModel.UserId = this._userId;
             this._unitOfWork.Experience.Add(experienceModel);
             await this._unitOfWork.SaveChangeAsync();
 
@@ -56,20 +56,26 @@ namespace Application.Services
         }
 
         // TODO:移到Tag_ExpService
+        /// <summary>
+        /// 比對傳入tagIds增刪Exp_Tag關聯
+        /// </summary>
+        /// <param name="experienceId"></param>
+        /// <param name="tagIds"></param>
+        /// <returns></returns>
         public async Task ManipulateExp_TagRelation(int experienceId, int[] tagIds)
         {
             // 建立待加入的關聯Models，並排除Tag_Exp中已有的Models
-            var currentTagIds = await _unitOfWork.Experience_Tag.Where(n => n.ExperienceId == experienceId).ToListAsync();
-            var addTagModels = tagIds.Except(currentTagIds.Select(t => t.TagId))
+            var currentExp_TagModel = await _unitOfWork.Experience_Tag.Where(n => n.ExperienceId == experienceId).ToListAsync();
+            var addTagModels = tagIds.Except(currentExp_TagModel.Select(t => t.TagId))
                                      .Select(tid => new Experience_Tag { ExperienceId = experienceId, TagId = tid })
                                      .ToList();
-            var dropTagModels = currentTagIds.Where(t => !tagIds.Contains(t.TagId))
-                                             .ToList();
+            var dropTagModels = currentExp_TagModel.Where(t => !tagIds.Contains(t.TagId))
+                                                   .ToList();
 
             if (addTagModels.Count() != 0 || dropTagModels.Count() != 0)
             {
                 _unitOfWork.Experience_Tag.AddRange(addTagModels);
-                _unitOfWork.Experience_Tag.RemoveRange((IEnumerable<Experience_Tag>)dropTagModels);
+                _unitOfWork.Experience_Tag.RemoveRange(dropTagModels);
                 await this._unitOfWork.SaveChangeAsync();
             }
         }
