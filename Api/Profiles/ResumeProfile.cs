@@ -13,8 +13,8 @@ namespace Api.Profiles
         {
             CreateMap<Card, CardResponse>()
             .ForMember(
-                dest => dest.CardType,
-                opt => opt.MapFrom(src => src.CardType.ToString())
+                dest => dest.Type,
+                opt => opt.MapFrom(src => src.Type.ToString())
             );
             CreateMap<CardResponse, CardViewModel>();
 

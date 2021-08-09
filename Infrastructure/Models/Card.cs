@@ -25,7 +25,7 @@ namespace Infrastructure.Models
         public int UserId { get; set; }
 
         [Required]
-        public CardType CardType { get; set; }
+        public CardType Type { get; set; }
 
         [Column(TypeName = "text")]
         public string Description { get; set; }
