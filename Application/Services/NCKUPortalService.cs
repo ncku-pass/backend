@@ -35,14 +35,14 @@ namespace Application.Services
         /// <returns></returns>
         public async Task<NCKUPortalTokenVerifyResponse> TokenVerify(NCKUPortalTokenMessage message)
         {
-            var response = await this._NCKUPortalAPI.GetExpRecordAsync(message.Key, message.KeyVal, "all");
+            var response = await this._NCKUPortalAPI.GetExpRecordAsync(message.Key, message.Keyval, "all");
             if (response == "{\"msg\":\"key and keyval no paired!!\"}")
             {
                 return new NCKUPortalTokenVerifyResponse() { Succeeded = false, ErrorMessage = response };
             }
 
             var payload = JwtBuilder.Create()
-                                    .Decode<IDictionary<string, object>>(message.KeyVal);
+                                    .Decode<IDictionary<string, object>>(message.Keyval);
             var verifyResponse = new NCKUPortalTokenVerifyResponse()
             {
                 Succeeded = true,
@@ -67,7 +67,7 @@ namespace Application.Services
 
             // 驗證計中Token是否與屬於當前系統使用者，避免冒用
             var outerStudentId = JwtBuilder.Create()
-                                           .Decode<IDictionary<string, object>>(message.KeyVal)["commonname"]
+                                           .Decode<IDictionary<string, object>>(message.Keyval)["commonname"]
                                            .ToString()
                                            .ToLower();
             var innerStudentId = (await this._unitOfWork.User.FirstOrDefaultAsync(u => u.Id == userId)).StudentId;
@@ -87,7 +87,7 @@ namespace Application.Services
                 return "StudentId not paired!";
             }
 
-            var response = await this._NCKUPortalAPI.GetExpRecordAsync(message.Key, message.KeyVal, type);
+            var response = await this._NCKUPortalAPI.GetExpRecordAsync(message.Key, message.Keyval, type);
             return response;
         }
     }

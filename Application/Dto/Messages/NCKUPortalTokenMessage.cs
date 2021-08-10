@@ -3,6 +3,6 @@
     public class NCKUPortalTokenMessage
     {
         public string Key { get; set; }
-        public string KeyVal { get; set; }
+        public string Keyval { get; set; }
     }
 }

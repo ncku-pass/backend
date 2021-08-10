@@ -10,7 +10,7 @@ namespace Api.Controllers
 {
     [Authorize]
     [Authorize(AuthenticationSchemes = "Bearer")]
-    [Route("api/ncku-protal")]
+    [Route("api/ncku-portal")]
     [ApiController]
     public class NCKUPortalController : ControllerBase
     {
