@@ -22,7 +22,7 @@ namespace Infrastructure.Models
         [MaxLength(250)]
         public string Description { get; set; }
 
-        [MaxLength(100)]
+        [MaxLength(250)]
         public string CoreAbilities { get; set; }
 
 

@@ -124,8 +124,8 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("CoreAbilities")
                         .HasColumnName("core_abilities")
-                        .HasColumnType("varchar(100) CHARACTER SET utf8mb4")
-                        .HasMaxLength(100);
+                        .HasColumnType("varchar(250) CHARACTER SET utf8mb4")
+                        .HasMaxLength(250);
 
                     b.Property<DateTime>("CreateTime")
                         .HasColumnName("create_time")

@@ -9,7 +9,7 @@ namespace Infrastructure.Migrations
             migrationBuilder.AddColumn<string>(
                 name: "core_abilities",
                 table: "experiences",
-                maxLength: 100,
+                maxLength: 250,
                 nullable: true);
         }
 
