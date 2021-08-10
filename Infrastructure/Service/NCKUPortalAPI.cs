@@ -21,7 +21,6 @@ namespace Infrastructure.Service
             var httpClient = _httpClientFactory.CreateClient();
             httpClient.BaseAddress = new Uri("https://i.ncku.edu.tw/");
 
-            
             string boundary = DateTime.Now.Ticks.ToString("X");
             var formData = new MultipartFormDataContent(boundary);
             formData.Add(new StringContent(key), "key");
@@ -31,7 +30,8 @@ namespace Infrastructure.Service
             var responseStr = UnicodeConvert(await response.Content.ReadAsStringAsync());
             return responseStr;
         }
-        string UnicodeConvert(string inputstr)
+
+        private string UnicodeConvert(string inputstr)
         {
             inputstr = Regex.Replace(inputstr, "\\\\u\\w{4}",
                 delegate (Match m)
