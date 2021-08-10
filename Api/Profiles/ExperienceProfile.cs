@@ -13,6 +13,7 @@ namespace Api.Profiles
     {
         public ExperienceProfile()
         {
+            CreateMap<ExperienceImportParameter, ExperienceCreateMessage>();
             CreateMap<ExperienceCreateParameter, ExperienceCreateMessage>();
             CreateMap<ExperienceUpdateParameter, ExperienceUpdateMessage>();
 

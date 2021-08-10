@@ -1,6 +1,7 @@
 ﻿using Api.RequestModel.Parameters;
 using Api.RequestModel.ViewModels;
 using Application.Dto.Messages;
+using Application.Dto.Responses;
 using Application.Services.Interface;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -14,7 +15,6 @@ namespace Api.Controllers
 {
     [Authorize]
     [Authorize(AuthenticationSchemes = "Bearer")]
-    //[Authorize(Roles = "Admin")]
     [ApiController]
     [Route("api/experiences")]
     public class ExperiencesController : Controller
@@ -87,14 +87,32 @@ namespace Api.Controllers
                 return this.NotFound($"查無此tags=>\n\tAddTags:{addStr}");
             }
 
-            var experienceModel = _mapper.Map<ExperienceCreateMessage>(experienceCreateParameter);
-            var experienceResponse = await _experienceService.AddExperienceAsync(experienceModel);
+            var experienceMessage = _mapper.Map<ExperienceCreateMessage>(experienceCreateParameter);
+            var experienceResponse = await _experienceService.AddExperienceAsync(experienceMessage);
             var experienceViewModel = _mapper.Map<ExperienceViewModel>(experienceResponse);
             return this.CreatedAtRoute(
                 "GetExperienceById",
                 new { experienceId = experienceViewModel.Id },
                 experienceViewModel
             );
+        }
+
+        /// <summary>
+        /// 匯入經歷資料
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <returns></returns>
+        [HttpPost("import")]
+        public async Task<IActionResult> ImportExperience([FromBody] List<ExperienceImportParameter> parameter)
+        {
+            var experienceMessage = _mapper.Map<List<ExperienceCreateMessage>>(parameter);
+            var experieceResponses = new List<ExperienceResponse>();
+            foreach (var item in experienceMessage)
+            {
+                experieceResponses.Add(await _experienceService.AddExperienceAsync(item));
+            }
+            var experienceViewModels = _mapper.Map<List<ExperienceViewModel>>(experieceResponses);
+            return this.Ok(experienceViewModels);
         }
 
         /// <summary>
