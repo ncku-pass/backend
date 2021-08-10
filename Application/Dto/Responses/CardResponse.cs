@@ -9,7 +9,7 @@ namespace Application.Dto.Responses
         public string Type { get; set; }
         public int ResumeId { get; set; }
         public int Order { get; set; }
-        public string Description { get; set; }
+        public string Text { get; set; }
         public ICollection<ExpInCardResponse> Experiences { get; set; }
     }
 }

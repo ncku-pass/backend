@@ -28,7 +28,7 @@ namespace Infrastructure.Models
         public CardType Type { get; set; }
 
         [Column(TypeName = "text")]
-        public string Description { get; set; }
+        public string Text { get; set; }
 
         public int Order { get; set; }
     }
