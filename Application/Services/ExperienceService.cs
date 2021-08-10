@@ -6,6 +6,7 @@ using Infrastructure.Infrastructure;
 using Infrastructure.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -41,6 +42,12 @@ namespace Application.Services
         /// <param name="experienceMessage"></param>
         public async Task<ExperienceResponse> AddExperienceAsync(ExperienceCreateMessage experienceMessage)
         {
+            // 賦值給Semester
+            if (string.IsNullOrEmpty(experienceMessage.Semester))
+            {
+                experienceMessage.Semester = DateToSemester(experienceMessage.DateStart);
+            }
+
             // 新增Exp到資料庫
             var experienceModel = _mapper.Map<Experience>(experienceMessage);
             experienceModel.UserId = this._userId;
@@ -56,6 +63,22 @@ namespace Application.Services
             var experienceResponse = _mapper.Map<ExperienceResponse>(experienceModel);
             experienceResponse.Tags = await _tagService.GetExperienceTagsAsync(experienceModel.Id);
             return experienceResponse;
+        }
+
+        private string DateToSemester(DateTime dateStart)
+        {
+            if (dateStart.Month >= 9)
+            {
+                return (dateStart.Year - 1911) + "-1";
+            }
+            else if (dateStart.Month >= 2)
+            {
+                return (dateStart.Year - 1912) + "-2";
+            }
+            else
+            {
+                return (dateStart.Year - 1912) + "-1";
+            }
         }
 
         // TODO:移到Tag_ExpService
