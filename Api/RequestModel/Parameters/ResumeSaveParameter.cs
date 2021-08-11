@@ -6,7 +6,7 @@ namespace Api.RequestModel.Parameters
     {
         public string Name { get; set; }
         public List<CardSaveParameter> Cards { get; set; }
-        public List<DeleteCardParameter> DeleteCards { get; set; }
+        public List<int> DeleteCardIds { get; set; }
     }
 
     public class CardSaveParameter
@@ -24,11 +24,5 @@ namespace Api.RequestModel.Parameters
         public int Id { get; set; }
         public bool ShowPosition { get; set; }
         public bool ShowFeedback { get; set; }
-    }
-
-    public class DeleteCardParameter
-    {
-        public int Id { get; set; }
-        public string Type { get; set; }
     }
 }

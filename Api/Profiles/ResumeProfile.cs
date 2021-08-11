@@ -27,7 +27,6 @@ namespace Api.Profiles
             CreateMap<CardSaveMessage, Card>();
 
             CreateMap<ExpInCardParameter, ExpInCardMessage>();
-            CreateMap<DeleteCardParameter, DeleteCardMessage>();
 
             CreateMap<Card_Experience, ExpInCardResponse>();
             CreateMap<Experience, ExpInCardResponse>();

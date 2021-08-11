@@ -7,7 +7,7 @@ namespace Application.Dto.Messages
         public int Id { get; set; }
         public string Name { get; set; }
         public List<CardSaveMessage> Cards { get; set; }
-        public List<DeleteCardMessage> DeleteCards { get; set; }
+        public List<int> DeleteCardIds { get; set; }
 
         public void InitCardOrder()
         {
@@ -36,11 +36,5 @@ namespace Application.Dto.Messages
         public int Id { get; set; }
         public bool ShowPosition { get; set; }
         public bool ShowFeedback { get; set; }
-    }
-
-    public class DeleteCardMessage
-    {
-        public int Id { get; set; }
-        public string Type { get; set; }
     }
 }

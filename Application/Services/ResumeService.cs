@@ -81,6 +81,7 @@ namespace Application.Services
         /// <returns></returns>
         public async Task<ResumeResponse> GetResumeByIdAsync(int resumeId)
         {
+            // 撈出資料庫對應Model
             var resumeModel = await _unitOfWork.Resume.SingleOrDefaultAsync(e => e.UserId == this._userId && e.Id == resumeId);
             var cardModels = await this._unitOfWork.Card.Where(e => e.ResumeId == resumeId).ToListAsync();
             var cardIds = cardModels.Select(t => t.Id).ToList();
@@ -90,6 +91,7 @@ namespace Application.Services
             var resumeResponse = _mapper.Map<ResumeResponse>(resumeModel);
             var cardResponses = _mapper.Map<List<CardResponse>>(cardModels);
 
+            // 撈card中的exp存入card.experience
             foreach (var card in cardResponses)
             {
                 var expInCardList = new List<ExpInCardResponse>() { };
@@ -104,7 +106,7 @@ namespace Application.Services
                 }
                 card.Experiences = expInCardList;
             }
-            resumeResponse.Cards = cardResponses;
+            resumeResponse.Cards = cardResponses.OrderBy(c => c.Order).ToList();
 
             return resumeResponse;
         }
@@ -221,9 +223,9 @@ namespace Application.Services
             await this._unitOfWork.SaveChangeAsync();
 
             // 刪除Card
-            foreach (var card in resumeSaveMessage.DeleteCards)
+            foreach (var id in resumeSaveMessage.DeleteCardIds)
             {
-                await this.DeleteCardAsync(resumeSaveMessage.Id, card.Id);
+                await this.DeleteCardAsync(resumeSaveMessage.Id, id);
             }
 
             return _ = await GetResumeByIdAsync(resumeModel.Id);
