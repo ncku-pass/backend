@@ -29,7 +29,7 @@ namespace Api.Profiles
             CreateMap<ExpInCardParameter, ExpInCardMessage>();
 
             CreateMap<Card_Experience, ExpInCardResponse>();
-            CreateMap<Experience, ExpInCardResponse>();
+            CreateMap<ExperienceResponse, ExpInCardResponse>();
             CreateMap<ExpInCardResponse, ExpInCardViewModel>();
         }
     }

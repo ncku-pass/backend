@@ -45,10 +45,10 @@ namespace Application.Services
             var cardModels = await this._unitOfWork.Card.Where(e => e.UserId == this._userId).ToListAsync();
             var cardIds = cardModels.Select(t => t.Id).ToList();
             var card_ExpModels = await _unitOfWork.Card_Experience.Where(ce => cardIds.Contains(ce.CardId)).ToListAsync();
-            var expModels = await _unitOfWork.Experience.Where(e => e.UserId == this._userId).ToListAsync();
 
             var resumeResponses = _mapper.Map<List<ResumeResponse>>(resumeModels);
             var cardResponses = _mapper.Map<List<CardResponse>>(cardModels);
+            var expResponses = await _experienceService.GetExperiencesAsync();
 
             // 填入每張card的expInCard
             foreach (var card in cardResponses)
@@ -58,9 +58,9 @@ namespace Application.Services
                 foreach (var card_exp in card_expModels)
                 {
                     var expInCardResponse = new ExpInCardResponse() { };
-                    var expModel = expModels.SingleOrDefault(e => e.Id == card_exp.ExperienceId);
+                    var exp = expResponses.SingleOrDefault(e => e.Id == card_exp.ExperienceId);
                     this._mapper.Map(card_exp, expInCardResponse);
-                    this._mapper.Map(expModel, expInCardResponse);
+                    this._mapper.Map(exp, expInCardResponse);
                     expInCardList.Add(expInCardResponse);
                 }
                 card.Experiences = expInCardList;
@@ -86,10 +86,10 @@ namespace Application.Services
             var cardModels = await this._unitOfWork.Card.Where(e => e.ResumeId == resumeId).ToListAsync();
             var cardIds = cardModels.Select(t => t.Id).ToList();
             var card_ExpModels = await _unitOfWork.Card_Experience.Where(te => cardIds.Contains(te.CardId)).ToListAsync();
-            var expModels = await _unitOfWork.Experience.Where(e => e.UserId == this._userId).ToListAsync();
 
             var resumeResponse = _mapper.Map<ResumeResponse>(resumeModel);
             var cardResponses = _mapper.Map<List<CardResponse>>(cardModels);
+            var expResponses = await _experienceService.GetExperiencesAsync();
 
             // 撈card中的exp存入card.experience
             foreach (var card in cardResponses)
@@ -99,9 +99,9 @@ namespace Application.Services
                 foreach (var card_exp in card_expModels)
                 {
                     var expInCardResponse = new ExpInCardResponse() { };
-                    var expModel = expModels.SingleOrDefault(e => e.Id == card_exp.ExperienceId);
+                    var exp = expResponses.SingleOrDefault(e => e.Id == card_exp.ExperienceId);
                     this._mapper.Map(card_exp, expInCardResponse);
-                    this._mapper.Map(expModel, expInCardResponse);
+                    this._mapper.Map(exp, expInCardResponse);
                     expInCardList.Add(expInCardResponse);
                 }
                 card.Experiences = expInCardList;
