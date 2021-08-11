@@ -99,8 +99,9 @@ namespace Api.Controllers
             var resumeSaveMessage = _mapper.Map<ResumeSaveMessage>(resumeSaveParameter);
             resumeSaveMessage.Id = resumeId;
             var resumeResponse = await this._resumeService.SaveResumeAsync(resumeSaveMessage);
+            var resumeViewModel = _mapper.Map<ResumeViewModel>(resumeResponse);
 
-            return this.Ok(resumeResponse);
+            return this.Ok(resumeViewModel);
         }
 
         private int[] PickExpInCard(ResumeSaveParameter resumeSaveParameter)
