@@ -14,8 +14,17 @@ namespace Api.Profiles
         public ExperienceProfile()
         {
             CreateMap<ExperienceImportParameter, ExperienceCreateMessage>();
-            CreateMap<ExperienceCreateParameter, ExperienceCreateMessage>();
-            CreateMap<ExperienceUpdateParameter, ExperienceUpdateMessage>();
+            // TODO:改名為Category
+            CreateMap<ExperienceCreateParameter, ExperienceCreateMessage>()
+                .ForMember(
+                    dest => dest.Category,
+                    opt => opt.MapFrom(src => string.Join(" ", src.Type))
+                );
+            CreateMap<ExperienceUpdateParameter, ExperienceUpdateMessage>()
+                .ForMember(
+                    dest => dest.Category,
+                    opt => opt.MapFrom(src => string.Join(" ", src.Type))
+                );
 
             CreateMap<ExperienceCreateMessage, Experience>();
             CreateMap<ExperienceUpdateMessage, Experience>();
@@ -25,7 +34,11 @@ namespace Api.Profiles
                     dest => dest.ExperienceType,
                     opt => opt.MapFrom(src => src.ExperienceType.ToString())
                 );
-            CreateMap<ExperienceResponse, ExperienceViewModel>();
+            CreateMap<ExperienceResponse, ExperienceViewModel>()
+                .ForMember(
+                    dest => dest.Type,
+                    opt => opt.MapFrom(src => src.Category.Split())
+                );
 
             CreateMap<List<ExperienceViewModel>, ExperienceClassifiedViewModel>()
                 .ForMember(

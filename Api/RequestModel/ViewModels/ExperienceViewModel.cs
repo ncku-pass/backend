@@ -13,6 +13,7 @@ namespace Api.RequestModel.ViewModels
         public string Feedback { get; set; }
         public string Semester { get; set; }
         public string Link { get; set; }
+        public string[] Type { get; set; }
         public string ExperienceType { get; set; }
         public DateTime DateStart { get; set; }
         public DateTime? DateEnd { get; set; }

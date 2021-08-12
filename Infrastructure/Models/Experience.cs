@@ -37,6 +37,9 @@ namespace Infrastructure.Models
         [Column(TypeName = "Text")]
         public string Link { get; set; }
 
+        [MaxLength(50)]
+        public string Category { get; set; }
+
         public ExperienceType ExperienceType { get; set; }
 
         [Required]
