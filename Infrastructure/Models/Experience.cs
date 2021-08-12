@@ -38,9 +38,9 @@ namespace Infrastructure.Models
         public string Link { get; set; }
 
         [MaxLength(50)]
-        public string Category { get; set; }
+        public string Categories { get; set; }
 
-        public ExperienceType ExperienceType { get; set; }
+        public ExperienceType Type { get; set; }
 
         [Required]
         [Column(TypeName = "Date")]

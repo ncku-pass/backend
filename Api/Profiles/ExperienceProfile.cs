@@ -17,13 +17,13 @@ namespace Api.Profiles
             // TODO:改名為Category
             CreateMap<ExperienceCreateParameter, ExperienceCreateMessage>()
                 .ForMember(
-                    dest => dest.Category,
-                    opt => opt.MapFrom(src => string.Join(" ", src.Type))
+                    dest => dest.Categories,
+                    opt => opt.MapFrom(src => string.Join(" ", src.Categories))
                 );
             CreateMap<ExperienceUpdateParameter, ExperienceUpdateMessage>()
                 .ForMember(
-                    dest => dest.Category,
-                    opt => opt.MapFrom(src => string.Join(" ", src.Type))
+                    dest => dest.Categories,
+                    opt => opt.MapFrom(src => string.Join(" ", src.Categories))
                 );
 
             CreateMap<ExperienceCreateMessage, Experience>();
@@ -31,39 +31,39 @@ namespace Api.Profiles
 
             CreateMap<Experience, ExperienceResponse>()
                 .ForMember(
-                    dest => dest.ExperienceType,
-                    opt => opt.MapFrom(src => src.ExperienceType.ToString())
+                    dest => dest.Type,
+                    opt => opt.MapFrom(src => src.Type.ToString())
                 );
             CreateMap<ExperienceResponse, ExperienceViewModel>()
                 .ForMember(
-                    dest => dest.Type,
-                    opt => opt.MapFrom(src => src.Category.Split())
+                    dest => dest.Categories,
+                    opt => opt.MapFrom(src => src.Categories.Split())
                 );
 
             CreateMap<List<ExperienceViewModel>, ExperienceClassifiedViewModel>()
                 .ForMember(
                     dest => dest.Course,
-                    opt => opt.MapFrom(src => src.Where(e => e.ExperienceType == "course").ToList())
+                    opt => opt.MapFrom(src => src.Where(e => e.Type == "course").ToList())
                 )
                 .ForMember(
                     dest => dest.Activity,
-                    opt => opt.MapFrom(src => src.Where(e => e.ExperienceType == "activity").ToList())
+                    opt => opt.MapFrom(src => src.Where(e => e.Type == "activity").ToList())
                 )
                 .ForMember(
                     dest => dest.Competition,
-                    opt => opt.MapFrom(src => src.Where(e => e.ExperienceType == "competition").ToList())
+                    opt => opt.MapFrom(src => src.Where(e => e.Type == "competition").ToList())
                 )
                 .ForMember(
                     dest => dest.Work,
-                    opt => opt.MapFrom(src => src.Where(e => e.ExperienceType == "work").ToList())
+                    opt => opt.MapFrom(src => src.Where(e => e.Type == "work").ToList())
                 )
                 .ForMember(
                     dest => dest.Certificate,
-                    opt => opt.MapFrom(src => src.Where(e => e.ExperienceType == "certificate").ToList())
+                    opt => opt.MapFrom(src => src.Where(e => e.Type == "certificate").ToList())
                 )
                 .ForMember(
                     dest => dest.Other,
-                    opt => opt.MapFrom(src => src.Where(e => e.ExperienceType == "other").ToList())
+                    opt => opt.MapFrom(src => src.Where(e => e.Type == "other").ToList())
                 );
 
             CreateMap<ExperienceResponse, ExperienceUpdateParameter>()
