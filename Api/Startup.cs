@@ -20,6 +20,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Serialization;
 using System;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -169,8 +170,16 @@ namespace Api
             {
                 options.AddPolicy("CorsPolicy", policy =>
                 {
-                    policy.WithOrigins(corsOrigins)
-                          .AllowAnyHeader()
+
+                    if (corsOrigins.Contains("*"))
+                    {
+                        policy.SetIsOriginAllowed(_ => true);
+                    }
+                    else
+                    {
+                        policy.WithOrigins(corsOrigins);
+                    }
+                    policy.AllowAnyHeader()
                           .AllowAnyMethod()
                           .AllowCredentials();
                 });
