@@ -65,7 +65,8 @@ namespace Application.Services
                                       select new TagResponse()
                                       {
                                           Id = tag.Id,
-                                          Name = tag.Name
+                                          Name = tag.Name,
+                                          IsDefaultTag = (tag.UserId == this._defaultUserId)
                                       }).OrderBy(t => t.Id).ToListAsync();
             return tagsResponse;
         }
@@ -74,6 +75,7 @@ namespace Application.Services
         {
             var tagModel = await _unitOfWork.Tag.FirstOrDefaultAsync(t => t.Id == tagId && t.UserId == this._userId);
             var tagResponse = _mapper.Map<TagResponse>(tagModel);
+            tagResponse.IsDefaultTag = (tagModel.UserId == this._defaultUserId);
             return tagResponse;
         }
 
@@ -84,7 +86,7 @@ namespace Application.Services
             var tagResponse = _mapper.Map<ICollection<TagResponse>>(tagModel);
 
             // 使用過且不為自己的的Tag(若有使用教發的Tag則在此篩出)
-            // TODO:作法不簡潔
+            // TODO:做法不簡潔
             var expIds = await _unitOfWork.Experience.Where(e => e.UserId == this._userId).Select(e => e.Id).ToListAsync();
             var usedTagIds = await _unitOfWork.Experience_Tag.Where(et => expIds.Contains(et.ExperienceId)).Select(et => et.TagId).Distinct().ToListAsync();
             var defaultTagModel = await _unitOfWork.Tag.Where(t => usedTagIds.Contains(t.Id) && t.UserId != this._userId).ToListAsync();

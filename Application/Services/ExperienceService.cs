@@ -136,7 +136,7 @@ namespace Application.Services
 
             // 移除該Exp全部的Tag關聯
             var experience_TagModels = await this._unitOfWork.Experience_Tag.Where(n => n.ExperienceId == experienceId).ToListAsync();
-            this._unitOfWork.Experience_Tag.RemoveRange((IEnumerable<Experience_Tag>)experience_TagModels);
+            this._unitOfWork.Experience_Tag.RemoveRange(experience_TagModels);
 
             // 移除Exp
             this._unitOfWork.Experience.Remove(experienceModel);
@@ -193,22 +193,9 @@ namespace Application.Services
         {
             var experienceModels = await _unitOfWork.Experience.Where(e => e.UserId == this._userId).ToListAsync();
             var experiencesResponse = _mapper.Map<List<ExperienceResponse>>(experienceModels);
-            // TODO:可以將TagSerivce.GetExperienceTagsAsync改成傳入多筆資料
-            var tagModel = await (from tag in _unitOfWork.Tag.GetAll()
-                                  join _ in _unitOfWork.Experience_Tag.GetAll() on tag.Id equals _.TagId into groupjoin
-                                  from combine in groupjoin.DefaultIfEmpty()
-                                  select new
-                                  {
-                                      ExpId = combine.ExperienceId,
-                                      Id = tag.Id,
-                                      Name = tag.Name
-                                  }).OrderBy(t => t.Id).ToListAsync();
             foreach (var exp in experiencesResponse)
             {
-                var tagList = tagModel.Where(t => t.ExpId == exp.Id)
-                                      .Select(t => new Tag { Id = t.Id, Name = t.Name })
-                                      .ToList();
-                exp.Tags = _mapper.Map<ICollection<TagResponse>>(tagList);
+                exp.Tags = await this._tagService.GetExperienceTagsAsync(exp.Id);
             }
 
             return experiencesResponse;
