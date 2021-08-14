@@ -4,6 +4,7 @@ using Application.Dto.Messages;
 using Application.Dto.Responses;
 using AutoMapper;
 using Infrastructure.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -37,7 +38,7 @@ namespace Api.Profiles
             CreateMap<ExperienceResponse, ExperienceViewModel>()
                 .ForMember(
                     dest => dest.Categories,
-                    opt => opt.MapFrom(src => src.Categories.Split())
+                    opt => opt.MapFrom(src => src.Categories.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
                 );
 
             CreateMap<List<ExperienceViewModel>, ExperienceClassifiedViewModel>()
