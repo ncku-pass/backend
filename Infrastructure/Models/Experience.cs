@@ -19,14 +19,14 @@ namespace Infrastructure.Models
         [MaxLength(10)]
         public string Position { get; set; }
 
-        [MaxLength(250)]
+        [MaxLength(550)]
         public string Description { get; set; }
 
         [MaxLength(250)]
         public string CoreAbilities { get; set; }
 
 
-        [MaxLength(250)]
+        [MaxLength(1050)]
         public string Feedback { get; set; }
 
         [Required]
@@ -37,7 +37,7 @@ namespace Infrastructure.Models
         [Column(TypeName = "Text")]
         public string Link { get; set; }
 
-        [MaxLength(50)]
+        [MaxLength(100)]
         public string Categories { get; set; }
 
         public ExperienceType Type { get; set; }
