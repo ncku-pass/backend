@@ -4,6 +4,7 @@ using Application.Dto.Messages;
 using Application.Dto.Responses;
 using AutoMapper;
 using Infrastructure.Models;
+using System;
 
 namespace Api.Profiles
 {
@@ -27,10 +28,16 @@ namespace Api.Profiles
             CreateMap<CardSaveMessage, Card>();
 
             CreateMap<ExpInCardParameter, ExpInCardMessage>();
+            CreateMap<ExpInCardMessage, Card_Experience>();
 
             CreateMap<Card_Experience, ExpInCardResponse>();
             CreateMap<ExperienceResponse, ExpInCardResponse>();
-            CreateMap<ExpInCardResponse, ExpInCardViewModel>();
+            CreateMap<ExpInCardResponse, ExpInCardViewModel>()
+            .ForMember(
+                dest => dest.Categories,
+                opt => opt.MapFrom(src => src.Categories.Split(new char[] { ' ', ';' }, StringSplitOptions.RemoveEmptyEntries))
+            );
+
         }
     }
 }

@@ -19,7 +19,10 @@ namespace Infrastructure.Models
 
         public int ExperienceId { get; set; }
 
+        public int Order { get; set; }
+
         public bool ShowPosition { get; set; }
+
         public bool ShowFeedback { get; set; }
     }
 }

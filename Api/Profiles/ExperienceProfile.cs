@@ -19,12 +19,12 @@ namespace Api.Profiles
             CreateMap<ExperienceCreateParameter, ExperienceCreateMessage>()
                 .ForMember(
                     dest => dest.Categories,
-                    opt => opt.MapFrom(src => string.Join(" ", src.Categories))
+                    opt => opt.MapFrom(src => string.Join(";", src.Categories))
                 );
             CreateMap<ExperienceUpdateParameter, ExperienceUpdateMessage>()
                 .ForMember(
                     dest => dest.Categories,
-                    opt => opt.MapFrom(src => string.Join(" ", src.Categories))
+                    opt => opt.MapFrom(src => string.Join(";", src.Categories))
                 );
 
             CreateMap<ExperienceCreateMessage, Experience>();
@@ -38,7 +38,7 @@ namespace Api.Profiles
             CreateMap<ExperienceResponse, ExperienceViewModel>()
                 .ForMember(
                     dest => dest.Categories,
-                    opt => opt.MapFrom(src => src.Categories.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
+                    opt => opt.MapFrom(src => src.Categories.Split(new char[] { ' ', ';' }, StringSplitOptions.RemoveEmptyEntries))
                 );
 
             CreateMap<List<ExperienceViewModel>, ExperienceClassifiedViewModel>()

@@ -9,13 +9,19 @@ namespace Application.Dto.Messages
         public List<CardSaveMessage> Cards { get; set; }
         public List<int> DeleteCardIds { get; set; }
 
-        public void InitCardOrder()
+        public void InitOrder()
         {
             var i = 1;
-            foreach (var item in this.Cards)
+            foreach (var card in this.Cards)
             {
-                item.Order = i;
+                card.Order = i;
                 i++;
+                var j = 1;
+                foreach (var exp in card.Experiences)
+                {
+                    exp.Order = j;
+                    j++;
+                }
             }
         }
     }
@@ -34,6 +40,7 @@ namespace Application.Dto.Messages
     public class ExpInCardMessage
     {
         public int Id { get; set; }
+        public int Order { get; set; }
         public bool ShowPosition { get; set; }
         public bool ShowFeedback { get; set; }
     }

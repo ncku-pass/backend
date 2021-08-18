@@ -63,7 +63,7 @@ namespace Application.Services
                     this._mapper.Map(exp, expInCardResponse);
                     expInCardList.Add(expInCardResponse);
                 }
-                card.Experiences = expInCardList;
+                card.Experiences = expInCardList.OrderBy(e => e.Order).ToList();
             }
 
             foreach (var resume in resumeResponses)
@@ -104,7 +104,7 @@ namespace Application.Services
                     this._mapper.Map(exp, expInCardResponse);
                     expInCardList.Add(expInCardResponse);
                 }
-                card.Experiences = expInCardList;
+                card.Experiences = expInCardList.OrderBy(e => e.Order).ToList();
             }
             resumeResponse.Cards = cardResponses.OrderBy(c => c.Order).ToList();
 
@@ -118,8 +118,8 @@ namespace Application.Services
         /// <returns></returns>
         public async Task<ResumeResponse> SaveResumeAsync(ResumeSaveMessage resumeSaveMessage)
         {
-            // 依Card排序賦值Order
-            resumeSaveMessage.InitCardOrder();
+            // 依排序給值card和expInCard的order
+            resumeSaveMessage.InitOrder();
 
             // 建立or更新資料庫的Resume
             var resumeModel = _mapper.Map<Resume>(resumeSaveMessage);
@@ -179,14 +179,16 @@ namespace Application.Services
                     card_ExpDictionary.Add(card_exp.ExperienceId, card_exp);
                 }
 
-                foreach (var card_exp in card.Experiences)
+                foreach (var card_expMessage in card.Experiences)
                 {
                     // 從字典檢查是否是現有card_exp
-                    if (card_ExpDictionary.ContainsKey(card_exp.Id))
+                    if (card_ExpDictionary.ContainsKey(card_expMessage.Id))
                     {
-                        var card_expModel = card_ExpDictionary[card_exp.Id];
-                        card_expModel.ShowFeedback = card_exp.ShowFeedback;
-                        card_expModel.ShowPosition = card_exp.ShowPosition;
+                        // 有則映射card_exp上去
+                        var card_expModel = card_ExpDictionary[card_expMessage.Id];
+                        card_expModel.Order = card_expMessage.Order;
+                        card_expModel.ShowFeedback = card_expMessage.ShowFeedback;
+                        card_expModel.ShowPosition = card_expMessage.ShowPosition;
                         this._unitOfWork.Card_Experience.Update(card_expModel);
                     }
                     else
@@ -194,9 +196,10 @@ namespace Application.Services
                         var card_expModel = new Card_Experience()
                         {
                             CardId = card.Id,
-                            ExperienceId = card_exp.Id,
-                            ShowFeedback = card_exp.ShowFeedback,
-                            ShowPosition = card_exp.ShowPosition
+                            ExperienceId = card_expMessage.Id,
+                            Order = card_expMessage.Order,
+                            ShowFeedback = card_expMessage.ShowFeedback,
+                            ShowPosition = card_expMessage.ShowPosition
                         };
                         this._unitOfWork.Card_Experience.Add(card_expModel);
                     }
