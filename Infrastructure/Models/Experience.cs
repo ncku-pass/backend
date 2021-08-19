@@ -16,7 +16,7 @@ namespace Infrastructure.Models
         public string Name { get; set; }
 
         [Required]
-        [MaxLength(10)]
+        [MaxLength(30)]
         public string Position { get; set; }
 
         [MaxLength(550)]
