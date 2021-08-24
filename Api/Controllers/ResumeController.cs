@@ -134,32 +134,5 @@ namespace Api.Controllers
             await this._resumeService.DeleteResumeAsync(resumeId);
             return this.NoContent();
         }
-
-        //// post api/resumes/{resumeId}/topics/{topicId}
-        ///// <summary>
-        ///// 刪除主題
-        ///// </summary>
-        ///// <param name="resumeId"></param>
-        ///// <param name="topicId"></param>
-        ///// <returns></returns>
-        //[HttpDelete("{resumeId}/topics/{topicId}")]
-        //public async Task<IActionResult> DeleteTopicById(
-        //    [FromRoute] int resumeId,
-        //    [FromRoute] int topicId
-        //    )
-        //{
-        //    if (!await _resumeService.ResumeExistsAsync(resumeId))
-        //    {
-        //        return this.NotFound("查無此=>resumeId:" + resumeId);
-        //    }
-        //    if (!await _resumeService.TopicExistsAsync(resumeId, topicId))
-        //    {
-        //        return this.NotFound("查無此=>topicId:" + topicId);
-        //    }
-
-        //    await this._resumeService.DeleteTopicAsync(resumeId, topicId);
-
-        //    return this.NoContent();
-        //}
     }
 }

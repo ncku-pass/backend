@@ -39,8 +39,8 @@ namespace Application.Services
             var tagModels = tagNames.Select(tag => new Tag { Id = 0, Name = tag, UserId = this._userId }).ToList();
             this._unitOfWork.Tag.AddRange(tagModels);
             await this._unitOfWork.SaveChangeAsync();
-            var tagResponse = this._mapper.Map<ICollection<TagResponse>>(tagModels);
-            return tagResponse;
+            var tagResponses = this._mapper.Map<ICollection<TagResponse>>(tagModels);
+            return tagResponses;
         }
 
         public async Task<bool> DeleteTagAsync(int tagId)

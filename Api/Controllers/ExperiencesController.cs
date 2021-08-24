@@ -65,9 +65,9 @@ namespace Api.Controllers
             {
                 return this.NotFound("查無此經歷=>Id:" + experienceId);
             }
-            var ExperienceResponse = await _experienceService.GetExperienceByIdAsync(experienceId);
-            var ExperienceViewModel = this._mapper.Map<ExperienceViewModel>(ExperienceResponse);
-            return this.Ok(ExperienceViewModel);
+            var experienceResponse = await _experienceService.GetExperienceByIdAsync(experienceId);
+            var experienceViewModel = this._mapper.Map<ExperienceViewModel>(experienceResponse);
+            return this.Ok(experienceViewModel);
         }
 
         /// <summary>

@@ -91,11 +91,11 @@ namespace Application.Services
         public async Task ManipulateExp_TagRelation(int experienceId, int[] tagIds)
         {
             // 建立待加入的關聯Models，並排除Tag_Exp中已有的Models
-            var currentExp_TagModel = await _unitOfWork.Experience_Tag.Where(n => n.ExperienceId == experienceId).ToListAsync();
-            var addTagModels = tagIds.Except(currentExp_TagModel.Select(t => t.TagId))
+            var currentExp_TagModels = await _unitOfWork.Experience_Tag.Where(n => n.ExperienceId == experienceId).ToListAsync();
+            var addTagModels = tagIds.Except(currentExp_TagModels.Select(t => t.TagId))
                                      .Select(tid => new Experience_Tag { ExperienceId = experienceId, TagId = tid })
                                      .ToList();
-            var dropTagModels = currentExp_TagModel.Where(t => !tagIds.Contains(t.TagId))
+            var dropTagModels = currentExp_TagModels.Where(t => !tagIds.Contains(t.TagId))
                                                    .ToList();
 
             if (addTagModels.Count() != 0 || dropTagModels.Count() != 0)
