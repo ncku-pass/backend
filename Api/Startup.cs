@@ -46,10 +46,10 @@ namespace Api
                 {
                     setupAction.ReturnHttpNotAcceptable = true;
                 })
-                .AddNewtonsoftJson(setupAction =>
-                {
-                    setupAction.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-                });
+                    .AddNewtonsoftJson(setupAction =>
+                    {
+                        setupAction.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                    });
 
             // Reverse_Proxy forwardheader設定
             services.Configure<ForwardedHeadersOptions>(options =>
@@ -70,24 +70,22 @@ namespace Api
 
             // TODO:問家駿這邊該怎麼簡化
             // DI註冊
-            // Service用Scoped:每個Request刷新
-            // Repo用Transient:每個子任務刷新
-            services.AddTransient<IUnitOfWork, UnitOfWork>();
-            services.AddTransient<IBaseRepository<Experience>, BaseRepository<Experience>>();
-            services.AddTransient<IBaseRepository<Experience_Tag>, BaseRepository<Experience_Tag>>();
-            services.AddTransient<IBaseRepository<Tag>, BaseRepository<Tag>>();
-            services.AddTransient<IBaseRepository<User>, BaseRepository<User>>();
-            services.AddTransient<IBaseRepository<Resume>, BaseRepository<Resume>>();
-            services.AddTransient<IBaseRepository<Card>, BaseRepository<Card>>();
-            services.AddTransient<IBaseRepository<Card_Experience>, BaseRepository<Card_Experience>>();
-
             services.AddScoped<IAuthenticateService, AuthenticateService>();
             services.AddScoped<IExperienceService, ExperienceService>();
             services.AddScoped<ITagService, TagService>();
             services.AddScoped<IResumeService, ResumeService>();
             services.AddScoped<INCKUPortalService, NCKUPortalService>();
 
-            services.AddScoped<INCKUPortalAPI, NCKUPortalAPI>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IBaseRepository<Experience>, BaseRepository<Experience>>();
+            services.AddScoped<IBaseRepository<Experience_Tag>, BaseRepository<Experience_Tag>>();
+            services.AddScoped<IBaseRepository<Tag>, BaseRepository<Tag>>();
+            services.AddScoped<IBaseRepository<User>, BaseRepository<User>>();
+            services.AddScoped<IBaseRepository<Resume>, BaseRepository<Resume>>();
+            services.AddScoped<IBaseRepository<Card>, BaseRepository<Card>>();
+            services.AddScoped<IBaseRepository<Card_Experience>, BaseRepository<Card_Experience>>();
+
+            services.AddTransient<INCKUPortalAPI, NCKUPortalAPI>();
 
             // Add Auto Mapper Configurations
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -127,29 +125,29 @@ namespace Api
 
             // JWT登入服務注入
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
-                {
-                    var secretByte = Encoding.UTF8.GetBytes(_configuration["Authentication:SecretKey"]);
-                    options.TokenValidationParameters = new TokenValidationParameters()
+                    .AddJwtBearer(options =>
                     {
-                        // TODO:待網域確認改回True
-                        ValidateIssuer = false,
-                        ValidIssuer = _configuration["Authentication:Issuer"],
-                        ValidateAudience = false,
-                        ValidAudience = _configuration["Authentication:Audience"],
-                        ValidateLifetime = true,
-                        ClockSkew = TimeSpan.Zero,
-                        IssuerSigningKey = new SymmetricSecurityKey(secretByte)
-                    };
-                    options.Events = new JwtBearerEvents
-                    {
-                        OnMessageReceived = context =>
+                        var secretByte = Encoding.UTF8.GetBytes(_configuration["Authentication:SecretKey"]);
+                        options.TokenValidationParameters = new TokenValidationParameters()
                         {
-                            context.Token = context.Request.Cookies["JWTToken"];
-                            return Task.CompletedTask;
-                        },
-                    };
-                });
+                            // TODO:待網域確認改回True
+                            ValidateIssuer = false,
+                            ValidIssuer = _configuration["Authentication:Issuer"],
+                            ValidateAudience = false,
+                            ValidAudience = _configuration["Authentication:Audience"],
+                            ValidateLifetime = true,
+                            ClockSkew = TimeSpan.Zero,
+                            IssuerSigningKey = new SymmetricSecurityKey(secretByte)
+                        };
+                        options.Events = new JwtBearerEvents
+                        {
+                            OnMessageReceived = context =>
+                            {
+                                context.Token = context.Request.Cookies["JWTToken"];
+                                return Task.CompletedTask;
+                            },
+                        };
+                    });
 
             // 使用Asp.Net core Identity身分認證框架
             services.AddIdentity<IdentityUser, IdentityRole>()
