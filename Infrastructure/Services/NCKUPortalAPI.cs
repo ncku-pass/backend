@@ -1,10 +1,10 @@
-﻿using Infrastructure.Service.Interface;
+﻿using Infrastructure.Services.Interface;
 using System;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Infrastructure.Service
+namespace Infrastructure.Services
 {
     public class NCKUPortalAPI : INCKUPortalAPI
     {

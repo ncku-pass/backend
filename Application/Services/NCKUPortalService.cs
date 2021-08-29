@@ -2,7 +2,7 @@
 using Application.Dto.Responses;
 using Application.Services.Interface;
 using Infrastructure.Infrastructure;
-using Infrastructure.Service.Interface;
+using Infrastructure.Services.Interface;
 using JWT.Builder;
 using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;

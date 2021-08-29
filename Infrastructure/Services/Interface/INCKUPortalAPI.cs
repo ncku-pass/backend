@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Infrastructure.Service.Interface
+namespace Infrastructure.Services.Interface
 {
     public interface INCKUPortalAPI
     {
