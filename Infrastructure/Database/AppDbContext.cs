@@ -23,6 +23,7 @@ namespace Infrastructure.Database
         public DbSet<Resume> Resumes { get; set; }
         public DbSet<Card> Cards { get; set; }
         public DbSet<Card_Experience> Card_Experiences { get; set; }
+        public DbSet<Department> Departments { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
             => optionsBuilder

@@ -17,6 +17,7 @@ namespace Infrastructure.Infrastructure
         public IBaseRepository<Resume> Resume { get; private set; }
         public IBaseRepository<Card> Card { get; private set; }
         public IBaseRepository<Card_Experience> Card_Experience { get; private set; }
+        public IBaseRepository<Department> Department { get; private set; }
 
         public UnitOfWork(
             AppDbContext context,

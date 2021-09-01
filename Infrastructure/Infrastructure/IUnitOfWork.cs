@@ -13,6 +13,7 @@ namespace Infrastructure.Infrastructure
         IBaseRepository<Resume> Resume { get; }
         IBaseRepository<Card> Card { get; }
         IBaseRepository<Card_Experience> Card_Experience { get; }
+        IBaseRepository<Department> Department { get; }
 
         /// <summary>
         /// Saves the change.

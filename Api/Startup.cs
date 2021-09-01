@@ -75,6 +75,7 @@ namespace Api
             services.AddScoped<ITagService, TagService>();
             services.AddScoped<IResumeService, ResumeService>();
             services.AddScoped<INCKUPortalService, NCKUPortalService>();
+            services.AddScoped<IDepartmentService, DepartmentService>();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IBaseRepository<Experience>, BaseRepository<Experience>>();
@@ -84,6 +85,7 @@ namespace Api
             services.AddScoped<IBaseRepository<Resume>, BaseRepository<Resume>>();
             services.AddScoped<IBaseRepository<Card>, BaseRepository<Card>>();
             services.AddScoped<IBaseRepository<Card_Experience>, BaseRepository<Card_Experience>>();
+            services.AddScoped<IBaseRepository<Department>, BaseRepository<Department>>();
 
             services.AddTransient<INCKUPortalAPI, NCKUPortalAPI>();
 
