@@ -23,6 +23,7 @@ namespace Application.Services
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
         private readonly INCKUPortalService _NCKUPortalService;
+        private readonly IDepartmentService _departmentService;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
 
@@ -31,6 +32,7 @@ namespace Application.Services
             IMapper mapper,
             IConfiguration configuration,
             INCKUPortalService nCKUPortalService,
+            IDepartmentService departmentService,
             UserManager<IdentityUser> userManager,
             SignInManager<IdentityUser> signInManager
             )
@@ -39,6 +41,7 @@ namespace Application.Services
             this._mapper = mapper;
             this._configuration = configuration;
             this._NCKUPortalService = nCKUPortalService;
+            this._departmentService = departmentService;
             this._userManager = userManager;
             this._signInManager = signInManager;
         }
@@ -77,6 +80,32 @@ namespace Application.Services
             return tokenStr;
         }
 
+        public async Task<AuthenticateLoginResponse> Login(AuthenticateLoginMessage loginMessage)
+        {
+            //1 驗證帳密
+            var loginResult = await _signInManager.PasswordSignInAsync(
+                                                loginMessage.StudentId,
+                                                loginMessage.Password,
+                                                false,
+                                                false
+                                                );
+            if (!loginResult.Succeeded)
+            {
+                return new AuthenticateLoginResponse() { Succeeded = false };
+            }
+            var identityUser = await this._userManager.FindByNameAsync(loginMessage.StudentId);
+            var userModel = await this._unitOfWork.User.FirstOrDefaultAsync(u => u.AspNetId == Guid.Parse(identityUser.Id));
+
+            //2 創建JWT
+            //payload
+            var tokenStr = await this.GenerateJWTToken(identityUser, userModel);
+
+            return new AuthenticateLoginResponse()
+            {
+                Succeeded = true,
+                TokenStr = tokenStr
+            };
+        }
         public async Task<AuthenticateLoginResponse> LoginByNCKUPortal(NCKUPortalTokenMessage message)
         {
             //1 驗證Token是否為真計中Token
@@ -111,58 +140,6 @@ namespace Application.Services
             };
         }
 
-        private async Task<AuthenticateRegisterResponse> RegisterWithNCKUPortal(NCKUPortalRegisterMessage registerMessage)
-        {
-            // 1 使用用戶名創建對象
-            var user = new IdentityUser
-            {
-                UserName = registerMessage.StudentId,
-                Email = registerMessage.Email
-            };
-
-            // 2 保存用戶
-            var result = await _userManager.CreateAsync(user);
-            if (!result.Succeeded)
-            {
-                var errorMessage = result.Errors.Select(e => e.Code + ": " + e.Description).ToList();
-                return new AuthenticateRegisterResponse() { Succeeded = false, ErrorMessage = errorMessage };
-            }
-
-            // 3 在UserTable保存用戶 return
-            var userModel = this._mapper.Map<User>(registerMessage);
-            userModel.AspNetId = Guid.Parse(user.Id);
-            this._unitOfWork.User.Add(userModel);
-            await this._unitOfWork.SaveChangeAsync();
-            return new AuthenticateRegisterResponse() { Succeeded = true };
-        }
-
-        public async Task<AuthenticateLoginResponse> Login(AuthenticateLoginMessage loginMessage)
-        {
-            //1 驗證帳密
-            var loginResult = await _signInManager.PasswordSignInAsync(
-                                                loginMessage.StudentId,
-                                                loginMessage.Password,
-                                                false,
-                                                false
-                                                );
-            if (!loginResult.Succeeded)
-            {
-                return new AuthenticateLoginResponse() { Succeeded = false };
-            }
-            var identityUser = await this._userManager.FindByNameAsync(loginMessage.StudentId);
-            var userModel = await this._unitOfWork.User.FirstOrDefaultAsync(u => u.AspNetId == Guid.Parse(identityUser.Id));
-
-            //2 創建JWT
-            //payload
-            var tokenStr = await this.GenerateJWTToken(identityUser, userModel);
-
-            return new AuthenticateLoginResponse()
-            {
-                Succeeded = true,
-                TokenStr = tokenStr
-            };
-        }
-
         public async Task<AuthenticateRegisterResponse> Register(AuthenticateRegisterMessage registerMessage)
         {
             // 1 使用用戶名創建對象
@@ -183,9 +160,37 @@ namespace Application.Services
             // 3 在UserTable保存用戶 return
             var userModel = this._mapper.Map<User>(registerMessage);
             userModel.AspNetId = Guid.Parse(user.Id);
+            userModel.DepartmentId = await this._departmentService.GetIdsByDepartment(registerMessage.Major);
             this._unitOfWork.User.Add(userModel);
             await this._unitOfWork.SaveChangeAsync();
             return new AuthenticateRegisterResponse() { Succeeded = true };
         }
+        private async Task<AuthenticateRegisterResponse> RegisterWithNCKUPortal(NCKUPortalRegisterMessage registerMessage)
+        {
+            // 1 使用用戶名創建對象
+            var user = new IdentityUser
+            {
+                UserName = registerMessage.StudentId,
+                Email = registerMessage.Email
+            };
+
+            // 2 保存用戶
+            var result = await _userManager.CreateAsync(user);
+            if (!result.Succeeded)
+            {
+                var errorMessage = result.Errors.Select(e => e.Code + ": " + e.Description).ToList();
+                return new AuthenticateRegisterResponse() { Succeeded = false, ErrorMessage = errorMessage };
+            }
+
+            // 3 在UserTable保存用戶 return
+            var userModel = this._mapper.Map<User>(registerMessage);
+            userModel.AspNetId = Guid.Parse(user.Id);
+            userModel.DepartmentId = await this._departmentService.GetIdsByDepartment(registerMessage.Major);
+            this._unitOfWork.User.Add(userModel);
+            await this._unitOfWork.SaveChangeAsync();
+            return new AuthenticateRegisterResponse() { Succeeded = true };
+        }
+
+
     }
 }

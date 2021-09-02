@@ -23,25 +23,24 @@ namespace Application.Services
             this._unitOfWork = unitOfWork;
         }
 
-        public async Task<List<int>> GetIdsByDegree(string degreeCode)
+        public async Task<List<int>> GetIdByDegree(string degreeCode)
         {
             var departmentModel = this._unitOfWork.Department.Where(d => d.Degree == (DegreeType)Enum.Parse(typeof(DegreeType), degreeCode));
             var departmentIds = await departmentModel.Select(d => d.Id).ToListAsync();
             return departmentIds;
         }
 
-        public async Task<List<int>> GetIdsByCollege(List<string> collegeCode)
+        public async Task<List<int>> GetIdsByCollege(string collegeCode)
         {
-            var departmentModel = this._unitOfWork.Department.Where(d => collegeCode.Contains(d.College));
+            var departmentModel = this._unitOfWork.Department.Where(d => d.College.Equals(collegeCode));
             var departmentIds = await departmentModel.Select(d => d.Id).ToListAsync();
             return departmentIds;
         }
 
-        public async Task<List<int>> GetIdsByDepartment(List<string> departmentCode)
+        public async Task<int> GetIdsByDepartment(string departmentCode)
         {
-            var departmentModel = this._unitOfWork.Department.Where(d => departmentCode.Contains(d.Prefix));
-            var departmentIds = await departmentModel.Select(d => d.Id).ToListAsync();
-            return departmentIds;
+            var departmentModel = await this._unitOfWork.Department.FirstOrDefaultAsync(d => d.Prefix.Equals(departmentCode));
+            return departmentModel.Id;
         }
     }
 }

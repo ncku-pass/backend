@@ -27,7 +27,8 @@ namespace Infrastructure.Infrastructure
             IBaseRepository<User> userRepository,
             IBaseRepository<Resume> resume,
             IBaseRepository<Card> card,
-            IBaseRepository<Card_Experience> card_Experience
+            IBaseRepository<Card_Experience> card_Experience,
+            IBaseRepository<Department> department
             )
         {
             this._context = context;
@@ -38,6 +39,7 @@ namespace Infrastructure.Infrastructure
             this.Resume = resume;
             this.Card = card;
             this.Card_Experience = card_Experience;
+            this.Department = department;
         }
 
         /// <summary>

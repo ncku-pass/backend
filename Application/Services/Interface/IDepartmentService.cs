@@ -7,8 +7,8 @@ namespace Application.Services.Interface
 {
     public interface IDepartmentService
     {
-        Task<List<int>> GetIdsByDegree(string degreeCode);
-        Task<List<int>> GetIdsByCollege(List<string> collegeCode);
-        Task<List<int>> GetIdsByDepartment(List<string> departmentCode);
+        Task<List<int>> GetIdByDegree(string degreeCode);
+        Task<List<int>> GetIdsByCollege(string collegeCode);
+        Task<int> GetIdsByDepartment(string departmentCode);
     }
 }

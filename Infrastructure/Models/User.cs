@@ -18,9 +18,10 @@ namespace Infrastructure.Models
         [StringLength(9)]
         public string StudentId { get; set; }
 
-        [Required]
-        [MaxLength(20)]
-        public string Major { get; set; }
+        [ForeignKey("DepartmentId")]
+        public virtual Department Department { get; set; }
+
+        public int DepartmentId { get; set; }
 
         [Required]
         public int EnrollmentYear { get; set; }
