@@ -151,7 +151,7 @@ namespace Application.Services
                 Id = tag.Sum(t => t.Id), // 加總Id，若不是自己的則加總為0
                 Name = name,
                 Count = tag.Sum(t => t.Count)
-            }).OrderBy(t => t.Count).ToList();
+            }).OrderByDescending(t => t.Count).ToList();
 
             return tagSearchResponse;
         }
