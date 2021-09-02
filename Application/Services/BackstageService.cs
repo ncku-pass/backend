@@ -112,6 +112,8 @@ namespace Application.Services
             {
                 BackstageCategoriesAnalyzeResponse.Tags.Add(new BackstageCategoriesAnalyzeResponseItem() { Name = tag.Key, Count = tag.Value });
             }
+            BackstageCategoriesAnalyzeResponse.Experiences = BackstageCategoriesAnalyzeResponse.Experiences.OrderByDescending(e => e.Count).ToList();
+            BackstageCategoriesAnalyzeResponse.Tags = BackstageCategoriesAnalyzeResponse.Tags.OrderByDescending(t => t.Count).ToList();
 
             return BackstageCategoriesAnalyzeResponse;
         }
