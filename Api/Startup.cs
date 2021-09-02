@@ -76,6 +76,7 @@ namespace Api
             services.AddScoped<IResumeService, ResumeService>();
             services.AddScoped<INCKUPortalService, NCKUPortalService>();
             services.AddScoped<IDepartmentService, DepartmentService>();
+            services.AddScoped<IBackstageService, BackstageService>();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IBaseRepository<Experience>, BaseRepository<Experience>>();
@@ -98,6 +99,7 @@ namespace Api
                 mc.AddProfile(new AuthenticationProfile());
                 mc.AddProfile(new ResumeProfile());
                 mc.AddProfile(new NCKUPortalProfile());
+                mc.AddProfile(new BackstageProfile());
             });
             IMapper mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);

@@ -10,6 +10,7 @@ namespace Application.Services.Interface
         Task<ExperienceResponse> GetExperienceByIdAsync(int experienceId);
 
         Task<IEnumerable<ExperienceResponse>> GetExperiencesAsync();
+        Task<IEnumerable<ExperienceResponse>> GetByUserIdAsync(int userId);
 
         Task<bool> ExperienceExistsAsync(int experienceId);
 

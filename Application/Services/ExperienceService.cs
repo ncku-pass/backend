@@ -200,5 +200,21 @@ namespace Application.Services
 
             return experiencesResponse;
         }
+
+        /// <summary>
+        /// 查詢所有經歷
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IEnumerable<ExperienceResponse>> GetByUserIdAsync(int userId)
+        {
+            var experienceModels = await _unitOfWork.Experience.Where(e => e.UserId == userId).ToListAsync();
+            var experiencesResponse = _mapper.Map<List<ExperienceResponse>>(experienceModels);
+            foreach (var exp in experiencesResponse)
+            {
+                exp.Tags = await this._tagService.GetExperienceTagsAsync(exp.Id);
+            }
+
+            return experiencesResponse;
+        }
     }
 }
