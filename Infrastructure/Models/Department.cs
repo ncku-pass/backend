@@ -14,7 +14,7 @@ namespace Infrastructure.Models
         public int Id { get; set; }
 
         [Required]
-        [MaxLength(1)]
+        [MaxLength(20)]
         public string College { get; set; }
 
         [Required]
@@ -26,6 +26,7 @@ namespace Infrastructure.Models
         public string Name { get; set; }
 
         [Required]
-        public DegreeType Degree { get; set; }
+        [MaxLength(10)]
+        public string Degree { get; set; }
     }
 }

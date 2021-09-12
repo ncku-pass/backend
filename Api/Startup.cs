@@ -75,7 +75,6 @@ namespace Api
             services.AddScoped<ITagService, TagService>();
             services.AddScoped<IResumeService, ResumeService>();
             services.AddScoped<INCKUPortalService, NCKUPortalService>();
-            services.AddScoped<IDepartmentService, DepartmentService>();
             services.AddScoped<IBackstageService, BackstageService>();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();

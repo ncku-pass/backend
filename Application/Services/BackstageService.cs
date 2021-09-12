@@ -16,46 +16,31 @@ namespace Application.Services
     public class BackstageService : IBackstageService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
         private readonly IExperienceService _experienceService;
-        private readonly ITagService _tagService;
-        private readonly IDepartmentService _departmentService;
 
         public BackstageService(
             IUnitOfWork unitOfWork,
-            IMapper mapper,
-            IExperienceService experienceService,
-            ITagService tagService,
-            IDepartmentService departmentService
+            IExperienceService experienceService
             )
         {
             this._unitOfWork = unitOfWork;
-            this._mapper = mapper;
             this._experienceService = experienceService;
-            this._tagService = tagService;
-            this._departmentService = departmentService;
         }
 
 
         public async Task<BackstageCategoriesAnalyzeResponse> CategoriesAnalyze(BackstageCategoriesAnalyzeMessage message)
         {
             // 1. 篩選出DepIds
-            var DepIds = new List<int>();
-            foreach (var item in message.Departments)
-            {
-                DepIds.Add(await this._departmentService.GetIdsByDepartment(item));
-            }
-            foreach (var item in message.Colleges)
-            {
-                DepIds = DepIds.Union(await this._departmentService.GetIdsByCollege(item)).ToList();
-            }
-            foreach (var item in message.Degrees)
-            {
-                DepIds = DepIds.Union(await this._departmentService.GetIdByDegree(item)).ToList();
-            }
+            var depModel = await this._unitOfWork.Department.ToListAsync();
+            var depIds = from d in depModel
+                        where (message.Colleges.Master.Contains(d.College) & d.Degree == "master") ||
+                              (message.Colleges.Bachelor.Contains(d.College) & d.Degree == "bachelor") ||
+                              (message.Departments.Contains(d.Prefix))
+                        select d.Id;
+
 
             // 2. 從UserTable篩出在DepIds中的使用者
-            var userIds = await this._unitOfWork.User.Where(u => DepIds.Contains(u.DepartmentId))
+            var userIds = await this._unitOfWork.User.Where(u => depIds.Contains(u.DepartmentId))
                                                      .Select(u => u.Id)
                                                      .ToListAsync();
 

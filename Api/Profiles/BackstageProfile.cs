@@ -15,9 +15,11 @@ namespace Api.Profiles
         public BackstageProfile()
         {
             CreateMap<BackstageCategoriesAnalyzeParameter, BackstageCategoriesAnalyzeMessage>();
+            CreateMap<BackstageCategoriesAnalyzeCollegesParameter, BackstageCategoriesAnalyzeCollegesMessage>();
             CreateMap<BackstageCategoriesAnalyzeResponse, BackstageCategoriesAnalyzeViewModel>();
 
             CreateMap<BackstageCategoriesAnalyzeResponseItem, BackstageCategoriesAnalyzeViewModelItem>();
+            
         }
     }
 }

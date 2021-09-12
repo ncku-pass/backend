@@ -23,7 +23,6 @@ namespace Application.Services
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
         private readonly INCKUPortalService _NCKUPortalService;
-        private readonly IDepartmentService _departmentService;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
 
@@ -32,7 +31,6 @@ namespace Application.Services
             IMapper mapper,
             IConfiguration configuration,
             INCKUPortalService nCKUPortalService,
-            IDepartmentService departmentService,
             UserManager<IdentityUser> userManager,
             SignInManager<IdentityUser> signInManager
             )
@@ -41,7 +39,6 @@ namespace Application.Services
             this._mapper = mapper;
             this._configuration = configuration;
             this._NCKUPortalService = nCKUPortalService;
-            this._departmentService = departmentService;
             this._userManager = userManager;
             this._signInManager = signInManager;
         }
@@ -160,7 +157,7 @@ namespace Application.Services
             // 3 在UserTable保存用戶 return
             var userModel = this._mapper.Map<User>(registerMessage);
             userModel.AspNetId = Guid.Parse(user.Id);
-            userModel.DepartmentId = await this._departmentService.GetIdsByDepartment(registerMessage.Major);
+            userModel.DepartmentId = (await this._unitOfWork.Department.FirstOrDefaultAsync(d => d.Prefix == registerMessage.Major)).Id;
             this._unitOfWork.User.Add(userModel);
             await this._unitOfWork.SaveChangeAsync();
             return new AuthenticateRegisterResponse() { Succeeded = true };
@@ -185,7 +182,7 @@ namespace Application.Services
             // 3 在UserTable保存用戶 return
             var userModel = this._mapper.Map<User>(registerMessage);
             userModel.AspNetId = Guid.Parse(user.Id);
-            userModel.DepartmentId = await this._departmentService.GetIdsByDepartment(registerMessage.Major);
+            userModel.DepartmentId = (await this._unitOfWork.Department.FirstOrDefaultAsync(d => d.Prefix == registerMessage.Major)).Id;
             this._unitOfWork.User.Add(userModel);
             await this._unitOfWork.SaveChangeAsync();
             return new AuthenticateRegisterResponse() { Succeeded = true };
