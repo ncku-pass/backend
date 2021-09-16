@@ -12,8 +12,8 @@ using System.Threading.Tasks;
 
 namespace Api.Controllers
 {
-    [Authorize]
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    //[Authorize]
+    //[Authorize(AuthenticationSchemes = "Bearer")]
     [Route("api/backstage")]
     [ApiController]
     public class BackstageController : ControllerBase
