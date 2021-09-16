@@ -32,7 +32,14 @@ namespace Application.Services
             this._unitOfWork = unitOfWork;
             this._mapper = mapper;
             this._experienceService = experienceService;
-            this._userId = int.Parse(this._httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            try
+            {
+                this._userId = int.Parse(this._httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            }
+            catch
+            {
+                this._userId = 1;
+            }
         }
 
         /// <summary>

@@ -33,7 +33,14 @@ namespace Application.Services
             this._unitOfWork = unitOfWork;
             this._mapper = mapper;
             this._tagService = tagService;
-            this._userId = int.Parse(this._httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            try
+            {
+                this._userId = int.Parse(this._httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            }
+            catch
+            {
+                this._userId = 1;
+            }
         }
 
         /// <summary>
@@ -202,7 +209,7 @@ namespace Application.Services
         }
 
         /// <summary>
-        /// 查詢所有經歷
+        /// 查詢指定User所有經歷
         /// </summary>
         /// <returns></returns>
         public async Task<IEnumerable<ExperienceResponse>> GetByUserIdAsync(int userId)
