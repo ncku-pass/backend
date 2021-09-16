@@ -7,10 +7,16 @@ namespace Api.RequestModel.Parameters
 {
     public class BackstageCategoriesAnalyzeParameter
     {
+        public BackstageCategoriesAnalyzeParameter()
+        {
+            YearStart ??= 1;
+            YearEnd ??= 200;
+        }
+
         public BackstageCategoriesAnalyzeCollegesParameter Colleges { get; set; }
         public List<string> Departments { get; set; }
-        public DateTime DateStart { get; set; }
-        public DateTime? DateEnd { get; set; }
+        public int? YearStart { get; set; }
+        public int? YearEnd { get; set; }
         public List<string> Categories { get; set; }
     }
 

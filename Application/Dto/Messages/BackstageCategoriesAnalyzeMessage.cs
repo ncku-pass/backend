@@ -8,8 +8,8 @@ namespace Application.Dto.Messages
     {
         public BackstageCategoriesAnalyzeCollegesMessage Colleges { get; set; }
         public List<string> Departments { get; set; }
-        public DateTime DateStart { get; set; }
-        public DateTime? DateEnd { get; set; }
+        public int YearStart { get; set; }
+        public int YearEnd { get; set; }
         public List<string> Categories { get; set; }
     }
     public class BackstageCategoriesAnalyzeCollegesMessage

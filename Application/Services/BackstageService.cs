@@ -33,14 +33,15 @@ namespace Application.Services
             // 1. 篩選出DepIds
             var depModel = await this._unitOfWork.Department.ToListAsync();
             var depIds = from d in depModel
-                        where (message.Colleges.Master.Contains(d.College) & d.Degree == "master") ||
-                              (message.Colleges.Bachelor.Contains(d.College) & d.Degree == "bachelor") ||
-                              (message.Departments.Contains(d.Prefix))
-                        select d.Id;
+                         where (message.Colleges.Master.Contains(d.College) && d.Degree == "master") ||
+                               (message.Colleges.Bachelor.Contains(d.College) && d.Degree == "bachelor") ||
+                               (message.Departments.Contains(d.Prefix))
+                         select d.Id;
 
 
             // 2. 從UserTable篩出在DepIds中的使用者
-            var userIds = await this._unitOfWork.User.Where(u => depIds.Contains(u.DepartmentId))
+            var userIds = await this._unitOfWork.User.Where(u => u.EnrollmentYear >= message.YearStart && u.EnrollmentYear <= message.YearEnd)
+                                                     .Where(u => depIds.Contains(u.DepartmentId))
                                                      .Select(u => u.Id)
                                                      .ToListAsync();
 
