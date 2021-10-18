@@ -47,18 +47,18 @@ namespace Application.Services
         {
             //header
             var signingAlgorithm = SecurityAlgorithms.HmacSha256;
+
             //payload
             var claims = new List<Claim>
             {
-                //sub
-                new Claim(JwtRegisteredClaimNames.Sub, userModel.Id.ToString()),
+                new Claim(JwtRegisteredClaimNames.Sub, userModel.Id.ToString())
             };
             var roleNames = await this._userManager.GetRolesAsync(identityUser);
             foreach (var roleName in roleNames)
             {
-                var roleClaim = new Claim(ClaimTypes.Role, roleName);
-                claims.Add(roleClaim);
+                claims.Add(new Claim("roles", roleName));
             }
+
             //signiture
             var serectByte = Encoding.UTF8.GetBytes(_configuration["Authentication:SecretKey"]);
             var signatureKey = new SymmetricSecurityKey(serectByte);
