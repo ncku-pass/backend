@@ -19,7 +19,7 @@ namespace Api.RequestModel.Parameters
         public string ConfirmPassword { get; set; }
 
         [Required]
-        [RegularExpression(@"[a-zA-Z]\d{8}", ErrorMessage = "學號格式錯誤")]
+        [RegularExpression(@"[a-zA-Z]([a-zA-Z0-9])\d{7}", ErrorMessage = "學號格式錯誤")]
         public string StudentId { get; set; }
 
         [Required]
