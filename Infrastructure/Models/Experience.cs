@@ -12,7 +12,7 @@ namespace Infrastructure.Models
         public int Id { get; set; }
 
         [Required]
-        [MaxLength(30)]
+        [MaxLength(100)]
         public string Name { get; set; }
 
         [Required]
