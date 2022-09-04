@@ -217,17 +217,10 @@ namespace Application.Services
             // 刪除指定Card_Exp關聯
             foreach (var card in resumeSaveMessage.Cards)
             {
-                if (card.Type == "text")
+                if (card.Type == "experience" && card.DeleteExpIds.Any())
                 {
-                    continue;
-                }
-                var currentCard_ExpModels = await this._unitOfWork.Card_Experience.Where(te => te.CardId == card.Id).ToListAsync();
-                foreach (var card_exp in currentCard_ExpModels)
-                {
-                    if (card.DeleteExpIds.Contains(card_exp.ExperienceId))
-                    {
-                        this._unitOfWork.Card_Experience.Remove(card_exp);
-                    }
+                    var currentCard_ExpModels = await this._unitOfWork.Card_Experience.Where(ce => ce.CardId == card.Id).ToListAsync();
+                    this._unitOfWork.Card_Experience.RemoveRange(currentCard_ExpModels.Where(ce => card.DeleteExpIds.Contains(ce.ExperienceId)).ToList());
                 }
             }
             await this._unitOfWork.SaveChangeAsync();

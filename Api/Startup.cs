@@ -71,6 +71,7 @@ namespace Api
             // TODO:問家駿這邊該怎麼簡化
             // DI註冊
             services.AddScoped<IAuthenticateService, AuthenticateService>();
+            services.AddScoped<IDefaultDataService, DefaultDataService>();
             services.AddScoped<IExperienceService, ExperienceService>();
             services.AddScoped<ITagService, TagService>();
             services.AddScoped<IResumeService, ResumeService>();

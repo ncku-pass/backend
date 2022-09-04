@@ -42,12 +42,12 @@ namespace Application.Services
             }
         }
 
-        public async Task<ICollection<TagResponse>> AddTagAsync(string[] tagNames)
+        public async Task<List<TagResponse>> AddTagAsync(string[] tagNames)
         {
             var tagModels = tagNames.Select(tag => new Tag { Id = 0, Name = tag, UserId = this._userId }).ToList();
             this._unitOfWork.Tag.AddRange(tagModels);
             await this._unitOfWork.SaveChangeAsync();
-            var tagResponses = this._mapper.Map<ICollection<TagResponse>>(tagModels);
+            var tagResponses = this._mapper.Map<List<TagResponse>>(tagModels);
             return tagResponses;
         }
 

@@ -1,0 +1,251 @@
+{
+  "TagCreateMessages": [
+    "系內必修",
+    "資料探勘",
+    "工讀經驗",
+    "特殊經歷"
+  ],
+
+  "ExperienceCreateMessages": [{
+      "Id": 0,
+      "Name": "【範例】英文(一)",
+      "Position": "",
+      "Description": "",
+      "Feedback": "學到一些口說技巧",
+      "Semester": "110-1",
+      "Link": "",
+      "Type": "course",
+      "CoreAbilities": "",
+      "Tags": [0],
+      "Categories": "必修課程",
+      "DateStart": "1970-01-01T00:00:00.000Z",
+      "DateEnd": null
+    },
+    {
+      "Id": 0,
+      "Name": "【範例】微積分(一)",
+      "Position": "95",
+      "Description": "系上的必修課程，可應用在未來進階課程",
+      "Feedback": "充滿危機的微積分差點就被當掉，還好期末考考不錯把分數拉高，低分飛過",
+      "Semester": "110-1",
+      "Link": "",
+      "Type": "course",
+      "CoreAbilities": "",
+      "Tags": [0, 1],
+      "Categories": "必修課程",
+      "DateStart": "1970-01-01T00:00:00.000Z",
+      "DateEnd": null
+    },
+    {
+      "Id": 0,
+      "Name": "【範例】統計學(一)",
+      "Position": "",
+      "Description": "",
+      "Feedback": "課程中學習到統計基礎知識，沒想到成為日後加入資料探勘社學習的助力！",
+      "Semester": "109-1",
+      "Link": "",
+      "Type": "course",
+      "CoreAbilities": "",
+      "Tags": [0, 1],
+      "Categories": "必修課程",
+      "DateStart": "1970-01-01T00:00:00.000Z",
+      "DateEnd": null
+    },
+    {
+      "Id": 0,
+      "Name": "【範例】成功登大人",
+      "Position": "大一新鮮人",
+      "Description": "",
+      "Feedback": "大一入學後參加的第一個活動，認識了一些有趣的同學哈哈",
+      "Semester": "110-1",
+      "Link": "",
+      "Type": "activity",
+      "CoreAbilities": "",
+      "Tags": [3],
+      "Categories": "校內活動",
+      "DateStart": "2021-09-01T00:00:00.000Z",
+      "DateEnd": null
+    },
+    {
+      "Id": 0,
+      "Name": "【範例】資料分析社",
+      "Position": "社員",
+      "Description": "資料分析社團",
+      "Feedback": "在一學期的課程中有許多業師授課的講座，從零學習到Data Mining的知識並打下好的基礎。\n後來我也參與到社團專案，替金融公司做零卡授信的資料探勘分析，最終成功建立模型並完成技術轉移，順利結束專案。",
+      "Semester": "110-1",
+      "Link": "",
+      "Type": "activity",
+      "CoreAbilities": "",
+      "Tags": [1],
+      "Categories": "社團",
+      "DateStart": "2021-09-01T00:00:00.000Z",
+      "DateEnd": "2022-08-31T00:00:00.000Z"
+    },
+    {
+      "Id": 0,
+      "Name": "【範例】Kaggle: Store Sales - Time Series Forecasting",
+      "Position": "Bronze",
+      "Description": "Kaggle平台上的商家銷售預測競賽",
+      "Feedback": "這次和資料分析社的朋友組隊參加Kaggle平台上的商家銷售預測競賽，第一次參加取得銅牌的成績，雖然只是小型的競賽但是個不錯的開始:D",
+      "Semester": "110-2",
+      "Link": "",
+      "Type": "competition",
+      "CoreAbilities": "",
+      "Tags": [1],
+      "Categories": "",
+      "DateStart": "2022-07-01T00:00:00.000Z",
+      "DateEnd": "2022-08-31T00:00:00.000Z"
+    },
+    {
+      "Id": 0,
+      "Name": "【範例】成功大學圖書館",
+      "Position": "工讀生",
+      "Description": "協助整理書籍，辦理行政業務",
+      "Feedback": "成大校內的工讀通常不會太繁忙，平均每週大約8小時的班，\n小編建議大家可以多問問有沒有工讀機會，利用課餘時間可以賺一筆零用金~",
+      "Semester": "110-1",
+      "Link": "",
+      "Type": "work",
+      "CoreAbilities": "",
+      "Tags": [2],
+      "Categories": "",
+      "DateStart": "2021-09-01T00:00:00.000Z",
+      "DateEnd": "2022-07-31T00:00:00.000Z"
+    },
+    {
+      "Id": 0,
+      "Name": "【範例】TOEIC",
+      "Position": "990",
+      "Description": "",
+      "Feedback": "畢業門檻Get！",
+      "Semester": "110-2",
+      "Link": "",
+      "Type": "certificate",
+      "CoreAbilities": "",
+      "Tags": [0],
+      "Categories": "",
+      "DateStart": "2022-07-01T00:00:00.000Z",
+      "DateEnd": "2022-07-01T00:00:00.000Z"
+    },
+    {
+      "Id": 0,
+      "Name": "【範例】四草鯨豚救護站志工",
+      "Position": "志工",
+      "Description": "四草鯨豚救護站是南台灣擱淺鯨豚的救護中心，當接獲鯨豚擱淺通報後會協同海巡到現場，並將活體鯨豚移置救護站水池進行治療。由於擱淺鯨豚通常健康狀況不佳，需要24小時監控觀測健康只表，救護站會對外招募排班志工協助值班。",
+      "Feedback": "之前一直有在關注救護站的消息，剛好當天朋友看到有鯨豚擱淺的貼文，以及對外召募志工的需求。看著夜半一點到四點空蕩蕩無人輪值的班表，我和朋友就決定拋下期末週，填上姓名毅然前往。雖然在現場的工作內容不外乎定時檢測呼吸頻率、紀錄行為，但能在氣溫十六、七度的冬天在四草陪著鯨豚待上一晚，也算是不錯的體驗吧！",
+      "Semester": "110-1",
+      "Link": "",
+      "Type": "other",
+      "CoreAbilities": "",
+      "Tags": [3],
+      "Categories": "",
+      "DateStart": "2021-12-03T00:00:00.000Z",
+      "DateEnd": null
+    }
+
+
+  ],
+
+
+  "ResumeSaveMessage": {
+    "Id": 0,
+    "Name": "【範例】大學回憶",
+    "Cards": [
+      {
+        "Type": "text",
+        "Id": 0,
+        "Name": "【範例】使用說明",
+        "Text": "本區塊是[文字區塊]可以輸入文字介紹，\n在「學習歷程」新增的經歷會列在右邊，可以拖動進入[經歷區塊]。\n\n拖動左上方的點點可以排序[文字區塊] & [經歷區塊]喔！",
+        "Order": 1,
+        "Experiences": [],
+        "DeleteExpIds": []
+      },
+      {
+        "Type": "experience",
+        "Id": 0,
+        "Name": "資料探勘",
+        "Text": "",
+        "Order": 2,
+        "Experiences": [
+          {
+            "ShowPosition": true,
+            "ShowFeedback": true,
+            "Id": 1,
+            "Order": 1
+          },
+          {
+            "ShowPosition": false,
+            "ShowFeedback": false,
+            "Id": 2,
+            "Order": 2
+          },
+          {
+            "ShowPosition": true,
+            "ShowFeedback": true,
+            "Id": 4,
+            "Order": 3
+          },
+          {
+            "ShowPosition": true,
+            "ShowFeedback": true,
+            "Id": 5,
+            "Order": 3
+          }
+        ],
+        "DeleteExpIds": []
+      },
+      {
+        "Type": "experience",
+        "Id": 0,
+        "Name": "語言能力證明",
+        "Text": "",
+        "Order": 3,
+        "Experiences": [
+          {
+            "ShowPosition": true,
+            "ShowFeedback": true,
+            "Id": 0,
+            "Order": 1
+          },
+          {
+            "ShowPosition": false,
+            "ShowFeedback": true,
+            "Id": 7,
+            "Order": 2
+          }
+        ],
+        "DeleteExpIds": []
+      },
+      {
+        "Type": "experience",
+        "Id": 0,
+        "Name": "大學生活",
+        "Text": "",
+        "Order": 4,
+        "Experiences": [
+          {
+            "showPosition": false,
+            "showFeedback": true,
+            "id": 3,
+            "order": 1
+          },
+          {
+            "showPosition": true,
+            "showFeedback": true,
+            "id": 6,
+            "order": 2
+          },
+          {
+            "showPosition": false,
+            "showFeedback": true,
+            "id": 8,
+            "order": 2
+          }
+        ],
+        "DeleteExpIds": []
+      }
+    ],
+    "DeleteCardIds": []
+
+  }
+
+}

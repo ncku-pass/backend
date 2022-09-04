@@ -19,17 +19,20 @@ namespace Api.Controllers
     [Route("api/experiences")]
     public class ExperiencesController : Controller
     {
-        private IExperienceService _experienceService;
+        private readonly IExperienceService _experienceService;
+        private readonly IDefaultDataService _defaultDataService;
         private readonly IMapper _mapper;
         private readonly ITagService _tagService;
 
         public ExperiencesController(
             IExperienceService experienceRepository,
+            IDefaultDataService defaultDataService,
             IMapper mapper,
             ITagService tagService
             )
         {
             this._experienceService = experienceRepository;
+            this._defaultDataService = defaultDataService;
             this._mapper = mapper;
             this._tagService = tagService;
         }
@@ -43,9 +46,11 @@ namespace Api.Controllers
         public async Task<IActionResult> GetExperiences()
         {
             var experiencesResponse = await _experienceService.GetExperiencesAsync();
-            if (experiencesResponse == null)
+            if (!experiencesResponse.Any())
             {
-                return this.NotFound("查無經歷");
+                // 若使用者沒有經歷，則新增範例經歷
+                await this._defaultDataService.CreateGuideExampleAsync();
+                experiencesResponse = await _experienceService.GetExperiencesAsync();
             }
             var experienceViewModel = this._mapper.Map<List<ExperienceViewModel>>(experiencesResponse);
             var experienceClassifiedViewModel = this._mapper.Map<ExperienceClassifiedViewModel>(experienceViewModel);
