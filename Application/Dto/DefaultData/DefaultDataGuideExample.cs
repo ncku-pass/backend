@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Application.Dto.Data
 {
-    class AuthenticateGuideExample
+    class DefaultDataGuideExample
     {
         public string[] TagCreateMessages { get; set; }
         public List<ExperienceCreateMessage> ExperienceCreateMessages { get; set; }

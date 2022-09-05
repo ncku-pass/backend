@@ -45,9 +45,17 @@ namespace Application.Services
         public async Task<string> CreateGuideExampleAsync()
         {
             // 讀取範例資料檔
-            string filePath = "../Application/Dto/DefaultData/AuthenticateGuideExample.json";
-            string jsonString = File.ReadAllText(filePath);
-            AuthenticateGuideExample guideExample = JsonConvert.DeserializeObject<AuthenticateGuideExample>(jsonString)!;
+            string jsonString;
+            try
+            {
+                string filePath = System.IO.Directory.GetCurrentDirectory();
+                jsonString = File.ReadAllText(Path.Combine(filePath.Remove(filePath.Length - 3), @"Application\Dto\DefaultData\DefaultDataGuideExample.json"));
+            }
+            catch
+            {
+                jsonString = File.ReadAllText("/src/data/DefaultDataGuideExample.json");
+            }
+            DefaultDataGuideExample guideExample = JsonConvert.DeserializeObject<DefaultDataGuideExample>(jsonString)!;
 
 
             // 1.新增範例Tag
