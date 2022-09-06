@@ -22,5 +22,6 @@ RUN dotnet publish "Api.csproj" -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+COPY --from=build /src/Application/Dto/DefaultData /src/data
 # ENTRYPOINT ["ASPNETCORE_URLS=http://*:$PORT","dotnet", "Api.dll","--environment=Development"]
 CMD ASPNETCORE_URLS=http://*:$PORT dotnet Api.dll
