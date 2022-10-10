@@ -10,6 +10,7 @@ namespace Application.Services.Interface
         Task<ExperienceResponse> GetExperienceByIdAsync(int experienceId);
 
         Task<IEnumerable<ExperienceResponse>> GetExperiencesAsync();
+
         Task<IEnumerable<ExperienceResponse>> GetByUserIdAsync(int userId);
 
         Task<bool> ExperienceExistsAsync(int experienceId);
@@ -17,6 +18,7 @@ namespace Application.Services.Interface
         Task<ICollection<int>> ExperiencesExistsAsync(int[] expIds);
 
         Task<ExperienceResponse> AddExperienceAsync(ExperienceCreateMessage experience);
+        Task ManipulateExp_TagRelation(int experienceId, int[] tagIds);
 
         Task<bool> DeleteExperienceAsync(int experienceId);
 

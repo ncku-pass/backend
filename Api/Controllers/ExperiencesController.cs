@@ -232,7 +232,7 @@ namespace Api.Controllers
             {
                 return this.NotFound("查無此經歷=>Id:" + notExistExpIds);
             }
-            
+
             // 逐筆刪除
             foreach (var expId in deleteParameter.Ids)
             {
@@ -243,7 +243,7 @@ namespace Api.Controllers
 
         /// get api/experiences/1
         /// <summary>
-        /// 根據經歷Id取得經歷
+        /// 根據經歷Id取得tag
         /// </summary>
         /// <param name="experienceId">經歷Id</param>
         /// <returns></returns>
@@ -257,6 +257,43 @@ namespace Api.Controllers
             var tagResponse = await _tagService.GetExperienceTagsAsync(experienceId);
             var tagViewModels = _mapper.Map<ICollection<TagViewModel>>(tagResponse);
             return this.Ok(tagViewModels);
+        }
+
+        /// PUT /api/experiences/tags
+        /// <summary>
+        /// 批次編輯Exp Tag關聯 
+        /// </summary>
+        /// <param name="relateTagsParameter"></param>
+        /// <returns></returns>
+        [HttpPut("tags")]
+        public async Task<IActionResult> EditExperienceRelateTags([FromBody] ExperienceRelateTagsParameter[] relateTagsParameter)
+        {
+            // 確認Exp存在且屬於該User
+            var notExistExpIds = await _experienceService.ExperiencesExistsAsync(relateTagsParameter.Select(p => p.ExperienceId).ToArray());
+            if (notExistExpIds.Any())
+            {
+                return this.NotFound("查無此經歷=>Id:" + notExistExpIds);
+            }
+
+            // 更新Exp Tag關聯
+            foreach (var item in relateTagsParameter)
+            {
+                await this._experienceService.ManipulateExp_TagRelation(item.ExperienceId, item.TagIds);
+            }
+
+            // 整理回傳
+            var expResponse = await _experienceService.GetExperiencesAsync();
+            var relateTagsViewModels = new List<ExperienceRelateTagsViewModel>();
+            foreach (var item in relateTagsParameter)
+            {
+                relateTagsViewModels.Add(new ExperienceRelateTagsViewModel
+                {
+                    ExperienceId= item.ExperienceId,
+                    TagIds= expResponse.Single(e=>e.Id==item.ExperienceId).Tags.Select(t=>t.Id).ToArray()
+                });
+            }
+
+            return this.Ok(relateTagsViewModels);
         }
     }
 }
