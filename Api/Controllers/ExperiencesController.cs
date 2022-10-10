@@ -218,6 +218,29 @@ namespace Api.Controllers
             return this.NoContent();
         }
 
+        /// <summary>
+        /// 刪除多筆經歷
+        /// </summary>
+        /// <param name="deleteParameter"></param>
+        /// <returns></returns>
+        [HttpDelete]
+        public async Task<IActionResult> DeleteExperience([FromBody] ExperienceDeleteParameter deleteParameter)
+        {
+            // 確認Exp存在且屬於該User
+            var notExistExpIds = await _experienceService.ExperiencesExistsAsync(deleteParameter.Ids);
+            if (notExistExpIds.Any())
+            {
+                return this.NotFound("查無此經歷=>Id:" + notExistExpIds);
+            }
+            
+            // 逐筆刪除
+            foreach (var expId in deleteParameter.Ids)
+            {
+                await _experienceService.DeleteExperienceAsync(expId);
+            }
+            return this.NoContent();
+        }
+
         /// get api/experiences/1
         /// <summary>
         /// 根據經歷Id取得經歷
