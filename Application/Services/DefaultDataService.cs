@@ -3,12 +3,9 @@ using Application.Dto.Responses;
 using Application.Services.Interface;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Security.Claims;
-using System.Security.Principal;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Application.Services
@@ -57,7 +54,6 @@ namespace Application.Services
             }
             DefaultDataGuideExample guideExample = JsonConvert.DeserializeObject<DefaultDataGuideExample>(jsonString)!;
 
-
             // 1.新增範例Tag
             var tagResponse = await this._tagService.AddTagAsync(guideExample.TagCreateMessages);
 
@@ -77,7 +73,6 @@ namespace Application.Services
                 expResponses.Add(await this._experienceService.AddExperienceAsync(exp));
             }
 
-
             // 3.新增範例Resume
             foreach (var card in guideExample.ResumeSaveMessage.Cards)
             {
@@ -93,6 +88,4 @@ namespace Application.Services
             return "succeeded";
         }
     }
-
-
 }

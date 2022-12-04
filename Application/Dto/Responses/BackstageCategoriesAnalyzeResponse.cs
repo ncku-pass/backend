@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Application.Dto.Responses
 {
@@ -14,6 +12,5 @@ namespace Application.Dto.Responses
     {
         public string Name { get; set; }
         public int Count { get; set; }
-
     }
 }

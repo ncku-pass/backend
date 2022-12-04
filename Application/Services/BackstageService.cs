@@ -1,14 +1,12 @@
 ﻿using Application.Dto.Messages;
 using Application.Dto.Responses;
 using Application.Services.Interface;
-using AutoMapper;
 using Infrastructure.Infrastructure;
 using Infrastructure.Models.Enums;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Application.Services
@@ -16,17 +14,13 @@ namespace Application.Services
     public class BackstageService : IBackstageService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IExperienceService _experienceService;
 
         public BackstageService(
             IUnitOfWork unitOfWork,
-            IExperienceService experienceService
             )
         {
             this._unitOfWork = unitOfWork;
-            this._experienceService = experienceService;
         }
-
 
         public async Task<BackstageCategoriesAnalyzeResponse> CategoriesAnalyze(BackstageCategoriesAnalyzeMessage message)
         {
@@ -37,7 +31,6 @@ namespace Application.Services
                                (message.Colleges.Bachelor.Contains(d.College) && d.Degree == "bachelor") ||
                                (message.Departments.Contains(d.Prefix))
                          select d.Id;
-
 
             // 2. 從UserTable篩出在DepIds中的使用者
             var userIds = await this._unitOfWork.User.Where(u => u.EnrollmentYear >= message.YearStart && u.EnrollmentYear <= message.YearEnd)
@@ -60,7 +53,6 @@ namespace Application.Services
                                       join tag in this._unitOfWork.Tag.Where(t => !t.Name.Contains("【範例】"))
                                          on combine.TagId equals tag.Id
                                       select tag.Name).ToListAsync();
-
 
             // 4. 用字典檔整理ExpName、TagName
             Dictionary<string, int> expResult = new Dictionary<string, int>();

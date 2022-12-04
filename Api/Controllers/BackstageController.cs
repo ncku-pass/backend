@@ -3,11 +3,7 @@ using Application.Dto.Messages;
 using Application.Services.Interface;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Api.Controllers
@@ -31,7 +27,7 @@ namespace Api.Controllers
         }
 
         [HttpPost("analyze-categories")]
-        public async Task<IActionResult> CategoriesAnalyze([FromBody]BackstageCategoriesAnalyzeParameter parameter)
+        public async Task<IActionResult> CategoriesAnalyze([FromBody] BackstageCategoriesAnalyzeParameter parameter)
         {
             var message = this._mapper.Map<BackstageCategoriesAnalyzeMessage>(parameter);
             var response = await this._backstageService.CategoriesAnalyze(message);

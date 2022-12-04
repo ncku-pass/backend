@@ -261,7 +261,7 @@ namespace Api.Controllers
 
         /// PUT /api/experiences/tags
         /// <summary>
-        /// 批次編輯Exp Tag關聯 
+        /// 批次編輯Exp Tag關聯
         /// </summary>
         /// <param name="relateTagsParameter"></param>
         /// <returns></returns>
@@ -288,8 +288,8 @@ namespace Api.Controllers
             {
                 relateTagsViewModels.Add(new ExperienceRelateTagsViewModel
                 {
-                    ExperienceId= item.ExperienceId,
-                    TagIds= expResponse.Single(e=>e.Id==item.ExperienceId).Tags.Select(t=>t.Id).ToArray()
+                    ExperienceId = item.ExperienceId,
+                    TagIds = expResponse.Single(e => e.Id == item.ExperienceId).Tags.Select(t => t.Id).ToArray()
                 });
             }
 

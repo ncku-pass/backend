@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Application.Dto.Messages
 {
@@ -12,6 +10,7 @@ namespace Application.Dto.Messages
         public int YearEnd { get; set; }
         public List<string> Categories { get; set; }
     }
+
     public class BackstageCategoriesAnalyzeCollegesMessage
     {
         public List<string> Bachelor { get; set; }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Api.RequestModel.ViewModels
 {
@@ -15,6 +12,5 @@ namespace Api.RequestModel.ViewModels
     {
         public string Name { get; set; }
         public int Count { get; set; }
-
     }
 }

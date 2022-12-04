@@ -172,7 +172,6 @@ namespace Api
             {
                 options.AddPolicy("CorsPolicy", policy =>
                 {
-
                     if (corsOrigins.Contains("*"))
                     {
                         policy.SetIsOriginAllowed(_ => true);

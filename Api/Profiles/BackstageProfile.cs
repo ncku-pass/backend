@@ -3,10 +3,6 @@ using Api.RequestModel.ViewModels;
 using Application.Dto.Messages;
 using Application.Dto.Responses;
 using AutoMapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Api.Profiles
 {
@@ -19,7 +15,6 @@ namespace Api.Profiles
             CreateMap<BackstageCategoriesAnalyzeResponse, BackstageCategoriesAnalyzeViewModel>();
 
             CreateMap<BackstageCategoriesAnalyzeResponseItem, BackstageCategoriesAnalyzeViewModelItem>();
-            
         }
     }
 }

@@ -37,7 +37,6 @@ namespace Api.Profiles
                 dest => dest.Categories,
                 opt => opt.MapFrom(src => src.Categories.Split(new char[] { ' ', ';' }, StringSplitOptions.RemoveEmptyEntries))
             );
-
         }
     }
 }

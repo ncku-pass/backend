@@ -103,6 +103,7 @@ namespace Application.Services
                 TokenStr = tokenStr
             };
         }
+
         public async Task<AuthenticateLoginResponse> LoginByNCKUPortal(NCKUPortalTokenMessage message)
         {
             //1 驗證Token是否為真計中Token
@@ -162,6 +163,7 @@ namespace Application.Services
             await this._unitOfWork.SaveChangeAsync();
             return new AuthenticateRegisterResponse() { Succeeded = true };
         }
+
         private async Task<AuthenticateRegisterResponse> RegisterWithNCKUPortal(NCKUPortalRegisterMessage registerMessage)
         {
             // 1 使用用戶名創建對象
@@ -187,7 +189,5 @@ namespace Application.Services
             await this._unitOfWork.SaveChangeAsync();
             return new AuthenticateRegisterResponse() { Succeeded = true };
         }
-
-
     }
 }

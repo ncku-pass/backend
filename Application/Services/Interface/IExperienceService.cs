@@ -18,6 +18,7 @@ namespace Application.Services.Interface
         Task<ICollection<int>> ExperiencesExistsAsync(int[] expIds);
 
         Task<ExperienceResponse> AddExperienceAsync(ExperienceCreateMessage experience);
+
         Task ManipulateExp_TagRelation(int experienceId, int[] tagIds);
 
         Task<bool> DeleteExperienceAsync(int experienceId);

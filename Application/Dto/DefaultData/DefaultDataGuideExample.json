@@ -6,7 +6,8 @@
     "特殊經歷"
   ],
 
-  "ExperienceCreateMessages": [{
+  "ExperienceCreateMessages": [
+    {
       "Id": 0,
       "Name": "【範例】英文(一)",
       "Position": "",
@@ -16,7 +17,7 @@
       "Link": "",
       "Type": "course",
       "CoreAbilities": "",
-      "Tags": [0],
+      "Tags": [ 0 ],
       "Categories": "必修課程",
       "DateStart": "1970-01-01T00:00:00.000Z",
       "DateEnd": null
@@ -31,7 +32,7 @@
       "Link": "",
       "Type": "course",
       "CoreAbilities": "",
-      "Tags": [0, 1],
+      "Tags": [ 0, 1 ],
       "Categories": "必修課程",
       "DateStart": "1970-01-01T00:00:00.000Z",
       "DateEnd": null
@@ -46,7 +47,7 @@
       "Link": "",
       "Type": "course",
       "CoreAbilities": "",
-      "Tags": [0, 1],
+      "Tags": [ 0, 1 ],
       "Categories": "必修課程",
       "DateStart": "1970-01-01T00:00:00.000Z",
       "DateEnd": null
@@ -61,7 +62,7 @@
       "Link": "",
       "Type": "activity",
       "CoreAbilities": "",
-      "Tags": [3],
+      "Tags": [ 3 ],
       "Categories": "校內活動",
       "DateStart": "2021-09-01T00:00:00.000Z",
       "DateEnd": null
@@ -76,7 +77,7 @@
       "Link": "",
       "Type": "activity",
       "CoreAbilities": "",
-      "Tags": [1],
+      "Tags": [ 1 ],
       "Categories": "社團",
       "DateStart": "2021-09-01T00:00:00.000Z",
       "DateEnd": "2022-08-31T00:00:00.000Z"
@@ -91,7 +92,7 @@
       "Link": "",
       "Type": "competition",
       "CoreAbilities": "",
-      "Tags": [1],
+      "Tags": [ 1 ],
       "Categories": "",
       "DateStart": "2022-07-01T00:00:00.000Z",
       "DateEnd": "2022-08-31T00:00:00.000Z"
@@ -106,7 +107,7 @@
       "Link": "",
       "Type": "work",
       "CoreAbilities": "",
-      "Tags": [2],
+      "Tags": [ 2 ],
       "Categories": "",
       "DateStart": "2021-09-01T00:00:00.000Z",
       "DateEnd": "2022-07-31T00:00:00.000Z"
@@ -121,7 +122,7 @@
       "Link": "",
       "Type": "certificate",
       "CoreAbilities": "",
-      "Tags": [0],
+      "Tags": [ 0 ],
       "Categories": "",
       "DateStart": "2022-07-01T00:00:00.000Z",
       "DateEnd": "2022-07-01T00:00:00.000Z"
@@ -136,15 +137,13 @@
       "Link": "",
       "Type": "other",
       "CoreAbilities": "",
-      "Tags": [3],
+      "Tags": [ 3 ],
       "Categories": "",
       "DateStart": "2021-12-03T00:00:00.000Z",
       "DateEnd": null
     }
 
-
   ],
-
 
   "ResumeSaveMessage": {
     "Id": 0,
@@ -245,7 +244,5 @@
       }
     ],
     "DeleteCardIds": []
-
   }
-
 }
