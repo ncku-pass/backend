@@ -45,24 +45,28 @@ namespace Application.Services
                                                      .Select(u => u.Id)
                                                      .ToListAsync();
 
-            // 3. 從ExpTable篩出這些使用者的ExpResponse、在篩除指定類別
-            var expResponse = new List<ExperienceResponse>();
-            foreach (var id in userIds)
-            {
-                expResponse.AddRange(await this._experienceService.GetByUserIdAsync(id));
-            }
-            var expCategoriesFilterResponse = new List<ExperienceResponse>();
+            // 3. 從ExpTable篩出這些使用者指定類別的ExpModel
+
+            // 指定類別轉為Enum序號
+            List<ExperienceType> catagories = new List<ExperienceType>();
             foreach (var item in message.Categories)
             {
-                expCategoriesFilterResponse.AddRange(expResponse.Where(e => e.Type == item));
+                var temp = (ExperienceType)Enum.Parse(typeof(ExperienceType), item, true);
+                catagories.Add(temp);
             }
+
+            var expModels = await this._unitOfWork.Experience.Where(e => userIds.Contains(e.UserId) && !e.Name.Contains("【範例】") && catagories.Contains(e.Type)).ToListAsync();
+            var usedTagNames = await (from combine in this._unitOfWork.Experience_Tag.Where(et => expModels.Select(e => e.Id).Contains(et.ExperienceId))
+                                      join tag in this._unitOfWork.Tag.Where(t => !t.Name.Contains("【範例】"))
+                                         on combine.TagId equals tag.Id
+                                      select tag.Name).ToListAsync();
 
 
             // 4. 用字典檔整理ExpName、TagName
             Dictionary<string, int> expResult = new Dictionary<string, int>();
             Dictionary<string, int> tagResult = new Dictionary<string, int>();
 
-            foreach (var exp in expCategoriesFilterResponse)
+            foreach (var exp in expModels)
             {
                 if (!expResult.ContainsKey(exp.Name))
                 {
@@ -72,16 +76,17 @@ namespace Application.Services
                 {
                     expResult[exp.Name] += 1;
                 }
-                foreach (var tag in exp.Tags)
+            }
+
+            foreach (var tagName in usedTagNames)
+            {
+                if (!tagResult.ContainsKey(tagName))
                 {
-                    if (!tagResult.ContainsKey(tag.Name))
-                    {
-                        tagResult.Add(tag.Name, 1);
-                    }
-                    else
-                    {
-                        tagResult[tag.Name] += 1;
-                    }
+                    tagResult.Add(tagName, 1);
+                }
+                else
+                {
+                    tagResult[tagName] += 1;
                 }
             }
 
