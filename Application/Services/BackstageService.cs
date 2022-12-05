@@ -16,7 +16,7 @@ namespace Application.Services
         private readonly IUnitOfWork _unitOfWork;
 
         public BackstageService(
-            IUnitOfWork unitOfWork,
+            IUnitOfWork unitOfWork
             )
         {
             this._unitOfWork = unitOfWork;
