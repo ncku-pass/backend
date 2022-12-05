@@ -56,10 +56,12 @@ namespace Api.Controllers
         [HttpGet("{tagId}", Name = "GetTagById")]
         public async Task<IActionResult> GetTagByIdAsync([FromRoute] int tagId)
         {
-            if (!await _tagService.TagExistsAsync(tagId))
+            var tagExistResponse = await _tagService.TagExistAsync(new int[] { tagId });
+            if (tagExistResponse.Error)
             {
-                return this.NotFound("查無此標籤=>Id:" + tagId);
+                return this.NotFound($"{tagExistResponse.ErrorMessage}");
             }
+
             var tagResponse = await _tagService.GetTagByIdAsync(tagId);
             var tagViewModel = _mapper.Map<TagViewModel>(tagResponse);
             return this.Ok(tagViewModel);
@@ -94,10 +96,12 @@ namespace Api.Controllers
             [FromBody] string tagName
             )
         {
-            if (!await _tagService.TagExistsAsync(tagId))
+            var tagExistResponse = await _tagService.TagExistAsync(new int[] { tagId });
+            if (tagExistResponse.Error)
             {
-                return this.NotFound("查無此標籤=>Id:" + tagId);
+                return this.NotFound($"{tagExistResponse.ErrorMessage}");
             }
+
             var tagResponse = await _tagService.UpdateTagAsync(new TagUpdateMessage { Id = tagId, Name = tagName });
             var tagViewModel = _mapper.Map<TagViewModel>(tagResponse);
             return this.CreatedAtRoute(
@@ -115,10 +119,12 @@ namespace Api.Controllers
         [HttpDelete("{tagId}")]
         public async Task<IActionResult> DeleteTagAsync([FromRoute] int tagId)
         {
-            if (!await _tagService.TagExistsAsync(tagId))
+            var tagExistResponse = await _tagService.TagExistAsync(new int[] { tagId });
+            if (tagExistResponse.Error)
             {
-                return this.NotFound("查無此標籤=>Id:" + tagId);
+                return this.NotFound($"{tagExistResponse.ErrorMessage}");
             }
+
             var experienceResponse = await _tagService.DeleteTagAsync(tagId);
             return this.NoContent();
         }

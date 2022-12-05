@@ -11,8 +11,6 @@ namespace Application.Services.Interface
 
         Task<ICollection<TagResponse>> GetExperienceTagsAsync(int experienceId);
 
-        Task<bool> TagExistsAsync(int tagId);
-
         Task<ICollection<TagResponse>> GetTagsAsync();
 
         Task<List<TagResponse>> AddTagAsync(string[] tagNames);
