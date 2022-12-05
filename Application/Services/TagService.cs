@@ -113,17 +113,26 @@ namespace Application.Services
             return await _unitOfWork.Tag.AnyAsync(t => t.Id == tagId && (t.UserId == this._userId || t.UserId == _defaultUserId));
         }
 
-        public async Task<ICollection<int>> TagsExistsAsync(int[] tagIds)
+        public async Task<TagExistResponse> TagExistAsync(int[] tagIds)
         {
-            if (tagIds.Length <= 0)
+            if (tagIds.Length == 0)
             {
-                return new List<int> { };
+                return new TagExistResponse { Error = false };
             }
-            var userTagsList = await _unitOfWork.Tag.Where(t => t.UserId == this._userId).Select(t => t.Id).ToListAsync();
-            var defaultTagsList = await _unitOfWork.Tag.Where(t => t.UserId == this._defaultUserId).Select(t => t.Id).ToListAsync();
 
-            var tagsNotExist = tagIds.Except(userTagsList).Except(defaultTagsList).ToList();
-            return tagsNotExist;
+            var userTagsList = await _unitOfWork.Tag.Where(t => t.UserId == this._userId || t.UserId == this._defaultUserId).Select(t => t.Id).ToListAsync();
+            var notExistTagsIds = tagIds.Except(userTagsList).ToList();
+
+            if (notExistTagsIds.Any())
+            {
+                return new TagExistResponse
+                {
+                    Error = true,
+                    ErrorMessage = $"查無此Tags=>Ids:{string.Join(", ", notExistTagsIds)}"
+                };
+
+            }
+            return new TagExistResponse { Error = false };
         }
 
         public async Task<TagResponse> UpdateTagAsync(TagUpdateMessage updateTagMessage)

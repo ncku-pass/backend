@@ -21,7 +21,7 @@ namespace Application.Services.Interface
 
         Task<bool> DeleteTagAsync(int tagId);
 
-        Task<ICollection<int>> TagsExistsAsync(int[] tagIds);
+        Task<TagExistResponse> TagExistAsync(int[] tagIds);
 
         Task<List<TagSearchResponse>> SearchTagAsync(string keyword);
     }

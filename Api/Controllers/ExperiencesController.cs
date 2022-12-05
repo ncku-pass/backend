@@ -83,13 +83,10 @@ namespace Api.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateExperience([FromBody] ExperienceCreateParameter experienceCreateParameter)
         {
-            var addTags = await _tagService.TagsExistsAsync(experienceCreateParameter.Tags);
-
-            if (addTags.Count() > 0)
+            var tagExistResponse = await _tagService.TagExistAsync(experienceCreateParameter.Tags);
+            if (tagExistResponse.Error)
             {
-                string addStr = "";
-                addTags.ToList().ForEach(i => addStr += i + ",");
-                return this.NotFound($"查無此tags=>\n\tAddTags:{addStr}");
+                return this.NotFound($"{tagExistResponse.ErrorMessage}");
             }
 
             var experienceMessage = _mapper.Map<ExperienceCreateMessage>(experienceCreateParameter);
@@ -137,12 +134,10 @@ namespace Api.Controllers
                 return this.NotFound("查無此經歷=>Id:" + experienceId);
             }
             // 檢查Tag是否皆存在
-            var notExistTags = await _tagService.TagsExistsAsync(experienceUpdateParameter.Tags);
-            if (notExistTags.Count() > 0)
+            var tagExistResponse = await _tagService.TagExistAsync(experienceUpdateParameter.Tags);
+            if (tagExistResponse.Error)
             {
-                string notExistTagsStr = "";
-                notExistTags.ToList().ForEach(i => notExistTagsStr += i + ",");
-                return this.NotFound($"查無此tags=>\n\tTags:{notExistTagsStr}");
+                return this.NotFound($"{tagExistResponse.ErrorMessage}");
             }
 
             // 更新此Exp
@@ -181,12 +176,10 @@ namespace Api.Controllers
             patchDocument.ApplyTo(experienceUpdateParameter, ModelState);
 
             // 檢查Tag是否皆存在
-            var notExistTags = await _tagService.TagsExistsAsync(experienceUpdateParameter.Tags);
-            if (notExistTags.Count() > 0)
+            var tagExistResponse = await _tagService.TagExistAsync(experienceUpdateParameter.Tags);
+            if (tagExistResponse.Error)
             {
-                string notExistTagsStr = "";
-                notExistTags.ToList().ForEach(i => notExistTagsStr += i + ",");
-                return this.NotFound($"查無此tags=>\n\tTags:{notExistTagsStr}");
+                return this.NotFound($"{tagExistResponse.ErrorMessage}");
             }
 
             // 更新此Exp
