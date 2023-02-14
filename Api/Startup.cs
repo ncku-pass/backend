@@ -77,6 +77,7 @@ namespace Api
             services.AddScoped<IResumeService, ResumeService>();
             services.AddScoped<INCKUPortalService, NCKUPortalService>();
             services.AddScoped<IBackstageService, BackstageService>();
+            services.AddScoped<IImageService, ImageService>();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IBaseRepository<Experience>, BaseRepository<Experience>>();
@@ -89,6 +90,7 @@ namespace Api
             services.AddScoped<IBaseRepository<Department>, BaseRepository<Department>>();
 
             services.AddTransient<INCKUPortalAPI, NCKUPortalAPI>();
+            services.AddTransient<IFileManagerAPI, FileManagerAPI>();
 
             // Add Auto Mapper Configurations
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
