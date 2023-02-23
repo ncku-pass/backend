@@ -51,7 +51,8 @@ namespace Application.Services
             //payload
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Sub, userModel.Id.ToString())
+                new Claim(JwtRegisteredClaimNames.Sub, userModel.Id.ToString()),
+                new Claim("studentId", userModel.StudentId)
             };
             var roleNames = await this._userManager.GetRolesAsync(identityUser);
             foreach (var roleName in roleNames)
