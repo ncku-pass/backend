@@ -88,6 +88,7 @@ namespace Api
             services.AddScoped<IBaseRepository<Card>, BaseRepository<Card>>();
             services.AddScoped<IBaseRepository<Card_Experience>, BaseRepository<Card_Experience>>();
             services.AddScoped<IBaseRepository<Department>, BaseRepository<Department>>();
+            services.AddScoped<IBaseRepository<Image>, BaseRepository<Image>>();
 
             services.AddTransient<INCKUPortalAPI, NCKUPortalAPI>();
             services.AddTransient<IFileManagerAPI, FileManagerAPI>();
@@ -102,6 +103,7 @@ namespace Api
                 mc.AddProfile(new ResumeProfile());
                 mc.AddProfile(new NCKUPortalProfile());
                 mc.AddProfile(new BackstageProfile());
+                mc.AddProfile(new ImageProfile());
             });
             IMapper mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);

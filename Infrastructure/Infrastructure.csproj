@@ -22,6 +22,8 @@
     <Compile Remove="Migrations\20210419154550_renameExp_Tag.Designer.cs" />
     <Compile Remove="Migrations\20210419161211_renameExp_Tag.cs" />
     <Compile Remove="Migrations\20210419161211_renameExp_Tag.Designer.cs" />
+    <Compile Remove="Migrations\20230306125744_addImageTable.cs" />
+    <Compile Remove="Migrations\20230306125744_addImageTable.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

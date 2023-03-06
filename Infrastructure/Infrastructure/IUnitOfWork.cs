@@ -14,6 +14,7 @@ namespace Infrastructure.Infrastructure
         IBaseRepository<Card> Card { get; }
         IBaseRepository<Card_Experience> Card_Experience { get; }
         IBaseRepository<Department> Department { get; }
+        IBaseRepository<Image> Image { get; }
 
         /// <summary>
         /// Saves the change.

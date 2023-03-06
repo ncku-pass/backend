@@ -24,6 +24,7 @@ namespace Infrastructure.Database
         public DbSet<Card> Cards { get; set; }
         public DbSet<Card_Experience> Card_Experiences { get; set; }
         public DbSet<Department> Departments { get; set; }
+        public DbSet<Image> Images { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
             => optionsBuilder

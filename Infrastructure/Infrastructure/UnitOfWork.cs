@@ -18,6 +18,7 @@ namespace Infrastructure.Infrastructure
         public IBaseRepository<Card> Card { get; private set; }
         public IBaseRepository<Card_Experience> Card_Experience { get; private set; }
         public IBaseRepository<Department> Department { get; private set; }
+        public IBaseRepository<Image> Image { get; private set; }
 
         public UnitOfWork(
             AppDbContext context,
@@ -28,7 +29,8 @@ namespace Infrastructure.Infrastructure
             IBaseRepository<Resume> resume,
             IBaseRepository<Card> card,
             IBaseRepository<Card_Experience> card_Experience,
-            IBaseRepository<Department> department
+            IBaseRepository<Department> department,
+            IBaseRepository<Image> Image
             )
         {
             this._context = context;
@@ -40,6 +42,7 @@ namespace Infrastructure.Infrastructure
             this.Card = card;
             this.Card_Experience = card_Experience;
             this.Department = department;
+            this.Image = Image;
         }
 
         /// <summary>
