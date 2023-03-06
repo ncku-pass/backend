@@ -1,12 +1,11 @@
 ﻿using Api.RequestModel.Parameters;
+using Api.RequestModel.ViewModels;
 using Application.Services.Interface;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Api.Controllers
@@ -18,41 +17,53 @@ namespace Api.Controllers
     public class ImagesController : Controller
     {
         private readonly IImageService _imageService;
+        private readonly IMapper _mapper;
 
-        public ImagesController(IImageService imageService)
+        public ImagesController(
+            IImageService imageService,
+            IMapper mapper
+            )
         {
             this._imageService = imageService;
+            this._mapper = mapper;
         }
 
         /// <summary>
-        /// 根據圖檔名取得圖片
+        /// 根據圖檔Id取得圖片
         /// </summary>
-        /// <param name="imageName"></param>
+        /// <param name="imageId"></param>
         /// <returns></returns>
-        [HttpGet("{imageName}", Name = "GetImage")]
-        public async Task<IActionResult> GetImage([FromRoute] string imageName)
+        [HttpGet("{imageId}", Name = "GetImage")]
+        public async Task<IActionResult> GetImage([FromRoute] int imageId)
         {
-            var result = await this._imageService.GetImageAsync(imageName);
-            return File(result, "image/" + Path.GetExtension(imageName).Replace(".", ""));
+            var imageFileResponse = await this._imageService.GetImageAsync(imageId);
+            return File(imageFileResponse.ImageBytes, "image/" + Path.GetExtension(imageFileResponse.Name).Replace(".", ""));
         }
 
+        /// <summary>
+        /// 上傳圖片
+        /// </summary>
+        /// <param name="imageUploadParameter"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> UploadImage([FromForm] ImageUploadParameter imageUploadParameter)
         {
-            List<string> imageNames = await this._imageService.UploadImageAsync(imageUploadParameter.ImageFiles);
-            var routeNames = string.Join(",", imageNames.Select(i => i.ToString()));
-            return this.CreatedAtRoute(
-                            "GetImage",
-                            new { imageName = routeNames },
-                            imageNames
-                        );
+            var imageResponses = await this._imageService.UploadImageAsync(imageUploadParameter.ImageFiles);
+            var imageViewModels = this._mapper.Map<List<ImageViewModel>>(imageResponses);
+
+            return this.Ok(imageViewModels);
         }
 
 
-        [HttpDelete("{imageName}")]
-        public async Task<IActionResult> DeleteImage([FromRoute] string imageName)
+        /// <summary>
+        /// 刪除圖片
+        /// </summary>
+        /// <param name="imageId"></param>
+        /// <returns></returns>
+        [HttpDelete("{imageId}")]
+        public async Task<IActionResult> DeleteImage([FromRoute] int imageId)
         {
-            await this._imageService.DeleteImageAsync(imageName);
+            await this._imageService.DeleteImageAsync(imageId);
             return this.Ok();
         }
     }

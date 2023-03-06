@@ -1,4 +1,5 @@
-﻿using Application.Dto.Responses;
+﻿using Api.RequestModel.ViewModels;
+using Application.Dto.Responses;
 using AutoMapper;
 using Infrastructure.Models;
 
@@ -13,6 +14,7 @@ namespace Api.Profiles
                     dest => dest.Name,
                     opt => opt.MapFrom(src => src.Name + "." + src.Extension)
                 );
+            CreateMap<ImageResponse, ImageViewModel>();
         }
     }
 }
