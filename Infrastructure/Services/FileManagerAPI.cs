@@ -15,7 +15,7 @@ namespace Infrastructure.Services
             _uploadFolderPath = Environment.GetEnvironmentVariable("UPLOAD_PATH");
         }
 
-        async Task<bool> IFileManagerAPI.CreateFileAsync(string targetPath, string fileName, IFormFile file)
+        public async Task CreateFileAsync(string targetPath, string fileName, IFormFile file)
         {
             try
             {
@@ -30,11 +30,10 @@ namespace Infrastructure.Services
                     {
                         await file.CopyToAsync(fileStream);
                     }
-                    return true;
                 }
                 else
                 {
-                    return false;
+                    throw new ArgumentException("File is Empty.");
                 }
             }
             catch (Exception ex)
@@ -51,7 +50,7 @@ namespace Infrastructure.Services
 
             if (!File.Exists(filePath))
             {
-                throw new ArgumentException("File not found.");
+                throw new FileNotFoundException("File not Found.");
             }
 
             using (var stream = new FileStream(filePath, FileMode.Open))
@@ -65,24 +64,21 @@ namespace Infrastructure.Services
         }
 
 
-        public async Task<bool> DeleteFileAsync(string targetPath, string fileName)
+        public async Task DeleteFileAsync(string targetPath, string fileName)
         {
             var filePath = Path.Combine(_uploadFolderPath, targetPath, fileName);
             if (!File.Exists(filePath))
             {
-                throw new ArgumentException("File not found.");
+                throw new FileNotFoundException("File not Found.");
             }
 
             try
             {
                 await Task.Run(() => File.Delete(filePath));
-                return true;
             }
             catch (Exception ex)
             {
-                // 寫入 Log 或是其他處理
-                Console.WriteLine($"Error: {ex.Message}");
-                return false;
+                throw new Exception("File Delete Failed", ex);
             }
         }
 

@@ -48,14 +48,26 @@ namespace Application.Services
         public async Task<ImageFileResponse> GetImageAsync(int imageId)
         {
             var imageModel = await this._unitOfWork.Image.SingleOrDefaultAsync(img => img.Id == imageId && img.UserId == this._userId);
+            if (imageModel == null)
+            {
+                throw new InvalidOperationException($"Image with ID {imageId} does not exist.");
+            }
             var imageName = imageModel.Name + "." + imageModel.Extension;
 
-            var imageResponse = new ImageFileResponse
+            return new ImageFileResponse
             {
                 Name = imageName,
                 ImageBytes = await _fileManagerAPI.GetFileAsync(this._imageFolderPath, imageName)
             };
-            return imageResponse;
+        }
+
+        public async Task<ImageFileResponse> GetImageAsync(string imageName)
+        {
+            return new ImageFileResponse
+            {
+                Name = imageName,
+                ImageBytes = await _fileManagerAPI.GetFileAsync(this._imageFolderPath, imageName)
+            };
         }
 
 

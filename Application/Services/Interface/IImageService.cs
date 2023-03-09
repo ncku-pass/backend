@@ -8,6 +8,7 @@ namespace Application.Services.Interface
     public interface IImageService
     {
         Task<ImageFileResponse> GetImageAsync(int imageId);
+        Task<ImageFileResponse> GetImageAsync(string imageName);
         Task<List<ImageResponse>> UploadImageAsync(List<IFormFile> files);
         Task DeleteImageAsync(int imageId);
     }
