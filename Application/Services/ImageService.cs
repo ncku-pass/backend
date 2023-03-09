@@ -75,26 +75,25 @@ namespace Application.Services
         {
             var imageModels = new List<Image> { };
 
-            foreach (var item in files)
+            foreach (var file in files)
             {
                 string fileName = GenerateRandomString(7);
-                string extension = Path.GetExtension(item.FileName);
-                await _fileManagerAPI.CreateFileAsync(this._imageFolderPath, fileName + extension, item);
+                string extension = Path.GetExtension(file.FileName);
+                await _fileManagerAPI.CreateFileAsync(this._imageFolderPath, fileName + extension, file);
 
                 var imageModel = new Image
                 {
                     Name = fileName,
                     Extension = extension.Replace(".", ""),
+                    Size = file.Length,
                     UserId = this._userId
                 };
                 this._unitOfWork.Image.Add(imageModel);
-                await this._unitOfWork.SaveChangeAsync();
-
                 imageModels.Add(imageModel);
             }
+            await this._unitOfWork.SaveChangeAsync();
 
             var imageResponses = this._mapper.Map<List<ImageResponse>>(imageModels);
-
             return imageResponses;
         }
         static string GenerateRandomString(int length)

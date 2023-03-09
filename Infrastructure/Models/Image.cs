@@ -14,7 +14,11 @@ namespace Infrastructure.Models
         public string Name { get; set; }
 
         [Required]
+        [MaxLength(5)]
         public string Extension { get; set; }
+
+        [Required]
+        public long Size { get; set; }
 
         [ForeignKey("UserId")]
         public virtual User User { get; set; }
