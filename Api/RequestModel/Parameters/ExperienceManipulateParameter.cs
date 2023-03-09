@@ -4,7 +4,13 @@ namespace Api.RequestModel.Parameters
 {
     public abstract class ExperienceManipulateParameter
     {
-        public string Name { get; set; }
+        private string _name;
+
+        public string Name
+        {
+            get => _name;
+            set => _name = value.Length > 100 ? value.Substring(0, 100) : value;
+        }
         public string Position { get; set; }
         public string Description { get; set; }
         public string Feedback { get; set; }
