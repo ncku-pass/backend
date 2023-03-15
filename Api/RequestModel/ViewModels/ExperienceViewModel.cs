@@ -18,5 +18,6 @@ namespace Api.RequestModel.ViewModels
         public DateTime DateStart { get; set; }
         public DateTime? DateEnd { get; set; }
         public ICollection<TagViewModel> Tags { get; set; }
+        public ICollection<ImageViewModel> Images { get; set; }
     }
 }

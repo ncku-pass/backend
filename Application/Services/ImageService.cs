@@ -5,6 +5,7 @@ using Infrastructure.Infrastructure;
 using Infrastructure.Models;
 using Infrastructure.Services.Interface;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -69,6 +70,16 @@ namespace Application.Services
                 ImageBytes = await _fileManagerAPI.GetFileAsync(this._imageFolderPath, imageName)
             };
         }
+
+        public async Task<List<ImageResponse>> GetExperienceImageAsync(int expId)
+        {
+            var imgIds = await this._unitOfWork.Experience_Image.Where(ei => ei.ExperienceId == expId).Select(ei => ei.ImageId).ToListAsync();
+            var imgModel = await this._unitOfWork.Image.Where(i => imgIds.Contains(i.Id)).ToListAsync();
+
+            var imgResponse = this._mapper.Map<List<ImageResponse>>(imgModel);
+            return imgResponse;
+        }
+
 
 
         public async Task<List<ImageResponse>> UploadImageAsync(List<IFormFile> files)

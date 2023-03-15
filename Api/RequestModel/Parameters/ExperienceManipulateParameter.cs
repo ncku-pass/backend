@@ -21,5 +21,6 @@ namespace Api.RequestModel.Parameters
         public DateTime DateStart { get; set; }
         public DateTime? DateEnd { get; set; }
         public int[] Tags { get; set; }
+        public int[] Images { get; set; }
     }
 }

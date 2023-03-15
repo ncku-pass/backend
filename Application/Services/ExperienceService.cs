@@ -20,19 +20,22 @@ namespace Application.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly ITagService _tagService;
+        private readonly IImageService _imageService;
         private readonly int _userId;
 
         public ExperienceService(
             IHttpContextAccessor httpContextAccessor,
             IUnitOfWork unitOfWork,
             IMapper mapper,
-            ITagService tagService
+            ITagService tagService,
+            IImageService imageService
             )
         {
             this._httpContextAccessor = httpContextAccessor;
             this._unitOfWork = unitOfWork;
             this._mapper = mapper;
             this._tagService = tagService;
+            this._imageService = imageService;
             try
             {
                 this._userId = int.Parse(this._httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
@@ -67,8 +70,15 @@ namespace Application.Services
                 await ManipulateExp_TagRelation(experienceModel.Id, experienceMessage.Tags);
             }
 
+            // 新增、刪除Exp_Img關聯
+            if (experienceMessage.Images != null)
+            {
+                await ManipulateExp_ImgRelation(experienceModel.Id, experienceMessage.Images);
+            }
+
             var experienceResponse = _mapper.Map<ExperienceResponse>(experienceModel);
             experienceResponse.Tags = await _tagService.GetExperienceTagsAsync(experienceModel.Id);
+            experienceResponse.Images = await _imageService.GetExperienceImageAsync(experienceModel.Id);
             return experienceResponse;
         }
 
@@ -102,13 +112,34 @@ namespace Application.Services
             var addTagModels = tagIds.Except(currentExp_TagModels.Select(t => t.TagId))
                                      .Select(tid => new Experience_Tag { ExperienceId = experienceId, TagId = tid })
                                      .ToList();
-            var dropTagModels = currentExp_TagModels.Where(t => !tagIds.Contains(t.TagId))
-                                                   .ToList();
+            var dropTagModels = currentExp_TagModels.Where(t => !tagIds.Contains(t.TagId)).ToList();
 
             if (addTagModels.Count() != 0 || dropTagModels.Count() != 0)
             {
                 _unitOfWork.Experience_Tag.AddRange(addTagModels);
                 _unitOfWork.Experience_Tag.RemoveRange(dropTagModels);
+                await this._unitOfWork.SaveChangeAsync();
+            }
+        }
+
+        /// <summary>
+        /// 比對傳入tagIds增刪Exp_Img關聯
+        /// </summary>
+        /// <param name="expId"></param>
+        /// <param name="imgIds"></param>
+        /// <returns></returns>
+        public async Task ManipulateExp_ImgRelation(int expId, int[] imgIds)
+        {
+            var currentExp_ImgModels = await _unitOfWork.Experience_Image.Where(n => n.ExperienceId == expId).ToListAsync();
+            var addImgModels = imgIds.Except(currentExp_ImgModels.Select(t => t.ImageId))
+                                     .Select(imgId => new Experience_Image { ExperienceId = expId, ImageId = imgId })
+                                     .ToList();
+            var dropImgModels = currentExp_ImgModels.Where(t => !imgIds.Contains(t.ImageId)).ToList();
+
+            if (addImgModels.Count() != 0 || dropImgModels.Count() != 0)
+            {
+                _unitOfWork.Experience_Image.AddRange(addImgModels);
+                _unitOfWork.Experience_Image.RemoveRange(dropImgModels);
                 await this._unitOfWork.SaveChangeAsync();
             }
         }
@@ -126,9 +157,11 @@ namespace Application.Services
 
             // 新增、刪除Exp_Tag關聯
             await ManipulateExp_TagRelation(experienceModel.Id, experienceUpdateMessage.Tags);
+            await ManipulateExp_ImgRelation(experienceModel.Id, experienceUpdateMessage.Images);
 
             var experienceResponse = _mapper.Map<ExperienceResponse>(experienceModel);
-            experienceResponse.Tags = await _tagService.GetExperienceTagsAsync(experienceModel.Id);
+            experienceResponse.Tags = await this._tagService.GetExperienceTagsAsync(experienceModel.Id);
+            experienceResponse.Images = await this._imageService.GetExperienceImageAsync(experienceModel.Id);
             return experienceResponse;
         }
 
@@ -142,8 +175,18 @@ namespace Application.Services
             var experienceModel = await this._unitOfWork.Experience.FirstOrDefaultAsync(e => e.Id == experienceId && e.UserId == this._userId);
 
             // 移除該Exp全部的Tag關聯
-            var experience_TagModels = await this._unitOfWork.Experience_Tag.Where(n => n.ExperienceId == experienceId).ToListAsync();
+            var experience_TagModels = await this._unitOfWork.Experience_Tag.Where(et => et.ExperienceId == experienceId).ToListAsync();
             this._unitOfWork.Experience_Tag.RemoveRange(experience_TagModels);
+
+            // 移除該Exp全部的Img關聯
+            var experience_ImgModels = await this._unitOfWork.Experience_Image.Where(ei => ei.ExperienceId == experienceId).ToListAsync();
+            this._unitOfWork.Experience_Image.RemoveRange(experience_ImgModels);
+            // TODO:有圖片管理功能時刪除
+            var imgIds = experience_ImgModels.Select(ei => ei.ImageId).ToList();
+            foreach (var id in imgIds)
+            {
+                await this._imageService.DeleteImageAsync(id);
+            }
 
             // 移除Exp
             this._unitOfWork.Experience.Remove(experienceModel);
@@ -185,9 +228,11 @@ namespace Application.Services
         {
             var experienceModel = await this._unitOfWork.Experience.FirstOrDefaultAsync(e => e.Id == experienceId && e.UserId == this._userId);
             var tagModel = await this._tagService.GetExperienceTagsAsync(experienceId);
+            var imgModel = await this._imageService.GetExperienceImageAsync(experienceId);
 
             var experienceResponse = _mapper.Map<ExperienceResponse>(experienceModel);
             experienceResponse.Tags = _mapper.Map<ICollection<TagResponse>>(tagModel);
+            experienceResponse.Images = _mapper.Map<ICollection<ImageResponse>>(imgModel);
 
             return experienceResponse;
         }
@@ -203,6 +248,7 @@ namespace Application.Services
             foreach (var exp in experiencesResponse)
             {
                 exp.Tags = await this._tagService.GetExperienceTagsAsync(exp.Id);
+                exp.Images = await this._imageService.GetExperienceImageAsync(exp.Id);
             }
 
             return experiencesResponse;

@@ -18,5 +18,6 @@ namespace Application.Dto.Responses
         public DateTime DateStart { get; set; }
         public DateTime? DateEnd { get; set; }
         public ICollection<TagResponse> Tags { get; set; }
+        public ICollection<ImageResponse> Images { get; set; }
     }
 }

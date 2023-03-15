@@ -9,6 +9,7 @@ namespace Application.Services.Interface
     {
         Task<ImageFileResponse> GetImageAsync(int imageId);
         Task<ImageFileResponse> GetImageAsync(string imageName);
+        Task<List<ImageResponse>> GetExperienceImageAsync(int expId);
         Task<List<ImageResponse>> UploadImageAsync(List<IFormFile> files);
         Task DeleteImageAsync(int imageId);
     }
