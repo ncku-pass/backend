@@ -82,6 +82,7 @@ namespace Api
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IBaseRepository<Experience>, BaseRepository<Experience>>();
             services.AddScoped<IBaseRepository<Experience_Tag>, BaseRepository<Experience_Tag>>();
+            services.AddScoped<IBaseRepository<Experience_Image>, BaseRepository<Experience_Image>>();
             services.AddScoped<IBaseRepository<Tag>, BaseRepository<Tag>>();
             services.AddScoped<IBaseRepository<User>, BaseRepository<User>>();
             services.AddScoped<IBaseRepository<Resume>, BaseRepository<Resume>>();

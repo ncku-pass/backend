@@ -12,6 +12,7 @@ namespace Infrastructure.Infrastructure
 
         public IBaseRepository<Experience> Experience { get; private set; }
         public IBaseRepository<Experience_Tag> Experience_Tag { get; private set; }
+        public IBaseRepository<Experience_Image> Experience_Image { get; private set; }
         public IBaseRepository<Tag> Tag { get; private set; }
         public IBaseRepository<User> User { get; private set; }
         public IBaseRepository<Resume> Resume { get; private set; }
@@ -24,6 +25,7 @@ namespace Infrastructure.Infrastructure
             AppDbContext context,
             IBaseRepository<Experience> experienceRepository,
             IBaseRepository<Experience_Tag> experience_Tag,
+            IBaseRepository<Experience_Image> experience_Image,
             IBaseRepository<Tag> tagRepository,
             IBaseRepository<User> userRepository,
             IBaseRepository<Resume> resume,
@@ -36,6 +38,7 @@ namespace Infrastructure.Infrastructure
             this._context = context;
             this.Experience = experienceRepository;
             this.Experience_Tag = experience_Tag;
+            this.Experience_Image = experience_Image;
             this.Tag = tagRepository;
             this.User = userRepository;
             this.Resume = resume;
