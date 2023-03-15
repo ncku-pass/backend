@@ -125,6 +125,17 @@ namespace Application.Services
             await this._unitOfWork.SaveChangeAsync();
         }
 
+        public async Task ImgExistAsync(int[] imgIds)
+        {
+            var userImgsList = await _unitOfWork.Image.Where(t => t.UserId == this._userId).Select(t => t.Id).ToListAsync();
+            var notExistImgsIds = imgIds.Except(userImgsList).ToList();
+
+            if (notExistImgsIds.Any())
+            {
+                throw new ArgumentException($"查無此Imgs=>Ids:{string.Join(", ", notExistImgsIds)}");
+            }
+        }
+
 
     }
 }

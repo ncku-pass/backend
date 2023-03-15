@@ -7,6 +7,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -23,18 +24,21 @@ namespace Api.Controllers
         private readonly IDefaultDataService _defaultDataService;
         private readonly IMapper _mapper;
         private readonly ITagService _tagService;
+        private readonly IImageService _imageService;
 
         public ExperiencesController(
             IExperienceService experienceRepository,
             IDefaultDataService defaultDataService,
             IMapper mapper,
-            ITagService tagService
+            ITagService tagService,
+            IImageService imageService
             )
         {
             this._experienceService = experienceRepository;
             this._defaultDataService = defaultDataService;
             this._mapper = mapper;
             this._tagService = tagService;
+            this._imageService = imageService;
         }
 
         /// get api/experiences
@@ -89,6 +93,17 @@ namespace Api.Controllers
                 return this.NotFound($"{tagExistResponse.ErrorMessage}");
             }
 
+            // TODO:統一try catch處裡contoller
+            try
+            {
+                await this._imageService.ImgExistAsync(experienceCreateParameter.Images);
+            }
+            catch (ArgumentException ex)
+            {
+                return this.NotFound(ex.Message);
+            }
+
+
             var experienceMessage = _mapper.Map<ExperienceCreateMessage>(experienceCreateParameter);
             var experienceResponse = await _experienceService.AddExperienceAsync(experienceMessage);
             var experienceViewModel = _mapper.Map<ExperienceViewModel>(experienceResponse);
@@ -140,6 +155,16 @@ namespace Api.Controllers
                 return this.NotFound($"{tagExistResponse.ErrorMessage}");
             }
 
+            // TODO:統一try catch處裡contoller
+            try
+            {
+                await this._imageService.ImgExistAsync(experienceUpdateParameter.Images);
+            }
+            catch (ArgumentException ex)
+            {
+                return this.NotFound(ex.Message);
+            }
+
             // 更新此Exp
             var experienceUpdateMessage = _mapper.Map<ExperienceUpdateMessage>(experienceUpdateParameter);
             experienceUpdateMessage.Id = experienceId;
@@ -180,6 +205,16 @@ namespace Api.Controllers
             if (tagExistResponse.Error)
             {
                 return this.NotFound($"{tagExistResponse.ErrorMessage}");
+            }
+
+            // TODO:統一try catch處裡contoller
+            try
+            {
+                await this._imageService.ImgExistAsync(experienceUpdateParameter.Images);
+            }
+            catch (ArgumentException ex)
+            {
+                return this.NotFound(ex.Message);
             }
 
             // 更新此Exp
