@@ -13,7 +13,7 @@ namespace Application.Services.Interface
 
         Task<List<ImageResponse>> GetExperienceImageAsync(int expId);
 
-        Task<List<ImageResponse>> UploadImageAsync(List<IFormFile> files);
+        Task<ImageResponse> UploadImageAsync(IFormFile file);
 
         Task DeleteImageAsync(int imageId);
 

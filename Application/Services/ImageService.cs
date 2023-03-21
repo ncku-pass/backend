@@ -80,30 +80,24 @@ namespace Application.Services
             return imgResponse;
         }
 
-        public async Task<List<ImageResponse>> UploadImageAsync(List<IFormFile> files)
+        public async Task<ImageResponse> UploadImageAsync(IFormFile file)
         {
-            var imageModels = new List<Image> { };
+            string fileName = GenerateRandomString(7);
+            string extension = Path.GetExtension(file.FileName);
+            await _fileManagerAPI.CreateFileAsync(this._imageFolderPath, fileName + extension, file);
 
-            foreach (var file in files)
+            var imageModel = new Image
             {
-                string fileName = GenerateRandomString(7);
-                string extension = Path.GetExtension(file.FileName);
-                await _fileManagerAPI.CreateFileAsync(this._imageFolderPath, fileName + extension, file);
-
-                var imageModel = new Image
-                {
-                    Name = fileName,
-                    Extension = extension.Replace(".", ""),
-                    Size = file.Length,
-                    UserId = this._userId
-                };
-                this._unitOfWork.Image.Add(imageModel);
-                imageModels.Add(imageModel);
-            }
+                Name = fileName,
+                Extension = extension.Replace(".", ""),
+                Size = file.Length,
+                UserId = this._userId
+            };
+            this._unitOfWork.Image.Add(imageModel);
             await this._unitOfWork.SaveChangeAsync();
 
-            var imageResponses = this._mapper.Map<List<ImageResponse>>(imageModels);
-            return imageResponses;
+            var imageResponse = this._mapper.Map<ImageResponse>(imageModel);
+            return imageResponse;
         }
 
         private static string GenerateRandomString(int length)

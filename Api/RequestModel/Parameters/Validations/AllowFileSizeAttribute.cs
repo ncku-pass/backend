@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Http;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Api.RequestModel.Parameters.Validations
@@ -15,14 +14,13 @@ namespace Api.RequestModel.Parameters.Validations
 
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
-            var files = value as List<IFormFile>;
-            foreach (var file in files)
+            var file = value as IFormFile;
+
+            if (file.Length > _maxSize)
             {
-                if (file.Length > _maxSize)
-                {
-                    return new ValidationResult($"以下檔案大小超過上限 {_maxSize / (1024 * 1024)} MB：{file.FileName}");
-                }
+                return new ValidationResult($"{file.FileName} 檔案大小超過上限 {_maxSize / (1024 * 1024)} MB");
             }
+
             return ValidationResult.Success;
         }
     }

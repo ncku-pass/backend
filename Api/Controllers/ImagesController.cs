@@ -85,13 +85,13 @@ namespace Api.Controllers
         /// <param name="imageUploadParameter"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> UploadImages([FromForm] ImageUploadParameter imageUploadParameter)
+        public async Task<IActionResult> UploadImage([FromForm] ImageUploadParameter imageUploadParameter)
         {
             try
             {
-                var imageResponses = await this._imageService.UploadImageAsync(imageUploadParameter.ImageFiles);
-                var imageViewModels = this._mapper.Map<List<ImageViewModel>>(imageResponses);
-                return this.Ok(imageViewModels);
+                var imageResponse = await this._imageService.UploadImageAsync(imageUploadParameter.Image);
+                var imageViewModel = this._mapper.Map<ImageViewModel>(imageResponse);
+                return this.Ok(imageViewModel);
             }
             catch (Exception ex)
             {
