@@ -10,6 +10,6 @@ namespace Application.Services.Interface
 
         Task<bool> UserVerify(NCKUPortalTokenMessage message);
 
-        Task<string> GetRecord(NCKUPortalTokenMessage message, string type);
+        Task<NCKUPortalGetRecordResponse> GetRecord(NCKUPortalTokenMessage message, string type);
     }
 }

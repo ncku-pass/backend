@@ -5,6 +5,8 @@ using Infrastructure.Infrastructure;
 using Infrastructure.Services.Interface;
 using JWT.Builder;
 using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -80,15 +82,19 @@ namespace Application.Services
         /// <param name="message"></param>
         /// <param name="type">["all", "activity", "course", "club"]</param>
         /// <returns></returns>
-        public async Task<string> GetRecord(NCKUPortalTokenMessage message, string type)
+        public async Task<NCKUPortalGetRecordResponse> GetRecord(NCKUPortalTokenMessage message, string type)
         {
             if (!await this.UserVerify(message))
             {
-                return "StudentId not paired!";
+                throw new Exception("StudentId not paired!");
             }
 
-            var response = await this._NCKUPortalAPI.GetExpRecordAsync(message.Key, message.Keyval, type);
-            return response;
+            var jsonResponse = await this._NCKUPortalAPI.GetExpRecordAsync(message.Key, message.Keyval, type);
+            var getRecordResponse = JsonConvert.DeserializeObject<NCKUPortalGetRecordResponse>(jsonResponse);
+
+            return getRecordResponse;
         }
+
+
     }
 }

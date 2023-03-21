@@ -4,6 +4,7 @@ using Application.Services.Interface;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Threading.Tasks;
 
 namespace Api.Controllers
@@ -38,9 +39,16 @@ namespace Api.Controllers
             [FromBody] NCKUPortalTokenParameter Parameter
             )
         {
-            var message = this._mapper.Map<NCKUPortalTokenMessage>(Parameter);
-            var response = await this._NCKUPortalService.GetRecord(message, type);
-            return this.Ok(response);
+            try
+            {
+                var message = this._mapper.Map<NCKUPortalTokenMessage>(Parameter);
+                var response = await this._NCKUPortalService.GetRecord(message, type);
+                return this.Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return this.Unauthorized(ex.Message);
+            }
         }
     }
 }
