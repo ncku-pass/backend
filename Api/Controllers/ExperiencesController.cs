@@ -103,7 +103,6 @@ namespace Api.Controllers
                 return this.NotFound(ex.Message);
             }
 
-
             var experienceMessage = _mapper.Map<ExperienceCreateMessage>(experienceCreateParameter);
             var experienceResponse = await _experienceService.AddExperienceAsync(experienceMessage);
             var experienceViewModel = _mapper.Map<ExperienceViewModel>(experienceResponse);

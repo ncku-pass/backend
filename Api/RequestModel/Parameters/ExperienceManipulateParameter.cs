@@ -11,6 +11,7 @@ namespace Api.RequestModel.Parameters
             get => _name;
             set => _name = value.Length > 100 ? value.Substring(0, 100) : value;
         }
+
         public string Position { get; set; }
         public string Description { get; set; }
         public string Feedback { get; set; }

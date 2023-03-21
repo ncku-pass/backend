@@ -11,6 +11,7 @@ namespace Application.Dto.Responses
             get => _name;
             set => _name = value.Length > 100 ? value.Substring(0, 97) + "..." : value;
         }
+
         public string Activity_url { get; set; }
         public string Active_start { get; set; }
         public string Active_end { get; set; }
@@ -27,6 +28,7 @@ namespace Application.Dto.Responses
             get => _name;
             set => _name = value.Length > 100 ? value.Substring(0, 97) + "..." : value;
         }
+
         public string Syear { get; set; }
         public string Sem { get; set; }
         public string Position { get; set; }
@@ -41,6 +43,7 @@ namespace Application.Dto.Responses
             get => _name;
             set => _name = value.Length > 100 ? value.Substring(0, 97) + "..." : value;
         }
+
         public string Syear { get; set; }
         public string Sem { get; set; }
         public string Dept_code { get; set; }
@@ -68,4 +71,3 @@ namespace Application.Dto.Responses
         public Data Data { get; set; }
     }
 }
-

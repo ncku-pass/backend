@@ -42,7 +42,6 @@ namespace Infrastructure.Services
             }
         }
 
-
         // 讀取檔案
         public async Task<byte[]> GetFileAsync(string targetPath, string fileName)
         {
@@ -63,7 +62,6 @@ namespace Infrastructure.Services
             }
         }
 
-
         public async Task DeleteFileAsync(string targetPath, string fileName)
         {
             var filePath = Path.Combine(_uploadFolderPath, targetPath, fileName);
@@ -81,6 +79,5 @@ namespace Infrastructure.Services
                 throw new Exception("File Delete Failed", ex);
             }
         }
-
     }
 }

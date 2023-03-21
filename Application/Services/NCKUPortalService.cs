@@ -94,7 +94,5 @@ namespace Application.Services
 
             return getRecordResponse;
         }
-
-
     }
 }

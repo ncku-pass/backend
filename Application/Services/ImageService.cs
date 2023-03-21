@@ -80,8 +80,6 @@ namespace Application.Services
             return imgResponse;
         }
 
-
-
         public async Task<List<ImageResponse>> UploadImageAsync(List<IFormFile> files)
         {
             var imageModels = new List<Image> { };
@@ -107,7 +105,8 @@ namespace Application.Services
             var imageResponses = this._mapper.Map<List<ImageResponse>>(imageModels);
             return imageResponses;
         }
-        static string GenerateRandomString(int length)
+
+        private static string GenerateRandomString(int length)
         {
             const string chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
             var random = new Random();
@@ -135,7 +134,5 @@ namespace Application.Services
                 throw new ArgumentException($"查無此Imgs=>Ids:{string.Join(", ", notExistImgsIds)}");
             }
         }
-
-
     }
 }

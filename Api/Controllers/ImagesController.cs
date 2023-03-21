@@ -37,7 +37,6 @@ namespace Api.Controllers
         [HttpGet("{imageId}", Name = "GetImageById")]
         public async Task<IActionResult> GetImage([FromRoute] int imageId)
         {
-
             try
             {
                 var imageFileResponse = await this._imageService.GetImageAsync(imageId);
@@ -99,7 +98,6 @@ namespace Api.Controllers
                 return this.StatusCode(500, ex.Message);
             }
         }
-
 
         /// <summary>
         /// 刪除圖片
