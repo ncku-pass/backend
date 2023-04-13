@@ -4,6 +4,7 @@ using Application.Services.Interface;
 using AutoMapper;
 using Infrastructure.Infrastructure;
 using Infrastructure.Models;
+using Infrastructure.Services.Interface;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -23,6 +24,7 @@ namespace Application.Services
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
         private readonly INCKUPortalService _NCKUPortalService;
+        private readonly IAESCryptAPI _AESCryptAPI;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
 
@@ -31,6 +33,7 @@ namespace Application.Services
             IMapper mapper,
             IConfiguration configuration,
             INCKUPortalService nCKUPortalService,
+            IAESCryptAPI aESCryptAPI,
             UserManager<IdentityUser> userManager,
             SignInManager<IdentityUser> signInManager
             )
@@ -39,6 +42,7 @@ namespace Application.Services
             this._mapper = mapper;
             this._configuration = configuration;
             this._NCKUPortalService = nCKUPortalService;
+            this._AESCryptAPI = aESCryptAPI;
             this._userManager = userManager;
             this._signInManager = signInManager;
         }
@@ -98,10 +102,16 @@ namespace Application.Services
             //payload
             var tokenStr = await this.GenerateJWTToken(identityUser, userModel);
 
+            //3 創建ImageToken
+            
+            var imageToken = this._AESCryptAPI.Encrypt(userModel.StudentId);
+
+
             return new AuthenticateLoginResponse()
             {
                 Succeeded = true,
-                TokenStr = tokenStr
+                TokenStr = tokenStr,
+                ImageToken = imageToken
             };
         }
 
@@ -132,10 +142,15 @@ namespace Application.Services
             //payload
             var tokenStr = await this.GenerateJWTToken(identityUser, userModel);
 
+            //3 創建ImageToken
+
+            var imageToken = this._AESCryptAPI.Encrypt(userModel.StudentId);
+
             return new AuthenticateLoginResponse()
             {
                 Succeeded = true,
-                TokenStr = tokenStr
+                TokenStr = tokenStr,
+                ImageToken = imageToken
             };
         }
 

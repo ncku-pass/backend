@@ -26,6 +26,8 @@
       "launchBrowser": true,
       "launchUrl": "http://localhost:5000/swagger",
       "environmentVariables": {
+        "IMAGE_IV": "wVyjNkieP92nkp0M",
+        "IMAGE_KEY": "poMiqfyeNza9Q2Fn",
         "UPLOAD_PATH": "C:\\Users\\m2553\\Desktop\\uploadTest",
         "ASPNETCORE_ENVIRONMENT": "Development"
       },

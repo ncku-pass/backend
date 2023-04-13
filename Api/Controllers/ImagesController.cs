@@ -33,13 +33,15 @@ namespace Api.Controllers
         /// 根據圖檔Id取得圖片
         /// </summary>
         /// <param name="imageId"></param>
+        /// <param name="token"></param>
         /// <returns></returns>
+        [AllowAnonymous]
         [HttpGet("{imageId}", Name = "GetImageById")]
-        public async Task<IActionResult> GetImage([FromRoute] int imageId)
+        public async Task<IActionResult> GetImage([FromRoute] int imageId, [FromQuery] string token)
         {
             try
             {
-                var imageFileResponse = await this._imageService.GetImageAsync(imageId);
+                var imageFileResponse = await this._imageService.GetImageAsync(imageId, token);
                 return File(imageFileResponse.ImageBytes, "image/" + Path.GetExtension(imageFileResponse.Name).Replace(".", ""));
             }
             catch (FileNotFoundException ex)
@@ -61,12 +63,13 @@ namespace Api.Controllers
         /// </summary>
         /// <param name="imageName"></param>
         /// <returns></returns>
+        [AllowAnonymous]
         [HttpGet(Name = "GetImageByName")]
-        public async Task<IActionResult> GetImageByName([FromQuery] string imageName)
+        public async Task<IActionResult> GetImageByName([FromQuery] string imageName, [FromQuery] string token)
         {
             try
             {
-                var imageFileResponse = await this._imageService.GetImageAsync(imageName);
+                var imageFileResponse = await this._imageService.GetImageAsync(imageName, token);
                 return File(imageFileResponse.ImageBytes, "image/" + Path.GetExtension(imageFileResponse.Name).Replace(".", ""));
             }
             catch (FileNotFoundException ex)

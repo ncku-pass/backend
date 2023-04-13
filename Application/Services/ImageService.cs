@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Application.Services
@@ -18,6 +19,7 @@ namespace Application.Services
     public class ImageService : IImageService
     {
         private readonly IFileManagerAPI _fileManagerAPI;
+        private readonly IAESCryptAPI _AESCryptAPI;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly string _imageFolderPath;
@@ -26,11 +28,13 @@ namespace Application.Services
         public ImageService(
             IHttpContextAccessor httpContextAccessor,
             IFileManagerAPI fileManagerAPI,
+            IAESCryptAPI aESCryptAPI,
             IUnitOfWork unitOfWork,
             IMapper mapper
             )
         {
             this._fileManagerAPI = fileManagerAPI;
+            this._AESCryptAPI = aESCryptAPI;
             this._unitOfWork = unitOfWork;
             this._mapper = mapper;
 
@@ -46,9 +50,14 @@ namespace Application.Services
             }
         }
 
-        public async Task<ImageFileResponse> GetImageAsync(int imageId)
+        public async Task<ImageFileResponse> GetImageAsync(int imageId, string token)
         {
-            var imageModel = await this._unitOfWork.Image.SingleOrDefaultAsync(img => img.Id == imageId && img.UserId == this._userId);
+            var studentId = this._AESCryptAPI.Decrypt(token);
+            if (!Regex.IsMatch(studentId, @"[a-zA-Z]([a-zA-Z0-9])\d{7}")) {
+                throw new InvalidOperationException($"Invalid Token.");
+            }
+
+            var imageModel = await this._unitOfWork.Image.SingleOrDefaultAsync(img => img.Id == imageId);
             if (imageModel == null)
             {
                 throw new InvalidOperationException($"Image with ID {imageId} does not exist.");
@@ -58,16 +67,22 @@ namespace Application.Services
             return new ImageFileResponse
             {
                 Name = imageName,
-                ImageBytes = await _fileManagerAPI.GetFileAsync(this._imageFolderPath, imageName)
+                ImageBytes = await _fileManagerAPI.GetFileAsync(Path.Combine(studentId, "images"), imageName)
             };
         }
 
-        public async Task<ImageFileResponse> GetImageAsync(string imageName)
+        public async Task<ImageFileResponse> GetImageAsync(string imageName, string token)
         {
+            var studentId = this._AESCryptAPI.Decrypt(token);
+            if (!Regex.IsMatch(studentId, @"[a-zA-Z]([a-zA-Z0-9])\d{7}"))
+            {
+                throw new InvalidOperationException($"Invalid Token.");
+            }
+
             return new ImageFileResponse
             {
                 Name = imageName,
-                ImageBytes = await _fileManagerAPI.GetFileAsync(this._imageFolderPath, imageName)
+                ImageBytes = await _fileManagerAPI.GetFileAsync(Path.Combine(studentId, "images"), imageName)
             };
         }
 
@@ -82,7 +97,7 @@ namespace Application.Services
 
         public async Task<ImageResponse> UploadImageAsync(IFormFile file)
         {
-            string fileName = GenerateRandomString(7);
+            string fileName = this._AESCryptAPI.GenerateRandomString(7);
             string extension = Path.GetExtension(file.FileName);
             await _fileManagerAPI.CreateFileAsync(this._imageFolderPath, fileName + extension, file);
 
@@ -98,16 +113,6 @@ namespace Application.Services
 
             var imageResponse = this._mapper.Map<ImageResponse>(imageModel);
             return imageResponse;
-        }
-
-        private static string GenerateRandomString(int length)
-        {
-            const string chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            var random = new Random();
-            var result = new string(Enumerable.Range(0, length)
-                                              .Select(i => chars[random.Next(chars.Length)])
-                                              .ToArray());
-            return result;
         }
 
         public async Task DeleteImageAsync(int imageId)

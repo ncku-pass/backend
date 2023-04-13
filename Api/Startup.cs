@@ -91,6 +91,7 @@ namespace Api
             services.AddScoped<IBaseRepository<Department>, BaseRepository<Department>>();
             services.AddScoped<IBaseRepository<Image>, BaseRepository<Image>>();
 
+            services.AddTransient<IAESCryptAPI, AESCryptAPI>();
             services.AddTransient<INCKUPortalAPI, NCKUPortalAPI>();
             services.AddTransient<IFileManagerAPI, FileManagerAPI>();
 

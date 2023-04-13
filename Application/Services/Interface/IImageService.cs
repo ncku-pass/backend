@@ -7,9 +7,9 @@ namespace Application.Services.Interface
 {
     public interface IImageService
     {
-        Task<ImageFileResponse> GetImageAsync(int imageId);
+        Task<ImageFileResponse> GetImageAsync(int imageId, string token);
 
-        Task<ImageFileResponse> GetImageAsync(string imageName);
+        Task<ImageFileResponse> GetImageAsync(string imageName, string token);
 
         Task<List<ImageResponse>> GetExperienceImageAsync(int expId);
 
