@@ -72,6 +72,8 @@ namespace Api.Profiles
                     dest => dest.Tags,
                     opt => opt.MapFrom(src => src.Tags.Select(t => t.Id).ToList())
                 );
+
+            CreateMap<ImgInExpParameter, ImgInExpMessage>();
         }
     }
 }

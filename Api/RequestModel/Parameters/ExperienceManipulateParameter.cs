@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Api.RequestModel.Parameters
 {
@@ -22,6 +23,11 @@ namespace Api.RequestModel.Parameters
         public DateTime DateStart { get; set; }
         public DateTime? DateEnd { get; set; }
         public int[] Tags { get; set; }
-        public int[] Images { get; set; }
+        public List<ImgInExpParameter> Images { get; set; }
+    }
+
+    public class ImgInExpParameter { 
+        public int Id { get; set; }
+        public string Name { get; set; }
     }
 }

@@ -96,7 +96,7 @@ namespace Api.Controllers
             // TODO:統一try catch處裡contoller
             try
             {
-                await this._imageService.ImgExistAsync(experienceCreateParameter.Images);
+                await this._imageService.ImgExistAsync(experienceCreateParameter.Images.Select(i => i.Id).ToList());
             }
             catch (ArgumentException ex)
             {
@@ -157,7 +157,7 @@ namespace Api.Controllers
             // TODO:統一try catch處裡contoller
             try
             {
-                await this._imageService.ImgExistAsync(experienceUpdateParameter.Images);
+                await this._imageService.ImgExistAsync(experienceUpdateParameter.Images.Select(i => i.Id).ToList());
             }
             catch (ArgumentException ex)
             {
@@ -209,7 +209,7 @@ namespace Api.Controllers
             // TODO:統一try catch處裡contoller
             try
             {
-                await this._imageService.ImgExistAsync(experienceUpdateParameter.Images);
+                await this._imageService.ImgExistAsync(experienceUpdateParameter.Images.Select(i => i.Id).ToList());
             }
             catch (ArgumentException ex)
             {

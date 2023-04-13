@@ -73,7 +73,7 @@ namespace Application.Services
             // 新增、刪除Exp_Img關聯
             if (experienceMessage.Images != null)
             {
-                await ManipulateExp_ImgRelation(experienceModel.Id, experienceMessage.Images);
+                await ManipulateExp_ImgRelation(experienceModel.Id, experienceMessage.Images.Select(i => i.Id).ToList());
             }
 
             var experienceResponse = _mapper.Map<ExperienceResponse>(experienceModel);
@@ -128,7 +128,7 @@ namespace Application.Services
         /// <param name="expId"></param>
         /// <param name="imgIds"></param>
         /// <returns></returns>
-        public async Task ManipulateExp_ImgRelation(int expId, int[] imgIds)
+        public async Task ManipulateExp_ImgRelation(int expId, List<int> imgIds)
         {
             var currentExp_ImgModels = await _unitOfWork.Experience_Image.Where(n => n.ExperienceId == expId).ToListAsync();
             var addImgModels = imgIds.Except(currentExp_ImgModels.Select(t => t.ImageId))
@@ -157,7 +157,7 @@ namespace Application.Services
 
             // 新增、刪除Exp_Tag關聯
             await ManipulateExp_TagRelation(experienceModel.Id, experienceUpdateMessage.Tags);
-            await ManipulateExp_ImgRelation(experienceModel.Id, experienceUpdateMessage.Images);
+            await ManipulateExp_ImgRelation(experienceModel.Id, experienceUpdateMessage.Images.Select(i => i.Id).ToList());
 
             var experienceResponse = _mapper.Map<ExperienceResponse>(experienceModel);
             experienceResponse.Tags = await this._tagService.GetExperienceTagsAsync(experienceModel.Id);

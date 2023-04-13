@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Application.Dto.Messages
 {
@@ -15,6 +16,11 @@ namespace Application.Dto.Messages
         public DateTime DateStart { get; set; }
         public DateTime? DateEnd { get; set; }
         public int[] Tags { get; set; }
-        public int[] Images { get; set; }
+        public List<ImgInExpMessage> Images { get; set; }
+    }
+    public class ImgInExpMessage
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
     }
 }

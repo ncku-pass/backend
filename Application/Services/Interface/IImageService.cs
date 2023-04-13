@@ -15,6 +15,6 @@ namespace Application.Services.Interface
 
         Task DeleteImageAsync(int imageId);
 
-        Task ImgExistAsync(int[] imgIds);
+        Task ImgExistAsync(List<int> imgIds);
     }
 }
