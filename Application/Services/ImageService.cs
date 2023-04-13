@@ -50,9 +50,9 @@ namespace Application.Services
             }
         }
 
-        public async Task<ImageFileResponse> GetImageAsync(int imageId, string token)
+        public async Task<ImageFileResponse> GetImageAsync(int imageId, string imageToken)
         {
-            var studentId = this._AESCryptAPI.Decrypt(token);
+            var studentId = this._AESCryptAPI.Decrypt(imageToken);
             if (!Regex.IsMatch(studentId, @"[a-zA-Z]([a-zA-Z0-9])\d{7}")) {
                 throw new InvalidOperationException($"Invalid Token.");
             }
@@ -63,21 +63,6 @@ namespace Application.Services
                 throw new InvalidOperationException($"Image with ID {imageId} does not exist.");
             }
             var imageName = imageModel.Name + "." + imageModel.Extension;
-
-            return new ImageFileResponse
-            {
-                Name = imageName,
-                ImageBytes = await _fileManagerAPI.GetFileAsync(Path.Combine(studentId, "images"), imageName)
-            };
-        }
-
-        public async Task<ImageFileResponse> GetImageAsync(string imageName, string token)
-        {
-            var studentId = this._AESCryptAPI.Decrypt(token);
-            if (!Regex.IsMatch(studentId, @"[a-zA-Z]([a-zA-Z0-9])\d{7}"))
-            {
-                throw new InvalidOperationException($"Invalid Token.");
-            }
 
             return new ImageFileResponse
             {

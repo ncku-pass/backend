@@ -5,7 +5,6 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -33,15 +32,15 @@ namespace Api.Controllers
         /// 根據圖檔Id取得圖片
         /// </summary>
         /// <param name="imageId"></param>
-        /// <param name="token"></param>
+        /// <param name="imageToken"></param>
         /// <returns></returns>
         [AllowAnonymous]
         [HttpGet("{imageId}", Name = "GetImageById")]
-        public async Task<IActionResult> GetImage([FromRoute] int imageId, [FromQuery] string token)
+        public async Task<IActionResult> GetImage([FromRoute] int imageId, [FromQuery] string imageToken)
         {
             try
             {
-                var imageFileResponse = await this._imageService.GetImageAsync(imageId, token);
+                var imageFileResponse = await this._imageService.GetImageAsync(imageId, imageToken);
                 return File(imageFileResponse.ImageBytes, "image/" + Path.GetExtension(imageFileResponse.Name).Replace(".", ""));
             }
             catch (FileNotFoundException ex)
@@ -49,30 +48,6 @@ namespace Api.Controllers
                 return this.NotFound(ex.Message);
             }
             catch (InvalidOperationException ex)
-            {
-                return this.NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return this.StatusCode(500, ex.Message);
-            }
-        }
-
-        /// <summary>
-        /// 根據圖檔名稱取得圖片
-        /// </summary>
-        /// <param name="imageName"></param>
-        /// <returns></returns>
-        [AllowAnonymous]
-        [HttpGet(Name = "GetImageByName")]
-        public async Task<IActionResult> GetImageByName([FromQuery] string imageName, [FromQuery] string token)
-        {
-            try
-            {
-                var imageFileResponse = await this._imageService.GetImageAsync(imageName, token);
-                return File(imageFileResponse.ImageBytes, "image/" + Path.GetExtension(imageFileResponse.Name).Replace(".", ""));
-            }
-            catch (FileNotFoundException ex)
             {
                 return this.NotFound(ex.Message);
             }
