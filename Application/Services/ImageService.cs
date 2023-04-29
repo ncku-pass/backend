@@ -53,7 +53,8 @@ namespace Application.Services
         public async Task<ImageFileResponse> GetImageAsync(int imageId, string imageToken)
         {
             var studentId = this._AESCryptAPI.Decrypt(imageToken);
-            if (!Regex.IsMatch(studentId, @"[a-zA-Z]([a-zA-Z0-9])\d{7}")) {
+            if (!Regex.IsMatch(studentId, @"[a-zA-Z]([a-zA-Z0-9])\d{7}"))
+            {
                 throw new InvalidOperationException($"Invalid Token.");
             }
 
@@ -110,6 +111,10 @@ namespace Application.Services
 
         public async Task ImgExistAsync(int[] imgIds)
         {
+            if (imgIds == null || imgIds.Length == 0)
+            {
+                return;
+            }
             var userImgsList = await _unitOfWork.Image.Where(t => t.UserId == this._userId).Select(t => t.Id).ToListAsync();
             var notExistImgsIds = imgIds.Except(userImgsList).ToList();
 
