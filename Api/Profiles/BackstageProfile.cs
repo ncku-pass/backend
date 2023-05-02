@@ -12,9 +12,13 @@ namespace Api.Profiles
         {
             CreateMap<BackstageCategoriesAnalyzeParameter, BackstageCategoriesAnalyzeMessage>();
             CreateMap<BackstageCategoriesAnalyzeCollegesParameter, BackstageCategoriesAnalyzeCollegesMessage>();
-            CreateMap<BackstageCategoriesAnalyzeResponse, BackstageCategoriesAnalyzeViewModel>();
 
+            CreateMap<BackstageCategoriesAnalyzeResponse, BackstageCategoriesAnalyzeViewModel>();
             CreateMap<BackstageCategoriesAnalyzeResponseItem, BackstageCategoriesAnalyzeViewModelItem>();
+
+            CreateMap<BackStageAbilityAnalyzeResponse, BackStageAbilityAnalyzeViewModel>();
+            CreateMap<BackStageAbilityAnalyzeTagResponseItem, BackStageAbilityAnalyzeTagViewModelItem>();
+            CreateMap<BackStageAbilityAnalyzeExpResponseItem, BackStageAbilityAnalyzeExpViewModelItem>();
         }
     }
 }

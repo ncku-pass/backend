@@ -34,5 +34,14 @@ namespace Api.Controllers
 
             return this.Ok(response);
         }
+
+        [HttpPost("analyze-abilities")]
+        public async Task<IActionResult> AbilityAnalyze([FromBody] BackstageCategoriesAnalyzeParameter parameter)
+        {
+            var message = this._mapper.Map<BackstageCategoriesAnalyzeMessage>(parameter);
+            var response = await this._backstageService.AbilityAnalyze(message);
+
+            return this.Ok(response);
+        }
     }
 }
