@@ -93,10 +93,13 @@ namespace Api.Controllers
                 return this.NotFound($"{tagExistResponse.ErrorMessage}");
             }
 
-            // TODO:統一try catch處裡contoller
+            // TODO:統一try catch處裡contoller、移除null檢測
             try
             {
-                await this._imageService.ImgExistAsync(experienceCreateParameter.Images.Select(i => i.Id).ToList());
+                if (experienceCreateParameter.Images != null)
+                {
+                    await this._imageService.ImgExistAsync(experienceCreateParameter.Images.Select(i => i.Id).ToList());
+                }
             }
             catch (ArgumentException ex)
             {
@@ -154,10 +157,13 @@ namespace Api.Controllers
                 return this.NotFound($"{tagExistResponse.ErrorMessage}");
             }
 
-            // TODO:統一try catch處裡contoller
+            // TODO:統一try catch處裡contoller、移除null檢測
             try
             {
-                await this._imageService.ImgExistAsync(experienceUpdateParameter.Images.Select(i => i.Id).ToList());
+                if (experienceUpdateParameter.Images != null)
+                {
+                    await this._imageService.ImgExistAsync(experienceUpdateParameter.Images.Select(i => i.Id).ToList());
+                }
             }
             catch (ArgumentException ex)
             {
@@ -206,10 +212,13 @@ namespace Api.Controllers
                 return this.NotFound($"{tagExistResponse.ErrorMessage}");
             }
 
-            // TODO:統一try catch處裡contoller
+            // TODO:統一try catch處裡contoller、移除null檢測
             try
             {
-                await this._imageService.ImgExistAsync(experienceUpdateParameter.Images.Select(i => i.Id).ToList());
+                if (experienceUpdateParameter.Images != null)
+                {
+                    await this._imageService.ImgExistAsync(experienceUpdateParameter.Images.Select(i => i.Id).ToList());
+                }
             }
             catch (ArgumentException ex)
             {
