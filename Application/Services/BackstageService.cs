@@ -103,6 +103,8 @@ namespace Application.Services
 
         public async Task<BackStageAbilityAnalyzeResponse> AbilityAnalyze(BackstageCategoriesAnalyzeMessage message)
         {
+            var backStageAbilityAnalyzeResponse = new BackStageAbilityAnalyzeResponse();
+            
             // 1. 篩選出DepIds
             var depModel = await this._unitOfWork.Department.ToListAsync();
             var depIds = from d in depModel
@@ -116,6 +118,7 @@ namespace Application.Services
                                                      .Where(u => depIds.Contains(u.DepartmentId))
                                                      .Select(u => u.Id)
                                                      .ToListAsync();
+            backStageAbilityAnalyzeResponse.Headcount = userIds.Count();
 
             // 3. 從ExpTable篩出這些使用者指定類別的ExpModel
 
@@ -164,17 +167,15 @@ namespace Application.Services
 
 
             // 5. 整理字典檔結果輸出
-            var backStageAbilityAnalyzeResponse = new BackStageAbilityAnalyzeResponse();
-
             foreach (var exp in expResult)
             {
-                backStageAbilityAnalyzeResponse.Experiences.Add(new BackStageAbilityAnalyzeExpResponseItem() { Name = exp.Key.Split(',')[0], Category = exp.Key.Split(',')[1], HeadCount = exp.Value });
+                backStageAbilityAnalyzeResponse.Experiences.Add(new BackStageAbilityAnalyzeExpResponseItem() { Name = exp.Key.Split(',')[0], Category = exp.Key.Split(',')[1], Headcount = exp.Value });
             }
             foreach (var tag in tagNameResult)
             {
-                backStageAbilityAnalyzeResponse.Tags.Add(new BackStageAbilityAnalyzeTagResponseItem() { Name = tag.Key, Count = tag.Value, HeadCount = tagUserResult[tag.Key].Count() });
+                backStageAbilityAnalyzeResponse.Tags.Add(new BackStageAbilityAnalyzeTagResponseItem() { Name = tag.Key, Count = tag.Value, Headcount = tagUserResult[tag.Key].Count() });
             }
-            backStageAbilityAnalyzeResponse.Experiences = backStageAbilityAnalyzeResponse.Experiences.OrderByDescending(e => e.HeadCount).ToList();
+            backStageAbilityAnalyzeResponse.Experiences = backStageAbilityAnalyzeResponse.Experiences.OrderByDescending(e => e.Headcount).ToList();
             backStageAbilityAnalyzeResponse.Tags = backStageAbilityAnalyzeResponse.Tags.OrderByDescending(t => t.Count).ToList();
 
             return backStageAbilityAnalyzeResponse;

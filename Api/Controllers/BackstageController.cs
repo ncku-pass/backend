@@ -1,4 +1,5 @@
 ﻿using Api.RequestModel.Parameters;
+using Api.RequestModel.ViewModels;
 using Application.Dto.Messages;
 using Application.Services.Interface;
 using AutoMapper;
@@ -31,8 +32,9 @@ namespace Api.Controllers
         {
             var message = this._mapper.Map<BackstageCategoriesAnalyzeMessage>(parameter);
             var response = await this._backstageService.CategoriesAnalyze(message);
+            var viewModel = this._mapper.Map<BackstageCategoriesAnalyzeViewModel>(response);
 
-            return this.Ok(response);
+            return this.Ok(viewModel);
         }
 
         [HttpPost("analyze-abilities")]
@@ -40,8 +42,9 @@ namespace Api.Controllers
         {
             var message = this._mapper.Map<BackstageCategoriesAnalyzeMessage>(parameter);
             var response = await this._backstageService.AbilityAnalyze(message);
+            var viewModel = this._mapper.Map<BackStageAbilityAnalyzeViewModel>(response);
 
-            return this.Ok(response);
+            return this.Ok(viewModel);
         }
     }
 }
